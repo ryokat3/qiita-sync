@@ -95,3 +95,4 @@ def qiita_get_domain_list(caller: RESTAPI_CALLER_TYPE):
 
 if __name__ == '__main__':
     print(os.getcwd())
+    print(__file__)
