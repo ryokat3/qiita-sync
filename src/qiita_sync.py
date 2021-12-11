@@ -54,8 +54,9 @@ def git_get_topdir() -> Optional[str]:
 def git_get_remote_url() -> Optional[str]:
     return exec_command("git config --get remote.origin.url".split())
 
-def git_get_modified_date(filename:str) -> str:
-    return exec_command("git log -1 --pretty='%ci'".split() + [ filename ])
+def git_get_committer_date(filename:str) -> str:
+    # "%cI", committer date, strict ISO 8601 format
+    return exec_command("git log -1 --pretty='%cI'".split() + [ filename ])
 
 ########################################################################
 # Rest API
@@ -116,7 +117,6 @@ def qiita_create_caller(auth_token: str):
         "Cache-Control": "no-cache, no-store",
         "Authorization": f"Bearer {auth_token}"
     }, convert_json_to_bytes)
-
 
 def qiita_get_item_list(caller: RESTAPI_CALLER_TYPE):
     return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/authenticated_user/items", "GET", None))    
