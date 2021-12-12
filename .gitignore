@@ -1,2 +1,5 @@
 access_token.txt
 qiita
+.venv
+.python-version
+.pytest_cache
