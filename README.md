@@ -1,5 +1,7 @@
 # qiita-sync
 
+![pytest](https://github.com/wak109/qiita-sync/actions/workflows/pytest.yml/badge.svg)
+
 ## Get Started
 
 ### Requirement
