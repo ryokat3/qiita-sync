@@ -69,8 +69,8 @@ def test_markdown_code_block_split():
     "text, num, idx, item", [
         (r"Hey `aaa` hoho", 3, 1, '`aaa`'),
         (r"Hey `aa\`a\`bb` hoho", 3, 0, 'Hey '),
-        (r"Hey `aa\`a\`bb` hoho `bb\`bb`", 4, 1, r"`aa\`a\`bb`"),
-        (r"`aa\`a\`bb` hoho `bb\`bb` ccc", 4, 1, " hoho ")
+        (r"Hey `aa\`a\`bb` hoho `bb\`日本語`", 4, 1, r"`aa\`a\`bb`"),
+        (r"`aa\`日本語\`bb` hoho `bb\`bb` ccc", 4, 1, " hoho ")
     ]
 )
 def test_markdown_code_inline_split(text, num, idx, item):

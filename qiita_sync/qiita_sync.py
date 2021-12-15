@@ -388,7 +388,6 @@ class QiitaDoc(NamedTuple):
 ########################################################################
 
 CODE_BLOCK_REGEX = re.compile(r"([\r\n]+\s*[\r\n]+(?P<CB>````*).*?[\r\n](?P=CB)\s*[\r\n]+)", re.MULTILINE | re.DOTALL)
-# CODE_INLINE_REGEX = re.compile(r"(`[\w(\\`)]*`)", re.MULTILINE | re.DOTALL)
 CODE_INLINE_REGEX = re.compile(r"(`(?:[^'\\]|(?:\\.))*?`)", re.MULTILINE | re.DOTALL)
 
 
@@ -400,8 +399,13 @@ def markdown_code_inline_split(text: str) -> List[str]:
     return list(filter(None, re.split(CODE_INLINE_REGEX, text)))
 
 
+def markdown_replace_block_text(func: Callable[[str], str], text: str):
+    return ''.join([func(block) if CODE_BLOCK_REGEX.match(block) is None else block for block in markdown_code_block_split(text)])
+
+
 def markdown_replace_text(func: Callable[[str], str], text: str):
-    return [func(block) if CODE_BLOCK_REGEX.match(block) is None else block for block in markdown_code_block_split(text)]
+    return markdown_replace_block_text(lambda block: ''.join(
+        [func(x) if CODE_INLINE_REGEX.match(x) is None else x for x in markdown_code_inline_split(block)]), text)
 
 ########################################################################
 # Qiita Sync
