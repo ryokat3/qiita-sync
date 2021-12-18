@@ -2,6 +2,7 @@
 #
 from __future__ import annotations
 
+import functools
 import json
 import os
 import subprocess
@@ -12,6 +13,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 from urllib import request
+from urllib.parse import urlparse
 from urllib.error import HTTPError
 from http.client import HTTPResponse
 from urllib.request import OpenerDirector
@@ -56,15 +58,25 @@ def update_mtime(filepath: str, t: datetime):
     os.utime(filepath, (t.timestamp(), t.timestamp()))
 
 
+def is_url(text: str) -> bool:
+    try:
+        urlparse(text)
+        return True
+    except Exception:
+        return False
+
+
 ########################################################################
 # Git
 ########################################################################
 
 
+@functools.lru_cache(maxsize=1)
 def git_get_topdir() -> Optional[str]:
     return exec_command("git rev-parse --show-toplevel".split())
 
 
+@functools.lru_cache(maxsize=1)
 def git_get_remote_url() -> Optional[str]:
     return exec_command("git config --get remote.origin.url".split())
 
@@ -72,6 +84,12 @@ def git_get_remote_url() -> Optional[str]:
 def git_get_committer_date(filename: str) -> Optional[str]:
     # "%cI", committer date, strict ISO 8601 format
     return exec_command("git log -1 --pretty='%cI'".split() + [filename])
+
+
+@functools.lru_cache(maxsize=1)
+def git_get_default_branch() -> Optional[str]:
+    res = exec_command("git symbolic-ref refs/remotes/origin/HEAD".split())
+    return res[len("refs/remotes/origin/"):] if res is not None else None
 
 
 ########################################################################
@@ -359,13 +377,21 @@ class QiitaDoc(NamedTuple):
         )
         qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
         return (
-            cls(data=qiita_data, body=m.group(2) if m is not None else "", timestamp=timestamp)
+            cls(
+                data=qiita_data,
+                body=m.group(2) if m is not None else "",
+                timestamp=timestamp,
+            )
             if isinstance(qiita_data, QiitaData)
             else cls(
                 data=QiitaData(
-                    qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
-                    QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
-                    None
+                    qiita_data["title"]
+                    if "title" in qiita_data
+                    else qiita_get_temporary_title(text),
+                    QiitaTags.fromString(
+                        qiita_data["tags"] if "tags" in qiita_data else "NoTag"
+                    ),
+                    None,
                 ),
                 body=text,
                 timestamp=timestamp,
@@ -384,28 +410,129 @@ class QiitaDoc(NamedTuple):
 
 
 #######################################################################
-# Markdown
-########################################################################
+# GitHub
+#######################################################################
 
-CODE_BLOCK_REGEX = re.compile(r"([\r\n]+\s*[\r\n]+(?P<CB>````*).*?[\r\n](?P=CB)\s*[\r\n]+)", re.MULTILINE | re.DOTALL)
-CODE_INLINE_REGEX = re.compile(r"(`(?:[^'\\]|(?:\\.))*?`)", re.MULTILINE | re.DOTALL)
+GITHUB_SSH_URL_REGEX = re.compile(r"^git@github.com:(.*)/(.*)\.git")
+GITHUB_HTTPS_URL_REGEX = re.compile(r"^https://github.com/(.*)/(.*)\.git")
+
+
+class GitHubRepository(NamedTuple):
+    user: str
+    repository: str
+    default_branch: str
+    top_dir: str
+
+    def getGitHubUrl(self, pathname: str) -> Optional[str]:
+        try:
+            relative_path = Path(pathname).relative_to(self.top_dir).as_posix()
+            return f"https://raw.githubusercontent.com/{self.user}/{self.repository}/{self.default_branch}/{relative_path}"
+        except Exception:
+            return None
+
+    @classmethod
+    def getInstance(cls) -> Optional[GitHubRepository]:
+        url = git_get_remote_url()
+        branch = git_get_default_branch()
+        user_repo = (
+            match_github_https_url(url) or match_github_ssh_url(url)
+            if url is not None
+            else None
+        )
+        top_dir = git_get_topdir()
+        return (
+            GitHubRepository(user_repo[0], user_repo[1], branch, top_dir)
+            if user_repo is not None and branch is not None and top_dir is not None
+            else None
+        )
+
+
+def match_github_ssh_url(text: str) -> Optional[Tuple[str, str]]:
+    m = re.match(GITHUB_SSH_URL_REGEX, text)
+    return (m.group(1), m.group(2)) if m is not None else None
+
+
+def match_github_https_url(text: str) -> Optional[Tuple[str, str]]:
+    m = re.match(GITHUB_HTTPS_URL_REGEX, text)
+    return (m.group(1), m.group(2)) if m is not None else None
+
+
+#######################################################################
+# Markdown
+#######################################################################
+
+CODE_BLOCK_REGEX = re.compile(
+    r"([\r\n]+\s*[\r\n]+(?P<CB>````*).*?[\r\n](?P=CB)\s*[\r\n]+)",
+    re.MULTILINE | re.DOTALL,
+)
+CODE_INLINE_REGEX = re.compile(
+    r"((?P<BT>``*)[^\r\n]*?(?P=BT))", re.MULTILINE | re.DOTALL
+)
+MARKDOWN_LINK_REGEX = re.compile(
+    r"(?<!\!)(\[[^\]]*\]\()([^\ \)]*)(.*\))", re.MULTILINE | re.DOTALL
+)
+MARKDOWN_IMAGE_REGEX = re.compile(
+    r"(\!\[[^\]]*\]\()([^\ \)]*)(.*\))", re.MULTILINE | re.DOTALL
+)
 
 
 def markdown_code_block_split(text: str) -> List[str]:
-    return list(filter(lambda elm: re.match(r"^````*$", elm) is None, re.split(CODE_BLOCK_REGEX, text)))
+    return list(
+        filter(
+            lambda elm: elm is not None and re.match(r"^````*$", elm) is None,
+            re.split(CODE_BLOCK_REGEX, text),
+        )
+    )
 
 
 def markdown_code_inline_split(text: str) -> List[str]:
-    return list(filter(None, re.split(CODE_INLINE_REGEX, text)))
+    return list(
+        filter(
+            None,
+            filter(
+                lambda elm: elm is not None and re.match(r"^``*$", elm) is None,
+                re.split(CODE_INLINE_REGEX, text),
+            ),
+        )
+    )
 
 
 def markdown_replace_block_text(func: Callable[[str], str], text: str):
-    return ''.join([func(block) if CODE_BLOCK_REGEX.match(block) is None else block for block in markdown_code_block_split(text)])
+    return "".join(
+        [
+            func(block) if CODE_BLOCK_REGEX.match(block) is None else block
+            for block in markdown_code_block_split(text)
+        ]
+    )
 
 
 def markdown_replace_text(func: Callable[[str], str], text: str):
-    return markdown_replace_block_text(lambda block: ''.join(
-        [func(x) if CODE_INLINE_REGEX.match(x) is None else x for x in markdown_code_inline_split(block)]), text)
+    return markdown_replace_block_text(
+        lambda block: "".join(
+            [
+                func(x) if CODE_INLINE_REGEX.match(x) is None else x
+                for x in markdown_code_inline_split(block)
+            ]
+        ),
+        text,
+    )
+
+
+def markdown_replace_link(func: Callable[[str], str], text: str):
+    return re.sub(
+        MARKDOWN_LINK_REGEX,
+        lambda m: "".join([m.group(1), func(m.group(2)), m.group(3)]),
+        text,
+    )
+
+
+def markdown_replace_image(func: Callable[[str], str], text: str):
+    return re.sub(
+        MARKDOWN_IMAGE_REGEX,
+        lambda m: "".join([m.group(1), func(m.group(2)), m.group(3)]),
+        text,
+    )
+
 
 ########################################################################
 # Qiita Sync
@@ -479,6 +606,33 @@ def qsync_upload_doc(caller: RESTAPI_CALLER_TYPE, filepath: str):
                 filepath,
             )
             update_mtime(filepath, newdoc.timestamp)
+
+
+def qsync_gen_convert_image(pathname: str) -> Callable[[str], str]:
+    def _(link: str) -> str:
+        instance = GitHubRepository.getInstance()
+        if instance is not None and is_url(link) is False:
+            url = instance.getGitHubUrl(link)
+            return url if url is not None else link
+        else:
+            return link
+
+    return _
+
+
+# TODO: not implemented !!!
+def qsync_gen_convert_link(pathname: str):
+    return pathname
+
+
+def qsync_convert_doc(pathname: str, content: str) -> str:
+    return markdown_replace_text(
+        lambda text: markdown_replace_image(
+            qsync_gen_convert_image(pathname),
+            markdown_replace_image(qsync_gen_convert_link(pathname), text),
+        ),
+        content,
+    )
 
 
 ########################################################################
