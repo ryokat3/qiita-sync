@@ -18,7 +18,11 @@ jobs:
     steps:
       - name: Install git
         run: |
-          sudo snap install git
+          apt-get install -y git
+          git --version
+          echo "Path is ... $PATH"
+          PATH=$PATH:$(dirname $(which git))
+          echo "Path is ... $PATHt
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
