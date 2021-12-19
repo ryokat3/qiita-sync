@@ -16,6 +16,13 @@ jobs:
       matrix:
         python-version: [3.7, 3.8, 3.9]
     steps:
+      - name: Install git
+        run: |
+          apt-get install -y git
+          git --version
+          echo "Path is ... $PATH"
+          PATH=$PATH:$(which git)
+          echo "Path is ... $PATH"
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
