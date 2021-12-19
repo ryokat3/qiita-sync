@@ -413,7 +413,7 @@ class QiitaDoc(NamedTuple):
 #######################################################################
 
 GITHUB_SSH_URL_REGEX = re.compile(r"^git@github.com:(.*)/(.*)\.git")
-GITHUB_HTTPS_URL_REGEX = re.compile(r"^https://github.com/(.*)/(.*)\.git")
+GITHUB_HTTPS_URL_REGEX = re.compile(r"^https://github.com/(.*)/(.*)(?:\.git)?")
 
 
 class GitHubRepository(NamedTuple):
