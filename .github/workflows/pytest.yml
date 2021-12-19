@@ -26,7 +26,8 @@ jobs:
         run: |
           git rev-parse --show-toplevel
           git config --get remote.origin.url
-          git symbolic-ref refs/remotes/origin/HEAD
+          git rev-parse --abbrev-ref HEAD
+#          git symbolic-ref refs/remotes/origin/HEAD
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:

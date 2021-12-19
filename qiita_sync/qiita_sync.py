@@ -88,9 +88,8 @@ def git_get_committer_date(filename: str) -> Optional[str]:
 
 @functools.lru_cache(maxsize=1)
 def git_get_default_branch() -> Optional[str]:
-    res = exec_command("git symbolic-ref refs/remotes/origin/HEAD".split())
-    return res[len("refs/remotes/origin/"):] if res is not None else None
-
+    return exec_command("git rev-parse --abbrev-ref HEAD".split())
+    
 
 ########################################################################
 # Rest API
