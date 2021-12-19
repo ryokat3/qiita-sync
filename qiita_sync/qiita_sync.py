@@ -432,13 +432,17 @@ class GitHubRepository(NamedTuple):
     @classmethod
     def getInstance(cls) -> Optional[GitHubRepository]:
         url = git_get_remote_url()
+        print(url)
         branch = git_get_default_branch()
+        print(branch)
         user_repo = (
             match_github_https_url(url) or match_github_ssh_url(url)
             if url is not None
             else None
         )
+        print(user_repo)
         top_dir = git_get_topdir()
+        print(top_dir)
         return (
             GitHubRepository(user_repo[0], user_repo[1], branch, top_dir)
             if user_repo is not None and branch is not None and top_dir is not None
