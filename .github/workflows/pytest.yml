@@ -20,9 +20,9 @@ jobs:
         run: |
           sudo apt-get install -y git
           git --version
-          echo "Path is ... $PATH"
-          PATH=$PATH:$(dirname $(which git))
-          echo "Path is ... $PATHt
+          git rev-parse --show-toplevel
+          git config --get remote.origin.url
+          git symbolic-ref refs/remotes/origin/HEAD
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
