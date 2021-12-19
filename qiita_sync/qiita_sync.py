@@ -60,8 +60,8 @@ def update_mtime(filepath: str, t: datetime):
 
 def is_url(text: str) -> bool:
     try:
-        urlparse(text)
-        return True
+        parts = urlparse(text)
+        return parts.scheme != '' and parts.netloc != ''
     except Exception:
         return False
 
@@ -89,7 +89,6 @@ def git_get_committer_date(filename: str) -> Optional[str]:
 @functools.lru_cache(maxsize=1)
 def git_get_default_branch() -> Optional[str]:
     return exec_command("git rev-parse --abbrev-ref HEAD".split())
-    
 
 ########################################################################
 # Rest API
@@ -212,6 +211,19 @@ def qiita_get_item(caller: RESTAPI_CALLER_TYPE, id: str):
     return restapi_json_response(
         caller(f"{QIITA_API_ENDPOINT}/items/{id}", "GET", None)
     )
+
+
+@functools.lru_cache(maxsize=1)
+def qiita_get_authenticated_user(caller: RESTAPI_CALLER_TYPE):
+    return restapi_json_response(
+        caller(f"{QIITA_API_ENDPOINT}/authenticated_user", "GET", None)
+    )
+
+
+@functools.lru_cache(maxsize=1)
+def qiita_get_authenticated_user_id(caller: RESTAPI_CALLER_TYPE) -> Optional[str]:
+    info = qiita_get_authenticated_user(caller)
+    return info['id'] if info is not None else None
 
 
 def qiita_post_item(caller: RESTAPI_CALLER_TYPE, data):
@@ -432,17 +444,13 @@ class GitHubRepository(NamedTuple):
     @classmethod
     def getInstance(cls) -> Optional[GitHubRepository]:
         url = git_get_remote_url()
-        print(url)
         branch = git_get_default_branch()
-        print(branch)
         user_repo = (
             match_github_https_url(url) or match_github_ssh_url(url)
             if url is not None
             else None
         )
-        print(user_repo)
         top_dir = git_get_topdir()
-        print(top_dir)
         return (
             GitHubRepository(user_repo[0], user_repo[1], branch, top_dir)
             if user_repo is not None and branch is not None and top_dir is not None
@@ -475,7 +483,7 @@ MARKDOWN_LINK_REGEX = re.compile(
     r"(?<!\!)(\[[^\]]*\]\()([^\ \)]*)(.*\))", re.MULTILINE | re.DOTALL
 )
 MARKDOWN_IMAGE_REGEX = re.compile(
-    r"(\!\[[^\]]*\]\()([^\ \)]*)(.*\))", re.MULTILINE | re.DOTALL
+    r"(\!\[[^\]]*\]\()([^\ \)]*)(.*\))", re.MULTILINE | re.DOTALL    
 )
 
 
@@ -594,8 +602,10 @@ def qsync_download_all(caller: RESTAPI_CALLER_TYPE, docdir: str):
             )
 
 
-def qsync_upload_doc(caller: RESTAPI_CALLER_TYPE, filepath: str):
-    doc = QiitaDoc.fromFile(Path(filepath))
+def qsync_upload_doc(caller: RESTAPI_CALLER_TYPE, filepath: str, qiita_id: str):
+    orig_doc = QiitaDoc.fromFile(Path(filepath))
+    doc = QiitaDoc(orig_doc.data, qsync_convert_doc(filepath, orig_doc.body, qiita_id), orig_doc.timestamp)
+
     if doc.data.id is not None:
         response = qiita_patch_item(caller, doc.data.id, doc.toApi())
         if response is not None:
@@ -611,30 +621,43 @@ def qsync_upload_doc(caller: RESTAPI_CALLER_TYPE, filepath: str):
             update_mtime(filepath, newdoc.timestamp)
 
 
-def qsync_gen_convert_image(pathname: str) -> Callable[[str], str]:
+def qsync_gen_convert_image(_pathname: str):
     def _(link: str) -> str:
+        if os.path.isabs(link) or is_url(link):
+            return link
+        pathname = Path(os.path.dirname(os.path.abspath(_pathname))).joinpath(link)
         instance = GitHubRepository.getInstance()
-        if instance is not None and is_url(link) is False:
-            url = instance.getGitHubUrl(link)
+        if instance is not None:            
+            url = instance.getGitHubUrl(str(pathname))
+            print(f"URL = {url}")
             return url if url is not None else link
         else:
             return link
+    return _
+
+
+def qsync_gen_convert_link(_pathname: str, qiita_id: str):
+    def _(link: str) -> str:
+        if os.path.isabs(link) or is_url(link):
+            return link
+        pathname = Path(os.path.dirname(_pathname)).joinpath(link)        
+        if pathname.is_file():
+            # qiita_id = qiita_get_authenticated_user_id()
+            article = QiitaDoc.fromFile(Path(os.path.dirname(pathname)).joinpath(link))
+            if qiita_id is not None and article.data.id is not None:
+                return f"https://qiita.com/{qiita_id}/items/{article.data.id}"
+        return link
 
     return _
 
 
-# TODO: not implemented !!!
-def qsync_gen_convert_link(pathname: str):
-    return pathname
-
-
-def qsync_convert_doc(pathname: str, content: str) -> str:
+def qsync_convert_doc(pathname: str, content: str, qiita_id: str) -> str:
     return markdown_replace_text(
         lambda text: markdown_replace_image(
             qsync_gen_convert_image(pathname),
-            markdown_replace_image(qsync_gen_convert_link(pathname), text),
+            markdown_replace_link(qsync_gen_convert_link(pathname, qiita_id), text),
         ),
-        content,
+        content
     )
 
 
@@ -651,7 +674,9 @@ def qsync_subcommand_download(args):
 def qsync_subcommand_upload(args):
     caller = qiita_create_caller(qsync_get_access_token(args.token))
     if args.file is not None:
-        qsync_upload_doc(caller, args.file)
+        qiita_id = qiita_get_authenticated_user_id(caller)
+        if qiita_id is not None:        
+            qsync_upload_doc(caller, args.file, qiita_id)
     else:
         pass
 
