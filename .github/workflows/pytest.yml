@@ -23,8 +23,12 @@ jobs:
           echo "Path is ... $PATH"
           PATH=$PATH:$(which git)
           echo "Path is ... $PATH"
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Clone repository
+        run: gh repo clone $GITHUB_REPOSITORY . -- --depth 1 --branch ${GITHUB_REF#refs/heads/}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Checkout
+#        uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
