@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Install git
         run: |
-          apt-get install -y git
+          sudo apt-get install -y git
           git --version
           echo "Path is ... $PATH"
           PATH=$PATH:$(which git)
