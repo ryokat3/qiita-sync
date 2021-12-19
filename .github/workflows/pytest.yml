@@ -16,10 +16,10 @@ jobs:
       matrix:
         python-version: [3.7, 3.8, 3.9]
     steps:
-      - name: Install git
-        run: |
-          sudo apt-get install -y git
-          git --version
+      #      - name: Install git
+      #        run: |
+      #          sudo apt-get install -y git
+      #          git --version
       - name: Checkout
         uses: actions/checkout@v2
       - name: Check GitHub repository
@@ -27,7 +27,6 @@ jobs:
           git rev-parse --show-toplevel
           git config --get remote.origin.url
           git rev-parse --abbrev-ref HEAD
-#          git symbolic-ref refs/remotes/origin/HEAD
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
