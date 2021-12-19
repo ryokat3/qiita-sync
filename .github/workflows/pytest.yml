@@ -20,11 +20,13 @@ jobs:
         run: |
           sudo apt-get install -y git
           git --version
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Check GitHub repository
+        run: |
           git rev-parse --show-toplevel
           git config --get remote.origin.url
           git symbolic-ref refs/remotes/origin/HEAD
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
