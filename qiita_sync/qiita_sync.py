@@ -66,6 +66,10 @@ def is_url(text: str) -> bool:
         return False
 
 
+def diff_url(target: str, pre: str) -> str:
+    return target if len(target) < len(pre) or target[:len(pre)].lower() != pre.lower() else target[len(pre):]
+
+
 ########################################################################
 # Git
 ########################################################################
@@ -89,6 +93,7 @@ def git_get_committer_date(filename: str) -> Optional[str]:
 @functools.lru_cache(maxsize=1)
 def git_get_default_branch() -> Optional[str]:
     return exec_command("git rev-parse --abbrev-ref HEAD".split())
+
 
 ########################################################################
 # Rest API
@@ -140,17 +145,13 @@ def restapi_call(
     content: Optional[bytes] = None,
 ) -> RestApiResponse:
     """Execute HTTP Request with OpenerDirector"""
-    with opener.open(
-        restapi_create_request(url, method, headers, content_type, content)
-    ) as response:
+    with opener.open(restapi_create_request(url, method, headers, content_type, content)) as response:
         return RestApiResponse(response, response.read())
 
 
 def restapi_build_opener() -> OpenerDirector:
     """Create OpenerDirector instance with cookie processor"""
-    return request.build_opener(
-        request.BaseHandler(), request.HTTPCookieProcessor(cookiejar.CookieJar())
-    )
+    return request.build_opener(request.BaseHandler(), request.HTTPCookieProcessor(cookiejar.CookieJar()))
 
 
 def restapi_json_response(resp: RestApiResponse):
@@ -202,22 +203,16 @@ def qiita_create_caller(auth_token: str):
 
 
 def qiita_get_item_list(caller: RESTAPI_CALLER_TYPE):
-    return restapi_json_response(
-        caller(f"{QIITA_API_ENDPOINT}/authenticated_user/items", "GET", None)
-    )
+    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/authenticated_user/items", "GET", None))
 
 
 def qiita_get_item(caller: RESTAPI_CALLER_TYPE, id: str):
-    return restapi_json_response(
-        caller(f"{QIITA_API_ENDPOINT}/items/{id}", "GET", None)
-    )
+    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "GET", None))
 
 
 @functools.lru_cache(maxsize=1)
 def qiita_get_authenticated_user(caller: RESTAPI_CALLER_TYPE):
-    return restapi_json_response(
-        caller(f"{QIITA_API_ENDPOINT}/authenticated_user", "GET", None)
-    )
+    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/authenticated_user", "GET", None))
 
 
 @functools.lru_cache(maxsize=1)
@@ -231,15 +226,11 @@ def qiita_post_item(caller: RESTAPI_CALLER_TYPE, data):
 
 
 def qiita_patch_item(caller: RESTAPI_CALLER_TYPE, id: str, data):
-    return restapi_json_response(
-        caller(f"{QIITA_API_ENDPOINT}/items/{id}", "PATCH", data)
-    )
+    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "PATCH", data))
 
 
 def qiita_delete_item(caller: RESTAPI_CALLER_TYPE, id: str):
-    return restapi_json_response(
-        caller(f"{QIITA_API_ENDPOINT}/items/{id}", "DELETE", None)
-    )
+    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "DELETE", None))
 
 
 ########################################################################
@@ -248,24 +239,12 @@ def qiita_delete_item(caller: RESTAPI_CALLER_TYPE, id: str):
 
 
 def qiita_get_first_section(body: str) -> Optional[str]:
-    m = next(
-        dropwhile(
-            lambda m: m is None,
-            map(lambda line: re.match(r"^#+\s+(.*)$", line), body.splitlines()),
-        ),
-        None,
-    )
+    m = next(dropwhile(lambda m: m is None, map(lambda line: re.match(r"^#+\s+(.*)$", line), body.splitlines())), None)
     return m.group(1).strip() if m is not None else None
 
 
 def qiita_get_first_line(body: str) -> Optional[str]:
-    m = next(
-        dropwhile(
-            lambda m: m is None,
-            map(lambda line: re.match(r"(\S+)", line), body.splitlines()),
-        ),
-        None,
-    )
+    m = next(dropwhile(lambda m: m is None, map(lambda line: re.match(r"(\S+)", line), body.splitlines())), None)
     return m.group(1).strip() if m is not None else None
 
 
@@ -278,11 +257,7 @@ class QiitaTag(NamedTuple):
     versions: List[str]
 
     def __str__(self) -> str:
-        return (
-            f"{self.name}={'|'.join(self.versions)}"
-            if len(self.versions) > 0
-            else self.name
-        )
+        return (f"{self.name}={'|'.join(self.versions)}" if len(self.versions) > 0 else self.name)
 
     def toApi(self) -> Dict[str, Any]:
         return {"name": self.name, "versions": self.versions}
@@ -294,6 +269,7 @@ class QiitaTag(NamedTuple):
 
 
 class QiitaTags(List[QiitaTag]):
+
     def __str__(self) -> str:
         return ",".join(map(str, self))
 
@@ -323,8 +299,7 @@ class QiitaData(NamedTuple):
                     f"tags:  {str(self.tags)}",
                     f"id:    {self.id}" if self.id is not None else None,
                 ],
-            )
-        )
+            ))
 
     @classmethod
     def fromString(cls, text: str) -> Union[QiitaData, Dict[str, str]]:
@@ -332,34 +307,15 @@ class QiitaData(NamedTuple):
             dict(
                 map(
                     lambda tpl: (tpl[0].strip(), tpl[1].strip()),
-                    map(
-                        lambda line: line.split(":", 1),
-                        filter(
-                            lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None,
-                            text.splitlines(),
-                        ),
-                    ),
-                )
-            )
-            if text is not None
-            else {}
-        )
-
-        return (
-            cls(
-                data["title"],
-                QiitaTags.fromString(data["tags"]),
-                data["id"] if "id" in data else None,
-            )
-            if "title" in data and "tags" in data
-            else data
-        )
+                    map(lambda line: line.split(":", 1),
+                        filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None, text.splitlines()))))
+            if text is not None else {})
+        return (cls(data["title"], QiitaTags.fromString(data["tags"]), data["id"] if "id" in data else None)
+                if "title" in data and "tags" in data else data)
 
     @classmethod
     def fromApi(cls, item) -> QiitaData:
-        return cls(
-            title=item["title"], tags=QiitaTags.fromApi(item["tags"]), id=item["id"]
-        )
+        return cls(title=item["title"], tags=QiitaTags.fromApi(item["tags"]), id=item["id"])
 
 
 class QiitaDoc(NamedTuple):
@@ -368,9 +324,7 @@ class QiitaDoc(NamedTuple):
     timestamp: datetime
 
     def toText(self) -> str:
-        return (
-            f"{os.linesep.join(['<!--', str(self.data), '-->'])}{os.linesep}{self.body}"
-        )
+        return (f"{os.linesep.join(['<!--', str(self.data), '-->'])}{os.linesep}{self.body}")
 
     def toApi(self) -> Dict[str, Any]:
         return {
@@ -383,40 +337,28 @@ class QiitaDoc(NamedTuple):
     def fromFile(cls, file: Path) -> QiitaDoc:
         text = file.read_text()
         timestamp = datetime.fromtimestamp(file.stat().st_mtime, timezone.utc)
-        m = re.match(
-            r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL
-        )
+        m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
         qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
-        return (
-            cls(
-                data=qiita_data,
-                body=m.group(2) if m is not None else "",
-                timestamp=timestamp,
-            )
-            if isinstance(qiita_data, QiitaData)
-            else cls(
-                data=QiitaData(
-                    qiita_data["title"]
-                    if "title" in qiita_data
-                    else qiita_get_temporary_title(text),
-                    QiitaTags.fromString(
-                        qiita_data["tags"] if "tags" in qiita_data else "NoTag"
-                    ),
-                    None,
-                ),
-                body=text,
-                timestamp=timestamp,
-            )
-        )
+        return (cls(
+            data=qiita_data,
+            body=m.group(2) if m is not None else "",
+            timestamp=timestamp,
+        ) if isinstance(qiita_data, QiitaData) else cls(
+            data=QiitaData(
+                qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
+                QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
+                None,
+            ),
+            body=text,
+            timestamp=timestamp,
+        ))
 
     @classmethod
     def fromApi(cls, item) -> QiitaDoc:
         return cls(
             data=QiitaData.fromApi(item),
             body=item["body"],
-            timestamp=datetime.strptime(
-                item["updated_at"], "%Y-%m-%dT%H:%M:%S%z"
-            ).astimezone(timezone.utc),
+            timestamp=datetime.strptime(item["updated_at"], "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc),
         )
 
 
@@ -426,6 +368,7 @@ class QiitaDoc(NamedTuple):
 
 GITHUB_SSH_URL_REGEX = re.compile(r"^git@github.com:(.*)/(.*)\.git")
 GITHUB_HTTPS_URL_REGEX = re.compile(r"^https://github.com/(.*)/(.*)(?:\.git)?")
+GITHUB_CONTENT_URL = "https://raw.githubusercontent.com/"
 
 
 class GitHubRepository(NamedTuple):
@@ -434,28 +377,24 @@ class GitHubRepository(NamedTuple):
     default_branch: str
     top_dir: str
 
-    def getGitHubUrl(self, pathname: str) -> Optional[str]:
+    def getGitHubUrl(self, pathname: Path) -> Optional[str]:
         try:
-            relative_path = Path(pathname).relative_to(self.top_dir).as_posix()
-            return f"https://raw.githubusercontent.com/{self.user}/{self.repository}/{self.default_branch}/{relative_path}"
+            relative_path = pathname.relative_to(self.top_dir).as_posix()
+            return f"{GITHUB_CONTENT_URL}{self.user}/{self.repository}/{self.default_branch}/{relative_path}"
         except Exception:
             return None
+
+    def getRelativePath(self, url: str) -> str:
+        return diff_url(url, "{GITHUB_CONTENT_URL}{self.user}/{self.repository}/{self.default_branch}/")
 
     @classmethod
     def getInstance(cls) -> Optional[GitHubRepository]:
         url = git_get_remote_url()
         branch = git_get_default_branch()
-        user_repo = (
-            match_github_https_url(url) or match_github_ssh_url(url)
-            if url is not None
-            else None
-        )
+        user_repo = (match_github_https_url(url) or match_github_ssh_url(url) if url is not None else None)
         top_dir = git_get_topdir()
-        return (
-            GitHubRepository(user_repo[0], user_repo[1], branch, top_dir)
-            if user_repo is not None and branch is not None and top_dir is not None
-            else None
-        )
+        return (GitHubRepository(user_repo[0], user_repo[1], branch, top_dir)
+                if user_repo is not None and branch is not None and top_dir is not None else None)
 
 
 def match_github_ssh_url(text: str) -> Optional[Tuple[str, str]]:
@@ -472,19 +411,10 @@ def match_github_https_url(text: str) -> Optional[Tuple[str, str]]:
 # Markdown
 #######################################################################
 
-CODE_BLOCK_REGEX = re.compile(
-    r"([\r\n]+\s*[\r\n]+(?P<CB>````*).*?[\r\n](?P=CB)\s*[\r\n]+)",
-    re.MULTILINE | re.DOTALL,
-)
-CODE_INLINE_REGEX = re.compile(
-    r"((?P<BT>``*)[^\r\n]*?(?P=BT))", re.MULTILINE | re.DOTALL
-)
-MARKDOWN_LINK_REGEX = re.compile(
-    r"(?<!\!)(\[[^\]]*\]\()([^\ \)]+)(.*?\))", re.MULTILINE | re.DOTALL
-)
-MARKDOWN_IMAGE_REGEX = re.compile(
-    r"(\!\[[^\]]*\]\()([^\ \)]+)(.*?\))", re.MULTILINE | re.DOTALL
-)
+CODE_BLOCK_REGEX = re.compile(r"([\r\n]+\s*[\r\n]+(?P<CB>````*).*?[\r\n](?P=CB)\s*[\r\n]+)", re.MULTILINE | re.DOTALL)
+CODE_INLINE_REGEX = re.compile(r"((?P<BT>``*)[^\r\n]*?(?P=BT))", re.MULTILINE | re.DOTALL)
+MARKDOWN_LINK_REGEX = re.compile(r"(?<!\!)(\[[^\]]*\]\()([^\ \)]+)(.*?\))", re.MULTILINE | re.DOTALL)
+MARKDOWN_IMAGE_REGEX = re.compile(r"(\!\[[^\]]*\]\()([^\ \)]+)(.*?\))", re.MULTILINE | re.DOTALL)
 
 
 def markdown_code_block_split(text: str) -> List[str]:
@@ -492,8 +422,7 @@ def markdown_code_block_split(text: str) -> List[str]:
         filter(
             lambda elm: elm is not None and re.match(r"^````*$", elm) is None,
             re.split(CODE_BLOCK_REGEX, text),
-        )
-    )
+        ))
 
 
 def markdown_code_inline_split(text: str) -> List[str]:
@@ -504,45 +433,26 @@ def markdown_code_inline_split(text: str) -> List[str]:
                 lambda elm: elm is not None and re.match(r"^``*$", elm) is None,
                 re.split(CODE_INLINE_REGEX, text),
             ),
-        )
-    )
+        ))
 
 
 def markdown_replace_block_text(func: Callable[[str], str], text: str):
     return "".join(
-        [
-            func(block) if CODE_BLOCK_REGEX.match(block) is None else block
-            for block in markdown_code_block_split(text)
-        ]
-    )
+        [func(block) if CODE_BLOCK_REGEX.match(block) is None else block for block in markdown_code_block_split(text)])
 
 
 def markdown_replace_text(func: Callable[[str], str], text: str):
     return markdown_replace_block_text(
         lambda block: "".join(
-            [
-                func(x) if CODE_INLINE_REGEX.match(x) is None else x
-                for x in markdown_code_inline_split(block)
-            ]
-        ),
-        text,
-    )
+            [func(x) if CODE_INLINE_REGEX.match(x) is None else x for x in markdown_code_inline_split(block)]), text)
 
 
-def markdown_replace_link(func: Callable[[str], str], text: str):    
-    return re.sub(
-        MARKDOWN_LINK_REGEX,
-        lambda m: "".join([m.group(1), func(m.group(2)), m.group(3)]),
-        text,
-    )
+def markdown_replace_link(func: Callable[[str], str], text: str):
+    return re.sub(MARKDOWN_LINK_REGEX, lambda m: "".join([m.group(1), func(m.group(2)), m.group(3)]), text)
 
 
-def markdown_replace_image(func: Callable[[str], str], text: str):    
-    return re.sub(
-        MARKDOWN_IMAGE_REGEX,
-        lambda m: "".join([m.group(1), func(m.group(2)), m.group(3)]),
-        text,
-    )
+def markdown_replace_image(func: Callable[[str], str], text: str):
+    return re.sub(MARKDOWN_IMAGE_REGEX, lambda m: "".join([m.group(1), func(m.group(2)), m.group(3)]), text)
 
 
 ########################################################################
@@ -550,115 +460,91 @@ def markdown_replace_image(func: Callable[[str], str], text: str):
 ########################################################################
 
 
-def qsync_get_topdir() -> str:
-    return git_get_topdir() or "."
+def qsync_get_topdir() -> Path:
+    return Path(git_get_topdir() or ".")
 
 
 def qsync_get_access_token(token_file: str) -> str:
-    with open(os.path.join(qsync_get_topdir(), token_file), "r") as fp:
+    with qsync_get_topdir().joinpath(token_file).open("r") as fp:
         return fp.read().strip()
 
 
-def qsync_get_local_docs(docdir: str):
-    return dict(
-        [
-            (fp.name, QiitaDoc.fromFile(fp))
-            for fp in Path(docdir).glob("*.md")
-            if fp.is_file()
-        ]
-    )
+def qsync_get_local_docs(docdir: Path):
+    return dict([(fp.name, QiitaDoc.fromFile(fp)) for fp in docdir.glob("*.md") if fp.is_file()])
 
 
 def qsync_get_doc(docs: Dict[str, QiitaDoc], id: str) -> Optional[Tuple[str, QiitaDoc]]:
-    return next(
-        dropwhile(lambda tpl: tpl is not None and tpl[1].data.id != id, docs.items()),
-        None,
-    )
+    return next(dropwhile(lambda tpl: tpl is not None and tpl[1].data.id != id, docs.items()), None)
 
 
 def qsync_get_remote_docs(caller: RESTAPI_CALLER_TYPE):
-    return dict(
-        [(item["id"], QiitaDoc.fromApi(item)) for item in qiita_get_item_list(caller)]
-    )
+    return dict([(item["id"], QiitaDoc.fromApi(item)) for item in qiita_get_item_list(caller)])
 
 
-def qsync_save_doc(doc: QiitaDoc, filepath: str):
-    with open(filepath, "w") as fp:
-        fp.write(doc.toText())
+def qsync_save_article(article: QiitaDoc, filepath: Path):
+    with filepath.open("w") as fp:
+        fp.write(article.toText())
 
 
-def qsync_download_all(caller: RESTAPI_CALLER_TYPE, docdir: str):
-    Path(docdir).mkdir(parents=True, exist_ok=True)
+def qsync_download_all_articles(caller: RESTAPI_CALLER_TYPE, docdir: Path):
+    docdir.mkdir(parents=True, exist_ok=True)
     local_docs = qsync_get_local_docs(docdir)
     for item in qiita_get_item_list(caller):
         doc = QiitaDoc.fromApi(item)
         if doc.data.id is not None:
             tpl = qsync_get_doc(local_docs, doc.data.id)
-            qsync_save_doc(
-                QiitaDoc.fromApi(item),
-                os.path.join(
-                    docdir, tpl[0] if tpl is not None else f"{doc.data.id}.md"
-                ),
-            )
+            qsync_save_article(
+                QiitaDoc.fromApi(item), docdir.joinpath(tpl[0] if tpl is not None else f"{doc.data.id}.md"))
 
 
-def qsync_upload_doc(caller: RESTAPI_CALLER_TYPE, filepath: str, qiita_id: str):
-    orig_doc = QiitaDoc.fromFile(Path(filepath))
-    doc = QiitaDoc(orig_doc.data, qsync_convert_doc(orig_doc.body, filepath, qiita_id), orig_doc.timestamp)
+def qsync_upload_article(caller: RESTAPI_CALLER_TYPE, filepath: Path, qiita_id: str):
+    orig_doc = QiitaDoc.fromFile(filepath)
+    doc = QiitaDoc(orig_doc.data, qsync_convert_article(orig_doc.body, filepath, qiita_id), orig_doc.timestamp)
 
     if doc.data.id is not None:
         response = qiita_patch_item(caller, doc.data.id, doc.toApi())
         if response is not None:
-            update_mtime(filepath, QiitaDoc.fromApi(response).timestamp)
+            update_mtime(str(filepath), QiitaDoc.fromApi(response).timestamp)
     else:
         response = qiita_post_item(caller, doc.toApi())
         if response is not None:
             newdoc = QiitaDoc.fromApi(response)
-            qsync_save_doc(
+            qsync_save_article(
                 QiitaDoc(body=doc.body, data=newdoc.data, timestamp=newdoc.timestamp),
                 filepath,
             )
-            update_mtime(filepath, newdoc.timestamp)
+            update_mtime(str(filepath), newdoc.timestamp)
 
 
-def qsync_gen_convert_image(_pathname: str):
-
-    def inner(link: str) -> str:
-        if os.path.isabs(link) or is_url(link):
-            return link
-        pathname = Path(os.path.dirname(os.path.abspath(_pathname))).joinpath(link)
-        instance = GitHubRepository.getInstance()
-        if instance is not None:
-            url = instance.getGitHubUrl(str(pathname))            
-            return url if url is not None else link
-        else:
-            return link
-    return inner
-
-
-def qsync_gen_convert_link(_pathname: str, qiita_id: str):
-
-    def inner(link: str) -> str:
-        if os.path.isabs(link) or is_url(link):
-            return link
-        pathname = Path(os.path.dirname(_pathname)).joinpath(link)
-        if pathname.is_file():            
-            article = QiitaDoc.fromFile(Path(os.path.dirname(pathname)).joinpath(link))
-            if qiita_id is not None and article.data.id is not None:
-                return f"https://qiita.com/{qiita_id}/items/{article.data.id}"
+def qsync_convert_image(link: str, pathname: Path) -> str:
+    if os.path.isabs(link) or is_url(link):
+        return link
+    linkpath = pathname.resolve().parent.joinpath(link)
+    instance = GitHubRepository.getInstance()
+    if instance is not None:
+        url = instance.getGitHubUrl(linkpath)
+        return url if url is not None else link
+    else:
         return link
 
-    return inner
+
+def qsync_convert_link(link: str, pathname: Path, qiita_id: str):
+    if os.path.isabs(link) or is_url(link):
+        return link
+    linkpath = pathname.parent.joinpath(link)
+    if linkpath.is_file():
+        article = QiitaDoc.fromFile(linkpath)
+        if qiita_id is not None and article.data.id is not None:
+            return f"https://qiita.com/{qiita_id}/items/{article.data.id}"
+    return link
 
 
-def qsync_convert_doc(content: str, pathname: str, qiita_id: str) -> str:
+def qsync_convert_article(content: str, pathname: Path, qiita_id: str) -> str:
     return markdown_replace_text(
         lambda text: markdown_replace_image(
-            qsync_gen_convert_image(pathname),
-            markdown_replace_link(qsync_gen_convert_link(pathname, qiita_id), text),
-        ),
-        content
-    )
+            functools.partial(qsync_convert_image, pathname=pathname),
+            markdown_replace_link(functools.partial(qsync_convert_link, pathname=pathname, qiita_id=qiita_id), text),
+        ), content)
 
 
 ########################################################################
@@ -668,7 +554,7 @@ def qsync_convert_doc(content: str, pathname: str, qiita_id: str) -> str:
 
 def qsync_subcommand_download(args):
     caller = qiita_create_caller(qsync_get_access_token(args.token))
-    qsync_download_all(caller, os.path.join(qsync_get_topdir(), args.dir))
+    qsync_download_all_articles(caller, qsync_get_topdir().joinpath(args.dir))
 
 
 def qsync_subcommand_upload(args):
@@ -676,23 +562,20 @@ def qsync_subcommand_upload(args):
     if args.file is not None:
         qiita_id = qiita_get_authenticated_user_id(caller)
         if qiita_id is not None:
-            qsync_upload_doc(caller, args.file, qiita_id)
+            qsync_upload_article(caller, Path(args.file), qiita_id)
     else:
         pass
 
 
 def qsync_subcommand_check(args):
     caller = qiita_create_caller(qsync_get_access_token(args.token))
-    local_docs = qsync_get_local_docs(os.path.join(qsync_get_topdir(), args.dir))
+    local_docs = qsync_get_local_docs(qsync_get_topdir().joinpath(args.dir))
     remote_docs = qsync_get_remote_docs(caller)
     for name, doc in local_docs.items():
         print(name)
         print(doc.timestamp.strftime("%Y-%m-%d %H:%M:%S%z"))
-        print(
-            remote_docs[doc.data.id].timestamp.strftime("%Y-%m-%d %H:%M:%S%z")
-            if doc.data.id in remote_docs
-            else "New"
-        )
+        print(remote_docs[doc.data.id].timestamp.strftime("%Y-%m-%d %H:%M:%S%z") if doc.data.id in
+              remote_docs else "New")
 
 
 def qsync_argparse_download(parser: ArgumentParser):

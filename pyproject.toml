@@ -10,9 +10,14 @@ python = "^3.7"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 flake8 = "^4.0.1"
-black = "^21.12b0"
 mypy = "^0.910"
+yapf = "^0.31.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.yapf]
+based_on_style = "yapf"
+column_limit = 119
+indent_width = 4
