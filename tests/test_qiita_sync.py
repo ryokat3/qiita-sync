@@ -1,7 +1,10 @@
 import random
 import string
-
+import os
+import re
 import pytest
+from pathlib import Path
+from typing import Generator, List
 from qiita_sync import __version__
 from qiita_sync.qiita_sync import (
     QiitaDoc,
@@ -16,55 +19,41 @@ from qiita_sync.qiita_sync import (
     qsync_convert_doc
 )
 
-import os
-from pathlib import Path
-from typing import Optional
-
 
 markdown_1 = """
-Hello, world
+# section
 
-# 日本語
-
-Link to [test2](test2.md)
+LinkTest1: [dlink](markdown_2.md)
+LinkTest2: [dlink](https://example.com/markdown/markdown_2.md)
 
 `````shell
-echo "hehe"
+Short sequence of backticks
 ```
-echo "hello, world"
-![hello](img/hehe.png description)
+#LinkTest   [LinkTest](LintTest.md)
+#ImageTest ![ImageTest](image/ImageTest.png)
 `````
 
-## その後で
+## sub-section
 
-![hello](img/hehe.png description)
+ImageTest1: ![ImageTest](img/ImageTest.png)
+ImageTest2: ![ImageTest](img/ImageTest.png description)
+ImageTest3: ![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)
 
 """
 
 markdown_2 = """
 <!--
-title: テスト
-tags:  テスト
+title: test
+tags:  test
 id:    123457689
 -->
 
-Hello, world
-
-# 日本語
-
-
-`````shell
-echo "hehe"
-```
-echo "hello, world"
-![hello](img/hehe.png description)
-`````
-
-## その後で
-
-![hello](img/hehe.png description)
-
+# test
 """
+
+
+def markdown_find_line(text: str, keyword: str) -> List[str]:
+    return [line[len(keyword):].strip() for line in text.splitlines() if line.startswith(keyword)]
 
 
 def generate_random_name(length: int) -> str:
@@ -72,10 +61,10 @@ def generate_random_name(length: int) -> str:
 
 
 def generate_tmpfile_fixture(content: str):
-    filename = generate_random_name(16)    
+    filename = generate_random_name(16)
 
     @pytest.fixture
-    def _(tmpdir) -> str:
+    def _(tmpdir) -> Generator[str, None, None]:
         tmpfile = tmpdir.join(filename)
 
         try:
@@ -91,7 +80,7 @@ def generate_tmpfile_fixture(content: str):
 def generate_file_fixture(content: str, filename: str):
 
     @pytest.fixture
-    def _() -> str:
+    def _() -> Generator[str, None, None]:
         filepath = Path(filename)
 
         try:
@@ -102,14 +91,10 @@ def generate_file_fixture(content: str, filename: str):
 
     return _
 
-markdown_1_fixture = generate_file_fixture(markdown_1, "test.md")
-markdown_2_fixture = generate_file_fixture(markdown_2, "test2.md")
 
+markdown_1_fixture = generate_file_fixture(markdown_1, "markdown_1.md")
+markdown_2_fixture = generate_file_fixture(markdown_2, "markdown_2.md")
 markdown_1_tmp_fixture = generate_tmpfile_fixture(markdown_1)
-
-
-def test_version():
-    assert __version__ == "0.1.0"
 
 
 def test_git_get_default_branch():
@@ -117,8 +102,8 @@ def test_git_get_default_branch():
 
 
 def test_QiitaDoc_fromFile(markdown_1_tmp_fixture):
-    doc = QiitaDoc.fromFile(Path(markdown_1_tmp_fixture))
-    assert doc.data.title == "日本語"
+    doc = QiitaDoc.fromFile(Path(markdown_1_tmp_fixture)) 
+    assert doc.data.title == markdown_find_line(markdown_1, '# ')[0]
 
 
 def test_GitHubRepository_get_instance():
@@ -129,8 +114,9 @@ def test_GitHubRepository_get_instance():
     assert instance.default_branch == "main"
 
 
-def test_GitHubRepository_getGitHubUrl():    
-    print(GitHubRepository.getInstance().getGitHubUrl(os.path.join(git_get_topdir(), "hehe/hehe.png")))
+def test_GitHubRepository_getGitHubUrl():
+    url = GitHubRepository.getInstance().getGitHubUrl(os.path.join(git_get_topdir(), "hehe/hehe.png"))
+    assert url.startswith('https://raw.githubusercontent.com')
 
 
 def test_markdown_code_block_split():
@@ -169,7 +155,7 @@ def test_markdown_replace_link(text, func, replaced):
     "text, func, replaced", [
         (r"![](hello)", lambda x:x+x, r"![](hellohello)"),
         (r"aaa [日本語](hello world)", lambda x:x+x, r"aaa [日本語](hello world)"),
-        (r"aaa![日本語](hello world)", lambda x:x+x, r"aaa![日本語](hellohello world)")
+        (r"aaa![日本語](hello world)", lambda x:x+x, r"aaa![日本語](hellohello world)")        
     ]
 )
 def test_markdown_replace_image(text, func, replaced):
@@ -178,5 +164,11 @@ def test_markdown_replace_image(text, func, replaced):
 
 def test_qsync_convert_doc(markdown_1_fixture, markdown_2_fixture):
     doc1 = QiitaDoc.fromFile(Path(markdown_1_fixture))
-    doc2 = QiitaDoc.fromFile(Path(markdown_2_fixture))
-    print(qsync_convert_doc(markdown_1_fixture, doc1.body, "hehe"))
+    QiitaDoc.fromFile(Path(markdown_2_fixture))
+    converted = qsync_convert_doc(doc1.body, markdown_1_fixture, "qiita_id")
+    
+    assert markdown_find_line(converted, 'LinkTest1:')[0] == '[dlink](https://qiita.com/qiita_id/items/123457689)'
+    assert markdown_find_line(converted, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/markdown_2.md)'
+    assert markdown_find_line(converted, 'ImageTest1:')[0] == '![ImageTest](https://raw.githubusercontent.com/wak109/qiita-sync/main/img/ImageTest.png)'
+    assert markdown_find_line(converted, 'ImageTest2:')[0] == '![ImageTest](https://raw.githubusercontent.com/wak109/qiita-sync/main/img/ImageTest.png description)'
+    assert markdown_find_line(converted, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
