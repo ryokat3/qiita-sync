@@ -21,6 +21,7 @@ from http import cookiejar
 
 from typing import (
     Callable,
+    Generic,
     Optional,
     TypeVar,
     NamedTuple,
@@ -32,6 +33,7 @@ from typing import (
 )
 
 T = TypeVar("T")
+U = TypeVar("U")
 
 ########################################################################
 # Const
@@ -69,6 +71,37 @@ def is_url(text: str) -> bool:
 def diff_url(target: str, pre: str) -> str:
     return target if len(target) < len(pre) or target[:len(pre)].lower() != pre.lower() else target[len(pre):]
 
+
+########################################################################
+# Maybe
+########################################################################
+
+class Maybe(Generic[T]):
+    _value: Optional[T]
+
+    def __init__(self, value: Optional[T]):
+        self._value = value
+
+    def map(self, f: Callable[[T], U]) -> Maybe[U]:
+        return Maybe(f(self._value)) if self._value is not None else Maybe(None)
+
+    def flatMap(self, f: Callable[[T], Maybe[U]]) -> Maybe[U]:
+        return f(self._value) if self._value is not None else Maybe(None)
+
+    def optionalMap(self, f: Callable[[T], Optional[U]]) -> Maybe[U]:
+        return Maybe(f(self._value)) if self._value is not None else Maybe(None)
+
+    def filter(self, p: Callable[[T], bool]) -> Maybe[T]:
+        return self if self._value is not None and p(self._value) else Maybe(None)
+
+    def filterNot(self, p: Callable[[T], bool]) -> Maybe[T]:
+        return Maybe(None) if self._value is None else Maybe(None) if p(self._value) else self
+
+    def get(self) -> Optional[T]:
+        return self._value
+
+    def getOrElse(self, else_value: T) -> T:
+        return self._value if self._value is not None else else_value
 
 ########################################################################
 # Git
@@ -339,11 +372,8 @@ class QiitaDoc(NamedTuple):
         timestamp = datetime.fromtimestamp(file.stat().st_mtime, timezone.utc)
         m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
         qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
-        return (cls(
-            data=qiita_data,
-            body=m.group(2) if m is not None else "",
-            timestamp=timestamp,
-        ) if isinstance(qiita_data, QiitaData) else cls(
+        return (cls(data=qiita_data, body=m.group(2) if m is not None else "",
+            timestamp=timestamp) if isinstance(qiita_data, QiitaData) else cls(
             data=QiitaData(
                 qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
                 QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
@@ -398,13 +428,11 @@ class GitHubRepository(NamedTuple):
 
 
 def match_github_ssh_url(text: str) -> Optional[Tuple[str, str]]:
-    m = re.match(GITHUB_SSH_URL_REGEX, text)
-    return (m.group(1), m.group(2)) if m is not None else None
+    return Maybe(re.match(GITHUB_SSH_URL_REGEX, text)).map(lambda m: (m.group(1), m.group(2))).get()
 
 
 def match_github_https_url(text: str) -> Optional[Tuple[str, str]]:
-    m = re.match(GITHUB_HTTPS_URL_REGEX, text)
-    return (m.group(1), m.group(2)) if m is not None else None
+    return Maybe(re.match(GITHUB_HTTPS_URL_REGEX, text)).map(lambda m: (m.group(1), m.group(2))).get()
 
 
 #######################################################################
@@ -517,26 +545,15 @@ def qsync_upload_article(caller: RESTAPI_CALLER_TYPE, filepath: Path, qiita_id: 
 
 
 def qsync_convert_image(link: str, pathname: Path) -> str:
-    if os.path.isabs(link) or is_url(link):
-        return link
-    linkpath = pathname.resolve().parent.joinpath(link)
-    instance = GitHubRepository.getInstance()
-    if instance is not None:
-        url = instance.getGitHubUrl(linkpath)
-        return url if url is not None else link
-    else:
-        return link
+    return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
+        pathname.resolve().parent.joinpath).flatMap(lambda p: Maybe(GitHubRepository.getInstance()).optionalMap(
+            lambda instance: instance.getGitHubUrl(p))).getOrElse(link)
 
 
 def qsync_convert_link(link: str, pathname: Path, qiita_id: str):
-    if os.path.isabs(link) or is_url(link):
-        return link
-    linkpath = pathname.parent.joinpath(link)
-    if linkpath.is_file():
-        article = QiitaDoc.fromFile(linkpath)
-        if qiita_id is not None and article.data.id is not None:
-            return f"https://qiita.com/{qiita_id}/items/{article.data.id}"
-    return link
+    return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
+        pathname.parent.joinpath).filter(lambda p: p.is_file()).map(QiitaDoc.fromFile).optionalMap(
+            lambda article: article.data.id).map(lambda id: f"https://qiita.com/{qiita_id}/items/{id}").getOrElse(link)
 
 
 def qsync_convert_article(content: str, pathname: Path, qiita_id: str) -> str:
