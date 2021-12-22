@@ -76,6 +76,7 @@ def diff_url(target: str, pre: str) -> str:
 # Maybe
 ########################################################################
 
+
 class Maybe(Generic[T]):
     _value: Optional[T]
 
@@ -91,17 +92,27 @@ class Maybe(Generic[T]):
     def optionalMap(self, f: Callable[[T], Optional[U]]) -> Maybe[U]:
         return Maybe(f(self._value)) if self._value is not None else Maybe(None)
 
+    def tryCatch(self, f: Callable[[T], U]) -> Maybe[U]:
+        try:
+            return Maybe(f(self._value)) if self._value is not None else Maybe(None)
+        except Exception:
+            return Maybe(None)
+
     def filter(self, p: Callable[[T], bool]) -> Maybe[T]:
         return self if self._value is not None and p(self._value) else Maybe(None)
 
     def filterNot(self, p: Callable[[T], bool]) -> Maybe[T]:
         return Maybe(None) if self._value is None else Maybe(None) if p(self._value) else self
 
+    def fold(self, on_none: Callable[[], U], on_some: Callable[[T], U]) -> U:
+        return on_some(self._value) if self._value is not None else on_none()
+
     def get(self) -> Optional[T]:
         return self._value
 
     def getOrElse(self, else_value: T) -> T:
         return self._value if self._value is not None else else_value
+
 
 ########################################################################
 # Git
@@ -372,24 +383,23 @@ class QiitaDoc(NamedTuple):
         timestamp = datetime.fromtimestamp(file.stat().st_mtime, timezone.utc)
         m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
         qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
-        return (cls(data=qiita_data, body=m.group(2) if m is not None else "",
-            timestamp=timestamp) if isinstance(qiita_data, QiitaData) else cls(
-            data=QiitaData(
-                qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
-                QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
-                None,
-            ),
-            body=text,
-            timestamp=timestamp,
-        ))
+        return cls(
+            data=qiita_data, body=m.group(2) if m is not None else "", timestamp=timestamp) if isinstance(
+                qiita_data, QiitaData) else cls(
+                    data=QiitaData(
+                        qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
+                        QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
+                        None,
+                    ),
+                    body=text,
+                    timestamp=timestamp)
 
     @classmethod
     def fromApi(cls, item) -> QiitaDoc:
         return cls(
             data=QiitaData.fromApi(item),
             body=item["body"],
-            timestamp=datetime.strptime(item["updated_at"], "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc),
-        )
+            timestamp=datetime.strptime(item["updated_at"], "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc))
 
 
 #######################################################################
@@ -525,23 +535,16 @@ def qsync_download_all_articles(caller: RESTAPI_CALLER_TYPE, docdir: Path):
                 QiitaDoc.fromApi(item), docdir.joinpath(tpl[0] if tpl is not None else f"{doc.data.id}.md"))
 
 
-def qsync_upload_article(caller: RESTAPI_CALLER_TYPE, filepath: Path, qiita_id: str):
-    orig_doc = QiitaDoc.fromFile(filepath)
-    doc = QiitaDoc(orig_doc.data, qsync_convert_article(orig_doc.body, filepath, qiita_id), orig_doc.timestamp)
+def qsync_update_article(caller: RESTAPI_CALLER_TYPE, article: QiitaDoc, article_id: str, filepath: Path):
+    Maybe(qiita_patch_item(
+        caller, article_id,
+        article.toApi())).map(lambda response: update_mtime(str(filepath),
+                                                            QiitaDoc.fromApi(response).timestamp))
 
-    if doc.data.id is not None:
-        response = qiita_patch_item(caller, doc.data.id, doc.toApi())
-        if response is not None:
-            update_mtime(str(filepath), QiitaDoc.fromApi(response).timestamp)
-    else:
-        response = qiita_post_item(caller, doc.toApi())
-        if response is not None:
-            newdoc = QiitaDoc.fromApi(response)
-            qsync_save_article(
-                QiitaDoc(body=doc.body, data=newdoc.data, timestamp=newdoc.timestamp),
-                filepath,
-            )
-            update_mtime(str(filepath), newdoc.timestamp)
+
+def qsync_upload_new_article(caller: RESTAPI_CALLER_TYPE, article: QiitaDoc, filepath: Path):
+    Maybe(qiita_post_item(caller, article.toApi())).map(QiitaDoc.fromApi).map(lambda new_article: qsync_save_article(
+        QiitaDoc(body=article.body, data=new_article.data, timestamp=new_article.timestamp), filepath))
 
 
 def qsync_convert_image(link: str, pathname: Path) -> str:
@@ -563,6 +566,13 @@ def qsync_convert_article(content: str, pathname: Path, qiita_id: str) -> str:
             markdown_replace_link(functools.partial(qsync_convert_link, pathname=pathname, qiita_id=qiita_id), text),
         ), content)
 
+
+def qsync_upload_article(caller: RESTAPI_CALLER_TYPE, filepath: Path, qiita_id: str):
+    Maybe(QiitaDoc.fromFile(filepath)).map(lambda local_format: QiitaDoc(
+        local_format.data, qsync_convert_article(local_format.body, filepath, qiita_id), local_format.timestamp)).map(
+            lambda qiita_format: Maybe(qiita_format.data.id).fold(
+                lambda: qsync_upload_new_article(caller, qiita_format, filepath), lambda id: qsync_update_article(
+                    caller, qiita_format, id, filepath)))
 
 ########################################################################
 # Qiita Sync CLI
