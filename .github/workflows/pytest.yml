@@ -36,4 +36,5 @@ jobs:
         run: poetry install --no-interaction
       - name: Run Tests
         run: poetry run pytest -s tests
-        env: QIITA_ACCESS_TOKEN: ${{ secrets.QIITA_ACCESS_TOKEN }}
+        env: 
+          QIITA_ACCESS_TOKEN: ${{ secrets.QIITA_ACCESS_TOKEN }}
