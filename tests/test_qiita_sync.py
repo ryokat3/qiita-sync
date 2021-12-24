@@ -1,11 +1,17 @@
+import os
 import random
 import string
 import pytest
 from pathlib import Path
 from typing import Generator, List
-from qiita_sync.qiita_sync import (QiitaDoc, GitHubRepository, git_get_default_branch, git_get_topdir,
-                                   markdown_code_block_split, markdown_code_inline_split, markdown_replace_text,
-                                   markdown_replace_link, markdown_replace_image, qsync_convert_article)
+
+from qiita_sync.qiita_sync import QiitaArticle, qsync_argparse
+from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_BLOB, DEFAULT_EXCLUDE_BLOB
+from qiita_sync.qiita_sync import git_get_default_branch, qsync_init
+from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
+from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
+
+from pytest_mock.plugin import MockerFixture
 
 markdown_1 = """
 # section
@@ -36,6 +42,26 @@ id:    123457689
 -->
 
 # test
+"""
+
+markdown_3 = """
+# section
+
+LinkTest1: [dlink](https://qiita.com/qiita_id/items/123457689)
+LinkTest2: [dlink](https://example.com/markdown/markdown_2.md)
+
+`````shell
+Short sequence of backticks
+```
+#LinkTest   [LinkTest](LintTest.md)
+#ImageTest ![ImageTest](image/ImageTest.png)
+`````
+
+## sub-section
+
+ImageTest1: ![ImageTest](https://raw.githubusercontent.com/wak109/qiita-sync/main/img/ImageTest.png)
+ImageTest2: ![ImageTest](HTTPS://raw.githubusercontent.com/wak109/qiita-sync/main/img/ImageTest.png description)
+ImageTest3: ![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)
 """
 
 
@@ -81,29 +107,26 @@ def generate_file_fixture(content: str, filename: str):
 
 markdown_1_fixture = generate_file_fixture(markdown_1, "markdown_1.md")
 markdown_2_fixture = generate_file_fixture(markdown_2, "markdown_2.md")
+markdown_3_fixture = generate_file_fixture(markdown_3, "markdown_3.md")
 markdown_1_tmp_fixture = generate_tmpfile_fixture(markdown_1)
+
+
+def test_qsync_argparse():
+    args = qsync_argparse().parse_args("download .".split())
+
+    assert args.target == "."
+    assert args.include == DEFAULT_INCLUDE_BLOB
+    assert args.exclude == DEFAULT_EXCLUDE_BLOB
+    assert args.token == DEFAULT_ACCESS_TOKEN_FILE
 
 
 def test_git_get_default_branch():
     assert git_get_default_branch() == "main"
 
 
-def test_QiitaDoc_fromFile(markdown_1_tmp_fixture):
-    doc = QiitaDoc.fromFile(Path(markdown_1_tmp_fixture))
+def test_QiitaArticle_fromFile(markdown_1_tmp_fixture):
+    doc = QiitaArticle.fromFile(Path(markdown_1_tmp_fixture))
     assert doc.data.title == markdown_find_line(markdown_1, '# ')[0]
-
-
-def test_GitHubRepository_get_instance():
-    instance = GitHubRepository.getInstance()
-    assert instance is not None
-    assert instance.user == "wak109"
-    assert instance.repository == "qiita-sync"
-    assert instance.default_branch == "main"
-
-
-def test_GitHubRepository_getGitHubUrl():
-    url = GitHubRepository.getInstance().getGitHubUrl(Path(git_get_topdir()).joinpath("hehe/hehe.png"))
-    assert url.startswith('https://raw.githubusercontent.com')
 
 
 def test_markdown_code_block_split():
@@ -142,10 +165,20 @@ def test_markdown_replace_image(text, func, replaced):
     assert markdown_replace_image(func, text) == replaced
 
 
-def test_qsync_convert_doc(markdown_1_fixture, markdown_2_fixture):
-    doc1 = QiitaDoc.fromFile(Path(markdown_1_fixture))
-    QiitaDoc.fromFile(Path(markdown_2_fixture))
-    converted = qsync_convert_article(doc1.body, Path(markdown_1_fixture), "qiita_id")
+def test_QiitaSync_instance(mocker: MockerFixture):
+    mocker.patch('qiita_sync.qiita_sync.qsync_get_access_token', return_value=os.environ['QIITA_ACCESS_TOKEN'])
+    args = qsync_argparse().parse_args("download .".split())
+    qsync = qsync_init(args)
+    assert qsync.qiita_id == "wak109"
+
+
+'''
+def test_getQiitaFormat(markdown_1_fixture, markdown_2_fixture):
+    markdown_1_path = Path(markdown_1_fixture) 
+    QiitaArticle.fromFile(Path(markdown_2_fixture))
+
+    converted = QsyncArticle(None, QiitaArticle.fromFile(
+        markdown_1_path), markdown_1_path, GitRepository.getInstance(), "qiita_id").getQiitaFormat().article.body
 
     assert markdown_find_line(converted, 'LinkTest1:')[0] == '[dlink](https://qiita.com/qiita_id/items/123457689)'
     assert markdown_find_line(converted, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/markdown_2.md)'
@@ -157,3 +190,14 @@ def test_qsync_convert_doc(markdown_1_fixture, markdown_2_fixture):
     )[0] == '![ImageTest](https://raw.githubusercontent.com/wak109/qiita-sync/main/img/ImageTest.png description)'
     assert markdown_find_line(
         converted, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
+
+
+def test_getLocalFormat(markdown_3_fixture, markdown_2_fixture):
+    markdown_3_path = Path(markdown_3_fixture) 
+    QiitaArticle.fromFile(Path(markdown_2_fixture))
+
+    converted = QsyncArticle(None, QiitaArticle.fromFile(
+        markdown_3_path), markdown_3_path, GitRepository.getInstance(), "qiita_id").getLocalFormat().article.body
+
+    print(converted)
+'''

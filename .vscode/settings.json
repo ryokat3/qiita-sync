@@ -7,6 +7,7 @@
     ],
     "editor.formatOnSave": true,
     "python.linting.flake8Args": [
-        "--max-line-length=119"
+        "--max-line-length=119",
+        "--ignore=E128"
     ]
 }

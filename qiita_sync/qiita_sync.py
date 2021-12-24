@@ -7,6 +7,7 @@ import json
 import os
 import subprocess
 import re
+import sys
 from argparse import ArgumentParser
 from itertools import dropwhile
 from pathlib import Path
@@ -40,7 +41,28 @@ U = TypeVar("U")
 ########################################################################
 
 DEFAULT_ACCESS_TOKEN_FILE = "access_token.txt"
-DEFAULT_MARKDOWN_DIR = "qiita"
+DEFAULT_INCLUDE_BLOB = ['**/*.md']
+DEFAULT_EXCLUDE_BLOB = ['README.md']
+
+
+########################################################################
+# Exception
+########################################################################
+
+
+class CommandError(Exception):
+
+    def __init__(self, cmd: List[str], result: subprocess.CompletedProcess[bytes]):
+        self.cmd = cmd
+        self.result = result
+
+    def __str__(self):
+        return f"{' '.join(self.cmd)} => {self.result.returncode} ({self.result.stderr})"
+
+
+class ApplicationError(Exception):
+    pass
+
 
 ########################################################################
 # Util
@@ -51,9 +73,12 @@ def convert_json_to_bytes(x):
     return bytes(json.dumps(x), "utf-8")
 
 
-def exec_command(cmdarglist: List[str]) -> Optional[str]:
+def exec_command(cmdarglist: List[str]) -> str:
     result = subprocess.run(cmdarglist, stdout=subprocess.PIPE)
-    return result.stdout.decode("utf-8").rstrip() if result.returncode == 0 else None
+    if result.returncode == 0:
+        return result.stdout.decode("utf-8").rstrip()
+    else:
+        raise CommandError(cmdarglist, result)
 
 
 def update_mtime(filepath: str, t: datetime):
@@ -120,22 +145,22 @@ class Maybe(Generic[T]):
 
 
 @functools.lru_cache(maxsize=1)
-def git_get_topdir() -> Optional[str]:
+def git_get_topdir() -> str:
     return exec_command("git rev-parse --show-toplevel".split())
 
 
 @functools.lru_cache(maxsize=1)
-def git_get_remote_url() -> Optional[str]:
+def git_get_remote_url() -> str:
     return exec_command("git config --get remote.origin.url".split())
 
 
-def git_get_committer_date(filename: str) -> Optional[str]:
+def git_get_committer_date(filename: str) -> str:
     # "%cI", committer date, strict ISO 8601 format
     return exec_command("git log -1 --pretty='%cI'".split() + [filename])
 
 
 @functools.lru_cache(maxsize=1)
-def git_get_default_branch() -> Optional[str]:
+def git_get_default_branch() -> str:
     return exec_command("git rev-parse --abbrev-ref HEAD".split())
 
 
@@ -254,15 +279,17 @@ def qiita_get_item(caller: RESTAPI_CALLER_TYPE, id: str):
     return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "GET", None))
 
 
-@functools.lru_cache(maxsize=1)
 def qiita_get_authenticated_user(caller: RESTAPI_CALLER_TYPE):
     return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/authenticated_user", "GET", None))
 
 
 @functools.lru_cache(maxsize=1)
-def qiita_get_authenticated_user_id(caller: RESTAPI_CALLER_TYPE) -> Optional[str]:
+def qiita_get_authenticated_user_id(caller: RESTAPI_CALLER_TYPE) -> str:
     info = qiita_get_authenticated_user(caller)
-    return info['id'] if info is not None else None
+    if info is not None and 'id' in info:
+        return info['id']
+    else:
+        raise ApplicationError("Failed to get Qiita ID")
 
 
 def qiita_post_item(caller: RESTAPI_CALLER_TYPE, data):
@@ -362,10 +389,11 @@ class QiitaData(NamedTuple):
         return cls(title=item["title"], tags=QiitaTags.fromApi(item["tags"]), id=item["id"])
 
 
-class QiitaDoc(NamedTuple):
+class QiitaArticle(NamedTuple):
     data: QiitaData
     body: str
     timestamp: datetime
+    filepath: Optional[Path]
 
     def toText(self) -> str:
         return (f"{os.linesep.join(['<!--', str(self.data), '-->'])}{os.linesep}{self.body}")
@@ -378,71 +406,33 @@ class QiitaDoc(NamedTuple):
         }
 
     @classmethod
-    def fromFile(cls, file: Path) -> QiitaDoc:
-        text = file.read_text()
-        timestamp = datetime.fromtimestamp(file.stat().st_mtime, timezone.utc)
+    def fromFile(cls, filepath: Path) -> QiitaArticle:
+        text = filepath.read_text()
+        timestamp = datetime.fromtimestamp(filepath.stat().st_mtime, timezone.utc)
         m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
         qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
-        return cls(
-            data=qiita_data, body=m.group(2) if m is not None else "", timestamp=timestamp) if isinstance(
-                qiita_data, QiitaData) else cls(
-                    data=QiitaData(
-                        qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
-                        QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
-                        None,
-                    ),
-                    body=text,
-                    timestamp=timestamp)
+
+        if isinstance(qiita_data, QiitaData):
+            return cls(
+                data=qiita_data, body=m.group(2) if m is not None else "", timestamp=timestamp, filepath=filepath)
+        else:
+            return cls(
+                data=QiitaData(
+                    qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
+                    QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
+                    None,
+                ),
+                body=text,
+                timestamp=timestamp,
+                filepath=filepath)
 
     @classmethod
-    def fromApi(cls, item) -> QiitaDoc:
+    def fromApi(cls, item) -> QiitaArticle:
         return cls(
             data=QiitaData.fromApi(item),
             body=item["body"],
-            timestamp=datetime.strptime(item["updated_at"], "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc))
-
-
-#######################################################################
-# GitHub
-#######################################################################
-
-GITHUB_SSH_URL_REGEX = re.compile(r"^git@github.com:(.*)/(.*)\.git")
-GITHUB_HTTPS_URL_REGEX = re.compile(r"^https://github.com/(.*)/(.*)(?:\.git)?")
-GITHUB_CONTENT_URL = "https://raw.githubusercontent.com/"
-
-
-class GitHubRepository(NamedTuple):
-    user: str
-    repository: str
-    default_branch: str
-    top_dir: str
-
-    def getGitHubUrl(self, pathname: Path) -> Optional[str]:
-        try:
-            relative_path = pathname.relative_to(self.top_dir).as_posix()
-            return f"{GITHUB_CONTENT_URL}{self.user}/{self.repository}/{self.default_branch}/{relative_path}"
-        except Exception:
-            return None
-
-    def getRelativePath(self, url: str) -> str:
-        return diff_url(url, "{GITHUB_CONTENT_URL}{self.user}/{self.repository}/{self.default_branch}/")
-
-    @classmethod
-    def getInstance(cls) -> Optional[GitHubRepository]:
-        url = git_get_remote_url()
-        branch = git_get_default_branch()
-        user_repo = (match_github_https_url(url) or match_github_ssh_url(url) if url is not None else None)
-        top_dir = git_get_topdir()
-        return (GitHubRepository(user_repo[0], user_repo[1], branch, top_dir)
-                if user_repo is not None and branch is not None and top_dir is not None else None)
-
-
-def match_github_ssh_url(text: str) -> Optional[Tuple[str, str]]:
-    return Maybe(re.match(GITHUB_SSH_URL_REGEX, text)).map(lambda m: (m.group(1), m.group(2))).get()
-
-
-def match_github_https_url(text: str) -> Optional[Tuple[str, str]]:
-    return Maybe(re.match(GITHUB_HTTPS_URL_REGEX, text)).map(lambda m: (m.group(1), m.group(2))).get()
+            timestamp=datetime.strptime(item["updated_at"], "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc),
+            filepath=None)
 
 
 #######################################################################
@@ -485,153 +475,244 @@ def markdown_replace_text(func: Callable[[str], str], text: str):
             [func(x) if CODE_INLINE_REGEX.match(x) is None else x for x in markdown_code_inline_split(block)]), text)
 
 
-def markdown_replace_link(func: Callable[[str], str], text: str):
-    return re.sub(MARKDOWN_LINK_REGEX, lambda m: "".join([m.group(1), func(m.group(2)), m.group(3)]), text)
+def markdown_replace_link(conv: Callable[[str], str], text: str):
+    return re.sub(MARKDOWN_LINK_REGEX, lambda m: "".join([m.group(1), conv(m.group(2)), m.group(3)]), text)
 
 
-def markdown_replace_image(func: Callable[[str], str], text: str):
-    return re.sub(MARKDOWN_IMAGE_REGEX, lambda m: "".join([m.group(1), func(m.group(2)), m.group(3)]), text)
+def markdown_replace_image(conv: Callable[[str], str], text: str):
+    return re.sub(MARKDOWN_IMAGE_REGEX, lambda m: "".join([m.group(1), conv(m.group(2)), m.group(3)]), text)
+
+
+#######################################################################
+# GitHub
+#######################################################################
+
+GITHUB_SSH_URL_REGEX = re.compile(r"^git@github.com:(.*)/(.*)\.git")
+GITHUB_HTTPS_URL_REGEX = re.compile(r"^https://github.com/(.*)/(.*)(?:\.git)?")
+GITHUB_CONTENT_URL = "https://raw.githubusercontent.com/"
+
+
+def match_github_ssh_url(text: str) -> Optional[Tuple[str, str]]:
+    return Maybe(re.match(GITHUB_SSH_URL_REGEX, text)).map(lambda m: (m.group(1), m.group(2))).get()
+
+
+def match_github_https_url(text: str) -> Optional[Tuple[str, str]]:
+    return Maybe(re.match(GITHUB_HTTPS_URL_REGEX, text)).map(lambda m: (m.group(1), m.group(2))).get()
 
 
 ########################################################################
 # Qiita Sync
 ########################################################################
 
-
-def qsync_get_topdir() -> Path:
-    return Path(git_get_topdir() or ".")
+QIITA_URL_PREFIX = 'https://qiita.com/'
 
 
 def qsync_get_access_token(token_file: str) -> str:
-    with qsync_get_topdir().joinpath(token_file).open("r") as fp:
-        return fp.read().strip()
+    filepath = Path(git_get_topdir()).joinpath(token_file)
+    if filepath.exists() and filepath.is_file():
+        with filepath.open("r") as fp:
+            return fp.read().strip()
+    else:
+        return sys.stdin.readline().rstrip()
 
 
-def qsync_get_local_docs(docdir: Path):
-    return dict([(fp.name, QiitaDoc.fromFile(fp)) for fp in docdir.glob("*.md") if fp.is_file()])
+def qsync_chdir_git(target: Path):
+    if not target.exists():
+        raise ApplicationError(f"{target} not exists")
+    os.chdir(str(target if target.is_dir() else target.parent))
 
 
-def qsync_get_doc(docs: Dict[str, QiitaDoc], id: str) -> Optional[Tuple[str, QiitaDoc]]:
-    return next(dropwhile(lambda tpl: tpl is not None and tpl[1].data.id != id, docs.items()), None)
+def qsync_get_local_article(include_patterns: List[str], exclude_patterns: List[str]) -> List[Path]:
+    topdir = Path(git_get_topdir())
+    return [
+        Path(fp).resolve()
+        for fp in (functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) -
+                   functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in exclude_patterns]))
+    ]
 
 
-def qsync_get_remote_docs(caller: RESTAPI_CALLER_TYPE):
-    return dict([(item["id"], QiitaDoc.fromApi(item)) for item in qiita_get_item_list(caller)])
+class QiitaSync(NamedTuple):
+    caller: RESTAPI_CALLER_TYPE
+    git_user: str
+    git_repository: str
+    git_branch: str
+    git_dir: str
+    qiita_id: str
+    atcl_path_map: Dict[Path, QiitaArticle]
+    atcl_id_map: Dict[str, QiitaArticle]
 
+    @classmethod
+    def getInstance(cls, qiita_token: str, file_list: List[Path]) -> QiitaSync:
+        url = git_get_remote_url()
+        user_repo = match_github_https_url(url) or match_github_ssh_url(url) if url is not None else None
+        if user_repo is None:
+            raise ApplicationError(f"{url} is not GitHub")
 
-def qsync_save_article(article: QiitaDoc, filepath: Path):
-    with filepath.open("w") as fp:
-        fp.write(article.toText())
+        atcl_list = [QiitaArticle.fromFile(fp) for fp in file_list if fp.is_file()]
+        caller = qiita_create_caller(qiita_token)
 
+        return cls(caller, user_repo[0], user_repo[1], git_get_default_branch(), git_get_topdir(),
+                   qiita_get_authenticated_user_id(caller),
+                   dict([(atcl.filepath, atcl) for atcl in atcl_list if atcl.filepath is not None]),
+                   dict([(atcl.data.id, atcl) for atcl in atcl_list if atcl.data.id is not None]))
 
-def qsync_download_all_articles(caller: RESTAPI_CALLER_TYPE, docdir: Path):
-    docdir.mkdir(parents=True, exist_ok=True)
-    local_docs = qsync_get_local_docs(docdir)
-    for item in qiita_get_item_list(caller):
-        doc = QiitaDoc.fromApi(item)
-        if doc.data.id is not None:
-            tpl = qsync_get_doc(local_docs, doc.data.id)
-            qsync_save_article(
-                QiitaDoc.fromApi(item), docdir.joinpath(tpl[0] if tpl is not None else f"{doc.data.id}.md"))
+    @property
+    def github_url(self):
+        return f"{GITHUB_CONTENT_URL}{self.git_user}/{self.git_repository}/{self.git_branch}/"
 
+    def getGitHubUrl(self, pathname: Path) -> Optional[str]:
+        try:
+            _relative_path = pathname.relative_to(self.git_dir).as_posix()
+            relative_path = _relative_path if _relative_path != "." else ""
+            return f"{self.github_url}{relative_path}"
+        except Exception:
+            return None
 
-def qsync_update_article(caller: RESTAPI_CALLER_TYPE, article: QiitaDoc, article_id: str, filepath: Path):
-    Maybe(qiita_patch_item(
-        caller, article_id,
-        article.toApi())).map(lambda response: update_mtime(str(filepath),
-                                                            QiitaDoc.fromApi(response).timestamp))
+    def getArticleDir(self, article: QiitaArticle) -> Path:
+        return article.filepath.parent if article.filepath is not None else Path(self.git_dir)
 
+    def getArticleById(self, id: str) -> Optional[QiitaArticle]:
+        return self.atcl_id_map[id]
 
-def qsync_upload_new_article(caller: RESTAPI_CALLER_TYPE, article: QiitaDoc, filepath: Path):
-    Maybe(qiita_post_item(caller, article.toApi())).map(QiitaDoc.fromApi).map(lambda new_article: qsync_save_article(
-        QiitaDoc(body=article.body, data=new_article.data, timestamp=new_article.timestamp), filepath))
+    def getFilePathById(self, id: str) -> Optional[Path]:
+        return self.atcl_id_map[id].filepath if id in self.atcl_id_map else None
 
+    def getArticleByPath(self, target: Path) -> Dict[Path, QiitaArticle]:
+        if Path(self.git_dir) == target:
+            return self.atcl_path_map
+        else:
+            return dict([(path, article)
+                         for path, article in self.atcl_path_map.items()
+                         if str(path).startswith(str(target.resolve()))])
 
-def qsync_convert_image(link: str, pathname: Path) -> str:
-    return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
-        pathname.resolve().parent.joinpath).flatMap(lambda p: Maybe(GitHubRepository.getInstance()).optionalMap(
-            lambda instance: instance.getGitHubUrl(p))).getOrElse(link)
+    def toLocalImageLink(self, link: str, article: QiitaArticle) -> str:
+        return Maybe(
+            article.filepath).flatMap(lambda filepath: Maybe(diff_url(link, self.github_url)).filterNot(is_url).map(
+                lambda diff: str(Path(self.git_dir).joinpath(diff).relative_to(filepath.parent)))).getOrElse(link)
 
+    def toLocaMarkdownlLink(self, link: str) -> str:
+        return Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filterNot(is_url).map(
+            lambda id: Maybe(self.getFilePathById(id)).map(str).getOrElse(f"{id}.md")).getOrElse(link)
 
-def qsync_convert_link(link: str, pathname: Path, qiita_id: str):
-    return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
-        pathname.parent.joinpath).filter(lambda p: p.is_file()).map(QiitaDoc.fromFile).optionalMap(
-            lambda article: article.data.id).map(lambda id: f"https://qiita.com/{qiita_id}/items/{id}").getOrElse(link)
+    def toLocalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
+        def convert_image_link(text: str, article: QiitaArticle) -> str:
+            return markdown_replace_image(lambda link: self.toLocalImageLink(link, article), text)
 
-def qsync_convert_article(content: str, pathname: Path, qiita_id: str) -> str:
-    return markdown_replace_text(
-        lambda text: markdown_replace_image(
-            functools.partial(qsync_convert_image, pathname=pathname),
-            markdown_replace_link(functools.partial(qsync_convert_link, pathname=pathname, qiita_id=qiita_id), text),
-        ), content)
+        def convert_link(text: str) -> str:
+            return markdown_replace_link(lambda link: self.toLocaMarkdownlLink(link), text)
 
+        return QiitaArticle(
+            article.data,
+            markdown_replace_text(lambda text: convert_image_link(convert_link(text), article), article.body),
+            article.timestamp, article.filepath)
 
-def qsync_upload_article(caller: RESTAPI_CALLER_TYPE, filepath: Path, qiita_id: str):
-    Maybe(QiitaDoc.fromFile(filepath)).map(lambda local_format: QiitaDoc(
-        local_format.data, qsync_convert_article(local_format.body, filepath, qiita_id), local_format.timestamp)).map(
-            lambda qiita_format: Maybe(qiita_format.data.id).fold(
-                lambda: qsync_upload_new_article(caller, qiita_format, filepath), lambda id: qsync_update_article(
-                    caller, qiita_format, id, filepath)))
+    def toQiitaImageLink(self, link: str, article: QiitaArticle) -> str:
+        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
+            self.getArticleDir(article).resolve().joinpath).optionalMap(lambda p: self.getGitHubUrl(p)).getOrElse(link)
+
+    def toQiitaMarkdownLink(self, link: str, article: QiitaArticle):
+        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
+            self.getArticleDir(article).resolve().joinpath).filter(lambda p: p.is_file()).map(
+                QiitaArticle.fromFile).optionalMap(lambda article: article.data.id).map(
+                    lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
+
+    def toQiitaFormat(self, article: QiitaArticle) -> QiitaArticle:
+
+        def convert_image_link(text: str) -> str:
+            return markdown_replace_image(lambda link: self.toQiitaImageLink(link, article), text)
+
+        def convert_link(text: str) -> str:
+            return markdown_replace_link(lambda link: self.toQiitaMarkdownLink(link, article), text)
+
+        return QiitaArticle(article.data,
+                            markdown_replace_text(lambda text: convert_image_link(convert_link(text)), article.body),
+                            article.timestamp, article.filepath)
+
+    def addFilepath(self, article: QiitaArticle) -> QiitaArticle:
+        if article.data.id is not None and article.data.id in self.atcl_id_map:
+            return QiitaArticle(article.data, article.body, article.timestamp,
+                                self.atcl_id_map[article.data.id].filepath)
+        else:
+            return article
+
+    def upload(self, article: QiitaArticle):
+        if article.data.id is not None:
+            qiita_patch_item(self.caller, article.data.id, article.toApi())
+        else:
+            Maybe(qiita_post_item(self.caller, article.toApi())).map(QiitaArticle.fromApi).map(lambda x: QiitaArticle(
+                x.data, article.body, x.timestamp, article.filepath)).map(lambda x: self.save(x))
+
+    def save(self, article: QiitaArticle):
+        with (article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")).open("w") as fp:
+            fp.write(article.toText())
+
+    def download_all(self):
+        return list(
+            map(self.toLocalFormat,
+                map(self.addFilepath, [QiitaArticle.fromApi(elem) for elem in qiita_get_item_list(self.caller)])))
+
 
 ########################################################################
 # Qiita Sync CLI
 ########################################################################
 
 
-def qsync_subcommand_download(args):
-    caller = qiita_create_caller(qsync_get_access_token(args.token))
-    qsync_download_all_articles(caller, qsync_get_topdir().joinpath(args.dir))
+def qsync_subcommand_download(qsync: QiitaSync, target: Path):
+    print(qsync.getArticleByPath(target))
 
 
-def qsync_subcommand_upload(args):
-    caller = qiita_create_caller(qsync_get_access_token(args.token))
-    if args.file is not None:
-        qiita_id = qiita_get_authenticated_user_id(caller)
-        if qiita_id is not None:
-            qsync_upload_article(caller, Path(args.file), qiita_id)
-    else:
-        pass
+def qsync_subcommand_upload(qsync: QiitaSync, target: Path):
+    print(qsync.getArticleByPath(target))
 
 
-def qsync_subcommand_check(args):
-    caller = qiita_create_caller(qsync_get_access_token(args.token))
-    local_docs = qsync_get_local_docs(qsync_get_topdir().joinpath(args.dir))
-    remote_docs = qsync_get_remote_docs(caller)
-    for name, doc in local_docs.items():
-        print(name)
-        print(doc.timestamp.strftime("%Y-%m-%d %H:%M:%S%z"))
-        print(remote_docs[doc.data.id].timestamp.strftime("%Y-%m-%d %H:%M:%S%z") if doc.data.id in
-              remote_docs else "New")
-
-
-def qsync_argparse_download(parser: ArgumentParser):
-    parser.set_defaults(func=qsync_subcommand_download)
-
-
-def qsync_argparse_upload(parser: ArgumentParser):
-    parser.add_argument("file", type=str, default=None)
-    parser.set_defaults(func=qsync_subcommand_upload)
-
-
-def qsync_argparse_check(parser: ArgumentParser):
-    parser.set_defaults(func=qsync_subcommand_check)
+def qsync_subcommand_check(qsync: QiitaSync, target: Path):
+    print(qsync.atcl_path_map)
 
 
 def qsync_argparse() -> ArgumentParser:
-    parser = ArgumentParser()
-    parser.add_argument("--dir", type=str, default=DEFAULT_MARKDOWN_DIR)
-    parser.add_argument("--token", type=str, default=DEFAULT_ACCESS_TOKEN_FILE)
-    parser.set_defaults(func=qsync_subcommand_download)
 
+    def common_arg(parser: ArgumentParser) -> ArgumentParser:
+        parser.add_argument("target", default='.', help="target Qiita article (file or directory)")
+        parser.add_argument("-t", "--token", default=DEFAULT_ACCESS_TOKEN_FILE, help="authentication token")
+        parser.add_argument("-i", "--include", nargs='*', default=DEFAULT_INCLUDE_BLOB, help="include blob")
+        parser.add_argument("-e", "--exclude", nargs='*', default=DEFAULT_EXCLUDE_BLOB, help="exclude blob")
+
+        return parser
+
+    parser = ArgumentParser()
     subparsers = parser.add_subparsers(help="sub-command help")
-    qsync_argparse_download(subparsers.add_parser("download", help="download help"))
-    qsync_argparse_upload(subparsers.add_parser("upload", help="upload help"))
-    qsync_argparse_check(subparsers.add_parser("check", help="check help"))
+
+    common_arg(subparsers.add_parser("download", help="download help")).set_defaults(func=qsync_subcommand_download)
+    common_arg(subparsers.add_parser("upload", help="upload help")).set_defaults(func=qsync_subcommand_upload)
+    common_arg(subparsers.add_parser("check", help="check help")).set_defaults(func=qsync_subcommand_check)
 
     return parser
 
 
+def qsync_init(args) -> QiitaSync:
+    access_token = qsync_get_access_token(args.token)
+    local_article = qsync_get_local_article(args.include, args.exclude)
+
+    return QiitaSync.getInstance(access_token, local_article)
+
+
+def qsync_main():
+    cwd = os.getcwd()
+    try:
+        args = qsync_argparse().parse_args()
+        target = Path(args.target).resolve()
+        qsync_chdir_git(target)
+        args.func(qsync_init(args), target)
+    except CommandError as err:
+        print(err)
+    except ApplicationError as err:
+        print(err)
+    except HTTPError as http_error:
+        print(http_error)
+    finally:
+        os.chdir(cwd)
+
+
 if __name__ == "__main__":
-    args = qsync_argparse().parse_args()
-    args.func(args)
+    qsync_main()
