@@ -7,11 +7,13 @@ import json
 import os
 import subprocess
 import re
+import logging
 import sys
 from argparse import ArgumentParser
 from itertools import dropwhile
 from pathlib import Path
 from datetime import datetime, timezone
+from distutils.util import strtobool
 
 from urllib import request
 from urllib.parse import urlparse
@@ -41,9 +43,20 @@ U = TypeVar("U")
 ########################################################################
 
 DEFAULT_ACCESS_TOKEN_FILE = "access_token.txt"
-DEFAULT_INCLUDE_BLOB = ['**/*.md']
-DEFAULT_EXCLUDE_BLOB = ['README.md']
+DEFAULT_INCLUDE_GLOB = ['**/*.md']
+DEFAULT_EXCLUDE_GLOB = ['**/README.md', '.*/**/*.md']
 
+ACCESS_TOKEN_ENV = "QIITA_ACCESS_TOKEN"
+
+########################################################################
+# Logger
+########################################################################
+
+logging.basicConfig(format='%(asctime)s [%(filename)s:%(lineno)d] %(levelname)-8s :: %(message)s',
+    datefmt='%y-%m-%d %H:%M:%S',
+    stream=sys.stdout)
+
+logger = logging.getLogger(__name__)
 
 ########################################################################
 # Exception
@@ -70,6 +83,7 @@ class ApplicationError(Exception):
 
 
 def convert_json_to_bytes(x):
+    logger.debug(x)
     return bytes(json.dumps(x), "utf-8")
 
 
@@ -96,6 +110,9 @@ def is_url(text: str) -> bool:
 def diff_url(target: str, pre: str) -> str:
     return target if len(target) < len(pre) or target[:len(pre)].lower() != pre.lower() else target[len(pre):]
 
+
+def str2bool(x) -> bool:
+    return True if strtobool(x) else False
 
 ########################################################################
 # Maybe
@@ -196,7 +213,7 @@ def restapi_create_request(
     content_type: Optional[str],
     content: Optional[bytes],
 ) -> request.Request:
-    """Create Request instance including content if exists"""
+    """Create Request instance including content if exists"""    
     return request.Request(
         url,
         data=content if content is not None and len(content) > 0 else None,
@@ -224,7 +241,11 @@ def restapi_build_opener() -> OpenerDirector:
 
 
 def restapi_json_response(resp: RestApiResponse):
-    return json.loads(resp.data.decode("utf-8"))
+    try:
+        return json.loads(resp.data.decode("utf-8")) if resp.data is not None and len(resp.data) > 0 else None
+    except json.decoder.JSONDecodeError:
+        logger.error(f'JSON Error: {resp.data.decode("utf-8")}')
+        return
 
 
 ########################################################################
@@ -360,15 +381,17 @@ class QiitaData(NamedTuple):
     title: str
     tags: QiitaTags
     id: Optional[str]
+    private: bool = False
 
     def __str__(self) -> str:
         return os.linesep.join(
             filter(
                 None,
                 [
-                    f"title: {self.title}",
-                    f"tags:  {str(self.tags)}",
-                    f"id:    {self.id}" if self.id is not None else None,
+                    f"title:   {self.title}",
+                    f"tags:    {str(self.tags)}",
+                    f"id:      {self.id}" if self.id is not None else None,
+                    f"private: {'true' if self.private else 'false'}"
                 ],
             ))
 
@@ -381,12 +404,16 @@ class QiitaData(NamedTuple):
                     map(lambda line: line.split(":", 1),
                         filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None, text.splitlines()))))
             if text is not None else {})
-        return (cls(data["title"], QiitaTags.fromString(data["tags"]), data["id"] if "id" in data else None)
-                if "title" in data and "tags" in data else data)
+        return (cls(
+            data["title"],
+            QiitaTags.fromString(data["tags"]),
+            data["id"] if "id" in data else None,
+            str2bool(data["private"]) if "private" in data else False
+        ) if "title" in data and "tags" in data else data)
 
     @classmethod
     def fromApi(cls, item) -> QiitaData:
-        return cls(title=item["title"], tags=QiitaTags.fromApi(item["tags"]), id=item["id"])
+        return cls(title=item["title"], tags=QiitaTags.fromApi(item["tags"]), id=item["id"], private=item["private"])
 
 
 class QiitaArticle(NamedTuple):
@@ -403,6 +430,7 @@ class QiitaArticle(NamedTuple):
             "body": self.body,
             "tags": self.data.tags.toApi(),
             "title": self.data.title,
+            "private": self.data.private
         }
 
     @classmethod
@@ -410,6 +438,7 @@ class QiitaArticle(NamedTuple):
         text = filepath.read_text()
         timestamp = datetime.fromtimestamp(filepath.stat().st_mtime, timezone.utc)
         m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
+        logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')
         qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
 
         if isinstance(qiita_data, QiitaData):
@@ -421,8 +450,9 @@ class QiitaArticle(NamedTuple):
                     qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
                     QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
                     None,
+                    str2bool(qiita_data["private"]) if "private" in qiita_data else True
                 ),
-                body=text,
+                body=m.group(2) if m is not None else text,
                 timestamp=timestamp,
                 filepath=filepath)
 
@@ -513,7 +543,12 @@ def qsync_get_access_token(token_file: str) -> str:
         with filepath.open("r") as fp:
             return fp.read().strip()
     else:
-        return sys.stdin.readline().rstrip()
+        token = os.getenv(ACCESS_TOKEN_ENV)
+        if token is not None:
+            return token
+    # Read from stdin
+    # return sys.stdin.readline().rstrip()
+    raise ApplicationError("No Qiita Access Token")
 
 
 def qsync_chdir_git(target: Path):
@@ -523,7 +558,7 @@ def qsync_chdir_git(target: Path):
 
 
 def qsync_get_local_article(include_patterns: List[str], exclude_patterns: List[str]) -> List[Path]:
-    topdir = Path(git_get_topdir())
+    topdir = Path(git_get_topdir())    
     return [
         Path(fp).resolve()
         for fp in (functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) -
@@ -537,7 +572,7 @@ class QiitaSync(NamedTuple):
     git_repository: str
     git_branch: str
     git_dir: str
-    qiita_id: str
+    qiita_id: str    
     atcl_path_map: Dict[Path, QiitaArticle]
     atcl_id_map: Dict[str, QiitaArticle]
 
@@ -551,10 +586,16 @@ class QiitaSync(NamedTuple):
         atcl_list = [QiitaArticle.fromFile(fp) for fp in file_list if fp.is_file()]
         caller = qiita_create_caller(qiita_token)
 
-        return cls(caller, user_repo[0], user_repo[1], git_get_default_branch(), git_get_topdir(),
-                   qiita_get_authenticated_user_id(caller),
-                   dict([(atcl.filepath, atcl) for atcl in atcl_list if atcl.filepath is not None]),
-                   dict([(atcl.data.id, atcl) for atcl in atcl_list if atcl.data.id is not None]))
+        return cls(
+            caller,
+            user_repo[0],
+            user_repo[1],
+            git_get_default_branch(),
+            git_get_topdir(),
+            qiita_get_authenticated_user_id(caller),
+            dict([(atcl.filepath, atcl) for atcl in atcl_list if atcl.filepath is not None]),
+            dict([(atcl.data.id, atcl) for atcl in atcl_list if atcl.data.id is not None]),
+        )
 
     @property
     def github_url(self):
@@ -640,8 +681,9 @@ class QiitaSync(NamedTuple):
         if article.data.id is not None:
             qiita_patch_item(self.caller, article.data.id, article.toApi())
         else:
-            Maybe(qiita_post_item(self.caller, article.toApi())).map(QiitaArticle.fromApi).map(lambda x: QiitaArticle(
-                x.data, article.body, x.timestamp, article.filepath)).map(lambda x: self.save(x))
+            Maybe(qiita_post_item(self.caller, article.toApi())).map(QiitaArticle.fromApi).map(
+                lambda x: QiitaArticle(x.data, article.body, x.timestamp, article.filepath)).map(
+                    lambda x: self.save(x))
 
     def save(self, article: QiitaArticle):
         with (article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")).open("w") as fp:
@@ -652,21 +694,36 @@ class QiitaSync(NamedTuple):
             map(self.toLocalFormat,
                 map(self.addFilepath, [QiitaArticle.fromApi(elem) for elem in qiita_get_item_list(self.caller)])))
 
+    def delete(self, article: QiitaArticle):
+        if article.data.id is not None:
+            qiita_delete_item(self.caller, article.data.id)
 
 ########################################################################
+
+
 # Qiita Sync CLI
 ########################################################################
 
 
 def qsync_subcommand_download(qsync: QiitaSync, target: Path):
+    logger.debug(f"{target} download")
     print(qsync.getArticleByPath(target))
 
 
 def qsync_subcommand_upload(qsync: QiitaSync, target: Path):
-    print(qsync.getArticleByPath(target))
+    logger.debug(f"{target} upload")
+    for article in qsync.getArticleByPath(target).values():
+        qsync.upload(article)
+
+
+def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
+    logger.debug(f"{target} delete")
+    for article in qsync.getArticleByPath(target).values():
+        qsync.delete(article)
 
 
 def qsync_subcommand_check(qsync: QiitaSync, target: Path):
+    logger.debug(f"{target} check")
     print(qsync.atcl_path_map)
 
 
@@ -675,8 +732,9 @@ def qsync_argparse() -> ArgumentParser:
     def common_arg(parser: ArgumentParser) -> ArgumentParser:
         parser.add_argument("target", default='.', help="target Qiita article (file or directory)")
         parser.add_argument("-t", "--token", default=DEFAULT_ACCESS_TOKEN_FILE, help="authentication token")
-        parser.add_argument("-i", "--include", nargs='*', default=DEFAULT_INCLUDE_BLOB, help="include blob")
-        parser.add_argument("-e", "--exclude", nargs='*', default=DEFAULT_EXCLUDE_BLOB, help="exclude blob")
+        parser.add_argument("-i", "--include", nargs='*', default=DEFAULT_INCLUDE_GLOB, help="include glob")
+        parser.add_argument("-e", "--exclude", nargs='*', default=DEFAULT_EXCLUDE_GLOB, help="exclude glob")
+        parser.add_argument("-v", "--verbose", action='store_true', help="debug logging")
 
         return parser
 
@@ -686,6 +744,7 @@ def qsync_argparse() -> ArgumentParser:
     common_arg(subparsers.add_parser("download", help="download help")).set_defaults(func=qsync_subcommand_download)
     common_arg(subparsers.add_parser("upload", help="upload help")).set_defaults(func=qsync_subcommand_upload)
     common_arg(subparsers.add_parser("check", help="check help")).set_defaults(func=qsync_subcommand_check)
+    common_arg(subparsers.add_parser("delete", help="delete help")).set_defaults(func=qsync_subcommand_delete)
 
     return parser
 
@@ -701,6 +760,7 @@ def qsync_main():
     cwd = os.getcwd()
     try:
         args = qsync_argparse().parse_args()
+        logger.setLevel(logging.DEBUG if args.verbose else logging.ERROR)
         target = Path(args.target).resolve()
         qsync_chdir_git(target)
         args.func(qsync_init(args), target)

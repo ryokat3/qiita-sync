@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Generator, List
 
 from qiita_sync.qiita_sync import QiitaArticle, qsync_argparse
-from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_BLOB, DEFAULT_EXCLUDE_BLOB
+from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
 from qiita_sync.qiita_sync import git_get_default_branch, qsync_init
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
 from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
@@ -115,8 +115,8 @@ def test_qsync_argparse():
     args = qsync_argparse().parse_args("download .".split())
 
     assert args.target == "."
-    assert args.include == DEFAULT_INCLUDE_BLOB
-    assert args.exclude == DEFAULT_EXCLUDE_BLOB
+    assert args.include == DEFAULT_INCLUDE_GLOB
+    assert args.exclude == DEFAULT_EXCLUDE_GLOB
     assert args.token == DEFAULT_ACCESS_TOKEN_FILE
 
 
