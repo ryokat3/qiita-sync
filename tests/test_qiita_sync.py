@@ -51,6 +51,7 @@ TEST_GITHUB_BRANCH = "master"
 
 TEST_GITHUB_SSH_URL = f"git@github.com:{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}.git"
 QSYNC_MODULE_PATH = "qiita_sync.qiita_sync."
+#QSYNC_MODULE_PATH = "qiita_sync."
 
 markdown_1 = """
 # section
