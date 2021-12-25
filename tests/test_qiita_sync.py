@@ -50,6 +50,7 @@ TEST_GITHUB_REPO = "github-repo"
 TEST_GITHUB_BRANCH = "master"
 
 TEST_GITHUB_SSH_URL = f"git@github.com:{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}.git"
+QSYNC_MODULE_PATH = "qiita_sync.qiita_sync."
 
 markdown_1 = """
 # section
@@ -69,7 +70,6 @@ Short sequence of backticks
 ImageTest1: ![ImageTest](img/ImageTest.png)
 ImageTest2: ![ImageTest](img/ImageTest.png description)
 ImageTest3: ![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)
-
 """
 
 TEST_ARTICLE_ID1 = "1234567890ABCDEFG"
@@ -115,19 +115,17 @@ ImageTest1: ![ImageTest](img/ImageTest.png)
 
 """
 
-markdown_1_fixture = generate_file_fixture(markdown_1, "markdown_1.md")
-markdown_2_fixture = generate_file_fixture(markdown_2, "markdown_2.md")
-markdown_3_fixture = generate_file_fixture(markdown_3, "markdown_3.md")
-markdown_4_fixture = generate_file_fixture(markdown_3, "markdown_4.md")
 
-QSYNC_MODULE_PATH = "qiita_sync.qiita_sync."
+@pytest.fixture
+def topdir_fx(mocker: MockerFixture, tmpdir) -> Generator[Path, None, None]:
+    topdir = Path(tmpdir)
 
-
-def setup_mocker(mocker: MockerFixture):
     mocker.patch(f'{QSYNC_MODULE_PATH}qiita_get_authenticated_user_id', return_value=TEST_QIITA_ID)
     mocker.patch(f'{QSYNC_MODULE_PATH}git_get_remote_url', return_value=TEST_GITHUB_SSH_URL)
     mocker.patch(f'{QSYNC_MODULE_PATH}git_get_default_branch', return_value=TEST_GITHUB_BRANCH)
+    mocker.patch(f'{QSYNC_MODULE_PATH}git_get_topdir', return_value=str(topdir))
 
+    yield topdir
 
 ########################################################################
 # CLI Test
@@ -143,9 +141,7 @@ def test_qsync_argparse():
     assert args.token == DEFAULT_ACCESS_TOKEN_FILE
 
 
-def test_QiitaSync_instance(mocker: MockerFixture):
-
-    setup_mocker(mocker)
+def test_QiitaSync_instance(topdir_fx: Path):
 
     args = qsync_argparse().parse_args("download .".split())
     qsync = qsync_init(args)
@@ -154,6 +150,7 @@ def test_QiitaSync_instance(mocker: MockerFixture):
     assert qsync.git_user == TEST_GITHUB_ID
     assert qsync.git_repository == TEST_GITHUB_REPO
     assert qsync.git_branch == TEST_GITHUB_BRANCH
+    assert qsync.git_dir == str(topdir_fx)
 
 
 ########################################################################
@@ -165,8 +162,10 @@ def test_QiitaSync_instance(mocker: MockerFixture):
 ########################################################################
 
 
-def test_QiitaArticle_fromFile(markdown_1_fixture):
-    doc = QiitaArticle.fromFile(Path(markdown_1_fixture))
+def test_QiitaArticle_fromFile(topdir_fx: Path):
+    topdir_fx.joinpath("markdown_1.md").write_text(markdown_1)
+
+    doc = QiitaArticle.fromFile(topdir_fx.joinpath("markdown_1.md"))
     assert doc.data.title == markdown_find_line(markdown_1, '# ')[0]
 
 
@@ -216,12 +215,12 @@ def test_markdown_replace_image(text, func, replaced):
 ########################################################################
 
 
-def test_QiitaSync_toGlobalFormat(markdown_1_fixture, markdown_2_fixture, mocker: MockerFixture):
+def test_QiitaSync_toGlobalFormat(topdir_fx: Path):
 
-    setup_mocker(mocker)
+    topdir_fx.joinpath('markdown_1.md').write_text(markdown_1)
+    topdir_fx.joinpath('markdown_2.md').write_text(markdown_2)
 
-    markdown_1_article = QiitaArticle.fromFile(Path(markdown_1_fixture))
-    QiitaArticle.fromFile(Path(markdown_2_fixture))
+    markdown_1_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_1.md')) 
 
     args = qsync_argparse().parse_args("download .".split())
     qsync = qsync_init(args)
@@ -234,20 +233,19 @@ def test_QiitaSync_toGlobalFormat(markdown_1_fixture, markdown_2_fixture, mocker
     assert markdown_find_line(converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
 
 
-def test_QiitaSync_toLocalFormat(markdown_3_fixture, markdown_2_fixture, mocker: MockerFixture):
+def test_QiitaSync_toLocalFormat(topdir_fx: Path):
 
-    setup_mocker(mocker)
+    topdir_fx.joinpath('markdown_2.md').write_text(markdown_2)
+    topdir_fx.joinpath('markdown_3.md').write_text(markdown_3)
 
-    markdown_3_article = QiitaArticle.fromFile(Path(markdown_3_fixture))
-    QiitaArticle.fromFile(Path(markdown_2_fixture))
+    markdown_3_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_3.md'))
 
     args = qsync_argparse().parse_args("download .".split())
     qsync = qsync_init(args)
     converted = qsync.toLocalFormat(markdown_3_article)
 
-    assert markdown_find_line(converted.body, 'LinkTest1:')[0] == f'[dlink]({markdown_2_fixture})'
+    assert markdown_find_line(converted.body, 'LinkTest1:')[0] == f'[dlink](markdown_2.md)'
     assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/markdown_2.md)'
     assert markdown_find_line(converted.body, 'ImageTest1:')[0] == f'![ImageTest](img/ImageTest.png)'
     assert markdown_find_line(converted.body, 'ImageTest2:')[0] == f'![ImageTest](img/ImageTest.png description)'
     assert markdown_find_line(converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
-    
