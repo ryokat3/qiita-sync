@@ -52,7 +52,8 @@ ACCESS_TOKEN_ENV = "QIITA_ACCESS_TOKEN"
 # Logger
 ########################################################################
 
-logging.basicConfig(format='%(asctime)s [%(filename)s:%(lineno)d] %(levelname)-8s :: %(message)s',
+logging.basicConfig(
+    format='%(asctime)s [%(filename)s:%(lineno)d] %(levelname)-8s :: %(message)s',
     datefmt='%y-%m-%d %H:%M:%S',
     stream=sys.stdout)
 
@@ -111,8 +112,10 @@ def diff_url(target: str, pre: str) -> str:
     return target if len(target) < len(pre) or target[:len(pre)].lower() != pre.lower() else target[len(pre):]
 
 
-def str2bool(x) -> bool:
+def str2bool(x: str) -> bool:
+    '''Return True/False (strtobool returns 1/0)'''
     return True if strtobool(x) else False
+
 
 ########################################################################
 # Maybe
@@ -213,7 +216,7 @@ def restapi_create_request(
     content_type: Optional[str],
     content: Optional[bytes],
 ) -> request.Request:
-    """Create Request instance including content if exists"""    
+    """Create Request instance including content if exists"""
     return request.Request(
         url,
         data=content if content is not None and len(content) > 0 else None,
@@ -388,8 +391,7 @@ class QiitaData(NamedTuple):
             filter(
                 None,
                 [
-                    f"title:   {self.title}",
-                    f"tags:    {str(self.tags)}",
+                    f"title:   {self.title}", f"tags:    {str(self.tags)}",
                     f"id:      {self.id}" if self.id is not None else None,
                     f"private: {'true' if self.private else 'false'}"
                 ],
@@ -404,12 +406,9 @@ class QiitaData(NamedTuple):
                     map(lambda line: line.split(":", 1),
                         filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None, text.splitlines()))))
             if text is not None else {})
-        return (cls(
-            data["title"],
-            QiitaTags.fromString(data["tags"]),
-            data["id"] if "id" in data else None,
-            str2bool(data["private"]) if "private" in data else False
-        ) if "title" in data and "tags" in data else data)
+        return (cls(data["title"], QiitaTags.fromString(data["tags"]), data["id"] if "id" in data else None,
+                    str2bool(data["private"]) if "private" in data else False)
+                if "title" in data and "tags" in data else data)
 
     @classmethod
     def fromApi(cls, item) -> QiitaData:
@@ -446,12 +445,9 @@ class QiitaArticle(NamedTuple):
                 data=qiita_data, body=m.group(2) if m is not None else "", timestamp=timestamp, filepath=filepath)
         else:
             return cls(
-                data=QiitaData(
-                    qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
-                    QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"),
-                    None,
-                    str2bool(qiita_data["private"]) if "private" in qiita_data else True
-                ),
+                data=QiitaData(qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
+                               QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"), None,
+                               str2bool(qiita_data["private"]) if "private" in qiita_data else True),
                 body=m.group(2) if m is not None else text,
                 timestamp=timestamp,
                 filepath=filepath)
@@ -558,7 +554,7 @@ def qsync_chdir_git(target: Path):
 
 
 def qsync_get_local_article(include_patterns: List[str], exclude_patterns: List[str]) -> List[Path]:
-    topdir = Path(git_get_topdir())    
+    topdir = Path(git_get_topdir())
     return [
         Path(fp).resolve()
         for fp in (functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) -
@@ -572,7 +568,7 @@ class QiitaSync(NamedTuple):
     git_repository: str
     git_branch: str
     git_dir: str
-    qiita_id: str    
+    qiita_id: str
     atcl_path_map: Dict[Path, QiitaArticle]
     atcl_id_map: Dict[str, QiitaArticle]
 
@@ -627,13 +623,15 @@ class QiitaSync(NamedTuple):
                          if str(path).startswith(str(target.resolve()))])
 
     def toLocalImageLink(self, link: str, article: QiitaArticle) -> str:
-        return Maybe(
-            article.filepath).flatMap(lambda filepath: Maybe(diff_url(link, self.github_url)).filterNot(is_url).map(
-                lambda diff: str(Path(self.git_dir).joinpath(diff).relative_to(filepath.parent)))).getOrElse(link)
+        return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
+            lambda filepath: Maybe(diff_url(link, self.github_url)).filterNot(is_url).map(lambda diff: str(
+                Path(self.git_dir).joinpath(diff).relative_to(filepath.parent)))).getOrElse(link)
 
-    def toLocaMarkdownlLink(self, link: str) -> str:
-        return Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filterNot(is_url).map(
-            lambda id: Maybe(self.getFilePathById(id)).map(str).getOrElse(f"{id}.md")).getOrElse(link)
+    def toLocaMarkdownlLink(self, link: str, article: QiitaArticle) -> str:
+        return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
+            lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filterNot(is_url).map(
+                lambda id: Maybe(self.getFilePathById(id)).map(lambda fp: fp.relative_to(filepath.parent)).map(
+                    str).getOrElse(f"{id}.md"))).getOrElse(link)
 
     def toLocalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
@@ -641,30 +639,30 @@ class QiitaSync(NamedTuple):
             return markdown_replace_image(lambda link: self.toLocalImageLink(link, article), text)
 
         def convert_link(text: str) -> str:
-            return markdown_replace_link(lambda link: self.toLocaMarkdownlLink(link), text)
+            return markdown_replace_link(lambda link: self.toLocaMarkdownlLink(link, article), text)
 
         return QiitaArticle(
             article.data,
             markdown_replace_text(lambda text: convert_image_link(convert_link(text), article), article.body),
             article.timestamp, article.filepath)
 
-    def toQiitaImageLink(self, link: str, article: QiitaArticle) -> str:
+    def toGlobalImageLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
             self.getArticleDir(article).resolve().joinpath).optionalMap(lambda p: self.getGitHubUrl(p)).getOrElse(link)
 
-    def toQiitaMarkdownLink(self, link: str, article: QiitaArticle):
+    def toGlobalMarkdownLink(self, link: str, article: QiitaArticle):
         return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
             self.getArticleDir(article).resolve().joinpath).filter(lambda p: p.is_file()).map(
                 QiitaArticle.fromFile).optionalMap(lambda article: article.data.id).map(
                     lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
 
-    def toQiitaFormat(self, article: QiitaArticle) -> QiitaArticle:
+    def toGlobalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
         def convert_image_link(text: str) -> str:
-            return markdown_replace_image(lambda link: self.toQiitaImageLink(link, article), text)
+            return markdown_replace_image(lambda link: self.toGlobalImageLink(link, article), text)
 
         def convert_link(text: str) -> str:
-            return markdown_replace_link(lambda link: self.toQiitaMarkdownLink(link, article), text)
+            return markdown_replace_link(lambda link: self.toGlobalMarkdownLink(link, article), text)
 
         return QiitaArticle(article.data,
                             markdown_replace_text(lambda text: convert_image_link(convert_link(text)), article.body),
@@ -681,9 +679,8 @@ class QiitaSync(NamedTuple):
         if article.data.id is not None:
             qiita_patch_item(self.caller, article.data.id, article.toApi())
         else:
-            Maybe(qiita_post_item(self.caller, article.toApi())).map(QiitaArticle.fromApi).map(
-                lambda x: QiitaArticle(x.data, article.body, x.timestamp, article.filepath)).map(
-                    lambda x: self.save(x))
+            Maybe(qiita_post_item(self.caller, article.toApi())).map(QiitaArticle.fromApi).map(lambda x: QiitaArticle(
+                x.data, article.body, x.timestamp, article.filepath)).map(lambda x: self.save(x))
 
     def save(self, article: QiitaArticle):
         with (article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")).open("w") as fp:
@@ -698,9 +695,8 @@ class QiitaSync(NamedTuple):
         if article.data.id is not None:
             qiita_delete_item(self.caller, article.data.id)
 
+
 ########################################################################
-
-
 # Qiita Sync CLI
 ########################################################################
 
