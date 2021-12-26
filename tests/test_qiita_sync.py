@@ -1,12 +1,14 @@
+import os
 import random
 import string
 import pytest
 from pathlib import Path
-from typing import Generator, List
+from typing import Generator, List, Optional
 
 from qiita_sync.qiita_sync import QiitaArticle
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse
+from qiita_sync.qiita_sync import rel_path, add_path, url_add_path
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
 from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
 
@@ -51,12 +53,19 @@ TEST_GITHUB_BRANCH = "master"
 
 TEST_GITHUB_SSH_URL = f"git@github.com:{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}.git"
 QSYNC_MODULE_PATH = "qiita_sync.qiita_sync."
-#QSYNC_MODULE_PATH = "qiita_sync."
 
-markdown_1 = """
+TEST_ARTICLE_ID1 = "1234567890ABCDEFG"
+
+
+def mkpath(p: Optional[str]):
+    return f"{p}/" if p is not None and p != "." else ""
+
+
+def markdown1(md: Optional[str] = None, img: Optional[str] = "img"):
+    return f"""
 # section
 
-LinkTest1: [dlink](markdown_2.md)
+LinkTest1: [dlink]({mkpath(md)}markdown_2.md)
 LinkTest2: [dlink](https://example.com/markdown/markdown_2.md)
 
 `````shell
@@ -68,14 +77,14 @@ Short sequence of backticks
 
 ## sub-section
 
-ImageTest1: ![ImageTest](img/ImageTest.png)
-ImageTest2: ![ImageTest](img/ImageTest.png description)
+ImageTest1: ![ImageTest]({mkpath(img)}ImageTest.png)
+ImageTest2: ![ImageTest]({mkpath(img)}ImageTest.png description)
 ImageTest3: ![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)
 """
 
-TEST_ARTICLE_ID1 = "1234567890ABCDEFG"
 
-markdown_2 = f"""
+def markdown2():
+    return f"""
 <!--
 title: test
 tags:  test
@@ -85,7 +94,9 @@ id:    {TEST_ARTICLE_ID1}
 # test
 """
 
-markdown_3 = f"""
+
+def markdown3(md: Optional[str] = None, img: Optional[str] = "img"):
+    return f"""
 # section
 
 LinkTest1: [dlink](https://qiita.com/{TEST_QIITA_ID}/items/{TEST_ARTICLE_ID1})
@@ -100,12 +111,14 @@ Short sequence of backticks
 
 ## sub-section
 
-ImageTest1: ![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/img/ImageTest.png)
-ImageTest2: ![ImageTest](HTTPS://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/img/ImageTest.png description)
+ImageTest1: ![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(img)}ImageTest.png)
+ImageTest2: ![ImageTest](HTTPS://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(img)}ImageTest.png description)
 ImageTest3: ![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)
 """
 
-markdown_4 = """
+
+def markdown4():
+    return f"""
 <!--
 private: true
 -->
@@ -155,6 +168,43 @@ def test_QiitaSync_instance(topdir_fx: Path):
 
 
 ########################################################################
+# Util Test
+########################################################################
+
+@pytest.mark.parametrize("to_path, from_path, relpath",
+[
+    ("/h1", "/h2", "../h1"),
+    ("/h1", "/", "h1"),
+    ("/", "/h2", ".."),
+    ("/h1", "/h1", "."),
+])
+def test_rel_path(to_path, from_path, relpath):    
+    assert rel_path(Path(to_path), Path(from_path)) == Path(relpath)
+
+
+@pytest.mark.parametrize("path, subpath, expected",
+[
+    ("/h1", "../h2", "/h2"),
+    ("/h1", "h2", "/h1/h2"),
+    ("/h1", ".", "/h1"),
+    ("/h1", "..", "/"),
+    ("/h1/h2", "..", "/h1")
+])
+def test_add_path(path, subpath, expected):    
+    assert add_path(Path(path), Path(subpath)) == Path(expected)
+
+
+@pytest.mark.parametrize("url, subpath, expected",
+[
+    ("https://www.exapmle.com/main/doc", "../img/", "https://www.exapmle.com/main/img"),
+    ("https://www.exapmle.com/main/doc", "hehe", "https://www.exapmle.com/main/doc/hehe"),
+    ("https://www.exapmle.com/main", "..", "https://www.exapmle.com/"),
+    ("https://www.exapmle.com/main/", "..", "https://www.exapmle.com/")
+])
+def test_url_add_path(url, subpath, expected):    
+    assert url_add_path(url, Path(subpath)) == expected
+
+########################################################################
 # Git Test
 ########################################################################
 
@@ -164,14 +214,14 @@ def test_QiitaSync_instance(topdir_fx: Path):
 
 
 def test_QiitaArticle_fromFile(topdir_fx: Path):
-    topdir_fx.joinpath("markdown_1.md").write_text(markdown_1)
+    topdir_fx.joinpath("markdown_1.md").write_text(markdown1())
 
     doc = QiitaArticle.fromFile(topdir_fx.joinpath("markdown_1.md"))
-    assert doc.data.title == markdown_find_line(markdown_1, '# ')[0]
+    assert doc.data.title == markdown_find_line(markdown1(), '# ')[0]
 
 
 def test_markdown_code_block_split():
-    assert ''.join(markdown_code_block_split(markdown_1)) == markdown_1
+    assert ''.join(markdown_code_block_split(markdown1())) == markdown1()
 
 
 ########################################################################
@@ -193,7 +243,7 @@ def test_markdown_code_inline_split(text, num, idx, item):
 
 
 def test_markdown_replace_text():
-    assert markdown_replace_text(lambda x: "x", markdown_1)[1] != "x"
+    assert markdown_replace_text(lambda x: "x", markdown1())[1] != "x"
 
 
 @pytest.mark.parametrize("text, func, replaced", [(r"[](hello)", lambda x: x + x, r"[](hellohello)"),
@@ -216,12 +266,29 @@ def test_markdown_replace_image(text, func, replaced):
 ########################################################################
 
 
-def test_QiitaSync_toGlobalFormat(topdir_fx: Path):
+@pytest.mark.parametrize("md1, md2, img",
+[
+    (None, None, 'img'),
+    (None, 'doc', 'img'),
+    ('doc', None, 'img'),
+    ('doc/more', None, None)
+])
+def test_QiitaSync_toGlobalFormat(md1, md2, img, topdir_fx: Path):
+    md1dir = topdir_fx.joinpath(md1) if md1 is not None else topdir_fx
+    md2dir = topdir_fx.joinpath(md2) if md2 is not None else topdir_fx
+    imgdir = topdir_fx.joinpath(img) if img is not None else topdir_fx
 
-    topdir_fx.joinpath('markdown_1.md').write_text(markdown_1)
-    topdir_fx.joinpath('markdown_2.md').write_text(markdown_2)
+    mdrel = os.path.relpath(md2dir, md1dir)
+    imgrel = os.path.relpath(imgdir, md1dir)
+    imgrel2 = os.path.relpath(imgdir, topdir_fx)
 
-    markdown_1_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_1.md')) 
+    md1dir.mkdir(parents=True, exist_ok=True)
+    md1dir.joinpath('markdown_1.md').write_text(markdown1(md=mdrel, img=imgrel))
+
+    md2dir.mkdir(parents=True, exist_ok=True)
+    md2dir.joinpath('markdown_2.md').write_text(markdown2())
+
+    markdown_1_article = QiitaArticle.fromFile(md1dir.joinpath('markdown_1.md'))
 
     args = qsync_argparse().parse_args("download .".split())
     qsync = qsync_init(args)
@@ -229,15 +296,15 @@ def test_QiitaSync_toGlobalFormat(topdir_fx: Path):
 
     assert markdown_find_line(converted.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{TEST_QIITA_ID}/items/{TEST_ARTICLE_ID1})'
     assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/markdown_2.md)'
-    assert markdown_find_line(converted.body, 'ImageTest1:')[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/img/ImageTest.png)'
-    assert markdown_find_line(converted.body, 'ImageTest2:')[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/img/ImageTest.png description)'
+    assert markdown_find_line(converted.body, 'ImageTest1:')[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(imgrel2)}ImageTest.png)'
+    assert markdown_find_line(converted.body, 'ImageTest2:')[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(imgrel2)}ImageTest.png description)'
     assert markdown_find_line(converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
 
 
 def test_QiitaSync_toLocalFormat(topdir_fx: Path):
 
-    topdir_fx.joinpath('markdown_2.md').write_text(markdown_2)
-    topdir_fx.joinpath('markdown_3.md').write_text(markdown_3)
+    topdir_fx.joinpath('markdown_2.md').write_text(markdown2())
+    topdir_fx.joinpath('markdown_3.md').write_text(markdown3())
 
     markdown_3_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_3.md'))
 

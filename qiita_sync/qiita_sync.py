@@ -14,9 +14,8 @@ from itertools import dropwhile
 from pathlib import Path
 from datetime import datetime, timezone
 from distutils.util import strtobool
-
 from urllib import request
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 from urllib.error import HTTPError
 from http.client import HTTPResponse
 from urllib.request import OpenerDirector
@@ -116,6 +115,19 @@ def str2bool(x: str) -> bool:
     '''Return True/False (strtobool returns 1/0)'''
     return True if strtobool(x) else False
 
+
+def rel_path(to_path: Path, from_path: Path) -> Path:
+    return Path(os.path.relpath(to_path, from_path))
+
+
+def add_path(path: Path, sub: Path) -> Path:
+    return path.joinpath(sub).resolve()
+
+
+def url_add_path(url: str, sub: Path) -> str:
+    parts = urlparse(url)
+    return urlunparse(parts._replace(path=str(add_path(Path(parts.path), sub))))
+    
 
 ########################################################################
 # Maybe
@@ -597,9 +609,9 @@ class QiitaSync(NamedTuple):
     def github_url(self):
         return f"{GITHUB_CONTENT_URL}{self.git_user}/{self.git_repository}/{self.git_branch}/"
 
-    def getGitHubUrl(self, pathname: Path) -> Optional[str]:
+    def getGitHubUrl(self, pathname: Path) -> Optional[str]:        
         try:
-            _relative_path = pathname.relative_to(self.git_dir).as_posix()
+            _relative_path = pathname.resolve().relative_to(self.git_dir).as_posix()
             relative_path = _relative_path if _relative_path != "." else ""
             return f"{self.github_url}{relative_path}"
         except Exception:
@@ -625,13 +637,12 @@ class QiitaSync(NamedTuple):
     def toLocalImageLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
             lambda filepath: Maybe(diff_url(link, self.github_url)).filterNot(is_url).map(lambda diff: str(
-                Path(self.git_dir).joinpath(diff).relative_to(filepath.parent)))).getOrElse(link)
+                rel_path(Path(self.git_dir).joinpath(diff), filepath.parent)))).getOrElse(link)
 
     def toLocaMarkdownlLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
             lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filterNot(is_url).map(
-                lambda id: Maybe(self.getFilePathById(id)).map(lambda fp: fp.relative_to(filepath.parent)).map(
-                    str).getOrElse(f"{id}.md"))).getOrElse(link)
+                lambda id: Maybe(self.getFilePathById(id)).map(lambda fp: str(rel_path(fp, filepath.parent))).getOrElse(f"{id}.md"))).getOrElse(link)
 
     def toLocalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
@@ -647,12 +658,12 @@ class QiitaSync(NamedTuple):
             article.timestamp, article.filepath)
 
     def toGlobalImageLink(self, link: str, article: QiitaArticle) -> str:
-        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
-            self.getArticleDir(article).resolve().joinpath).optionalMap(lambda p: self.getGitHubUrl(p)).getOrElse(link)
+        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(lambda x:
+            add_path(self.getArticleDir(article), Path(x))).optionalMap(lambda p: self.getGitHubUrl(p)).getOrElse(link)
 
     def toGlobalMarkdownLink(self, link: str, article: QiitaArticle):
-        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
-            self.getArticleDir(article).resolve().joinpath).filter(lambda p: p.is_file()).map(
+        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(lambda x:
+            add_path(self.getArticleDir(article), x)).filter(lambda p: p.is_file()).map(
                 QiitaArticle.fromFile).optionalMap(lambda article: article.data.id).map(
                     lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
 
