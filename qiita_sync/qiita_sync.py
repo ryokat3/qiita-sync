@@ -652,10 +652,8 @@ class QiitaSync(NamedTuple):
         def convert_link(text: str) -> str:
             return markdown_replace_link(lambda link: self.toLocaMarkdownlLink(link, article), text)
 
-        return QiitaArticle(
-            article.data,
-            markdown_replace_text(lambda text: convert_image_link(convert_link(text), article), article.body),
-            article.timestamp, article.filepath)
+        return article._replace(body=markdown_replace_text(
+            lambda text: convert_image_link(convert_link(text), article), article.body))
 
     def toGlobalImageLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(lambda x:
@@ -663,7 +661,7 @@ class QiitaSync(NamedTuple):
 
     def toGlobalMarkdownLink(self, link: str, article: QiitaArticle):
         return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(lambda x:
-            add_path(self.getArticleDir(article), x)).filter(lambda p: p.is_file()).map(
+            add_path(self.getArticleDir(article), Path(x))).filter(lambda p: p.is_file()).map(
                 QiitaArticle.fromFile).optionalMap(lambda article: article.data.id).map(
                     lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
 
@@ -675,14 +673,12 @@ class QiitaSync(NamedTuple):
         def convert_link(text: str) -> str:
             return markdown_replace_link(lambda link: self.toGlobalMarkdownLink(link, article), text)
 
-        return QiitaArticle(article.data,
-                            markdown_replace_text(lambda text: convert_image_link(convert_link(text)), article.body),
-                            article.timestamp, article.filepath)
+        return article._replace(body=markdown_replace_text(
+            lambda text: convert_image_link(convert_link(text)), article.body))
 
     def addFilepath(self, article: QiitaArticle) -> QiitaArticle:
         if article.data.id is not None and article.data.id in self.atcl_id_map:
-            return QiitaArticle(article.data, article.body, article.timestamp,
-                                self.atcl_id_map[article.data.id].filepath)
+            return article._replace(filepath=self.atcl_id_map[article.data.id].filepath)                             
         else:
             return article
 
@@ -690,8 +686,8 @@ class QiitaSync(NamedTuple):
         if article.data.id is not None:
             qiita_patch_item(self.caller, article.data.id, article.toApi())
         else:
-            Maybe(qiita_post_item(self.caller, article.toApi())).map(QiitaArticle.fromApi).map(lambda x: QiitaArticle(
-                x.data, article.body, x.timestamp, article.filepath)).map(lambda x: self.save(x))
+            Maybe(qiita_post_item(self.caller, article.toApi())).map(QiitaArticle.fromApi).map(
+                lambda x: article._replace(data=x.data, timestamp=x.timestamp)).map(lambda x: self.save(x))
 
     def save(self, article: QiitaArticle):
         with (article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")).open("w") as fp:
@@ -742,6 +738,7 @@ def qsync_argparse() -> ArgumentParser:
         parser.add_argument("-i", "--include", nargs='*', default=DEFAULT_INCLUDE_GLOB, help="include glob")
         parser.add_argument("-e", "--exclude", nargs='*', default=DEFAULT_EXCLUDE_GLOB, help="exclude glob")
         parser.add_argument("-v", "--verbose", action='store_true', help="debug logging")
+        parser.add_argument("-m", "--mtime", action='store_true', help="Use fs mtime instead of git commit time")
 
         return parser
 
