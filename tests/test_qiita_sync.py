@@ -317,3 +317,22 @@ def test_QiitaSync_toLocalFormat(topdir_fx: Path):
     assert markdown_find_line(converted.body, 'ImageTest1:')[0] == f'![ImageTest](img/ImageTest.png)'
     assert markdown_find_line(converted.body, 'ImageTest2:')[0] == f'![ImageTest](img/ImageTest.png description)'
     assert markdown_find_line(converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
+
+
+def test_QiitaSync_format_conversion(topdir_fx: Path):
+
+    topdir_fx.joinpath('markdown_1.md').write_text(markdown1())
+    topdir_fx.joinpath('markdown_2.md').write_text(markdown2())
+    topdir_fx.joinpath('markdown_3.md').write_text(markdown3())
+
+    markdown1_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_1.md'))
+    markdown3_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_3.md'))
+
+    args = qsync_argparse().parse_args("download .".split())
+    qsync = qsync_init(args)
+
+    print(qsync.toLocalFormat(markdown1_article).body)
+    assert qsync.toLocalFormat(qsync.toGlobalFormat(markdown1_article)).body.lower() == markdown1_article.body.lower()
+    assert qsync.toLocalFormat(qsync.toGlobalFormat(markdown1_article)).body.lower() == qsync.toLocalFormat(markdown1_article).body.lower()
+    assert qsync.toGlobalFormat(qsync.toLocalFormat(markdown3_article)).body.lower() == markdown3_article.body.lower()
+    assert qsync.toGlobalFormat(qsync.toLocalFormat(markdown3_article)).body.lower() == qsync.toGlobalFormat(markdown3_article).body.lower()

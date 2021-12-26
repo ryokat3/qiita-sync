@@ -636,12 +636,12 @@ class QiitaSync(NamedTuple):
 
     def toLocalImageLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
-            lambda filepath: Maybe(diff_url(link, self.github_url)).filterNot(is_url).map(lambda diff: str(
+            lambda filepath: Maybe(diff_url(link, self.github_url)).filter(lambda x: x != link).map(lambda diff: str(
                 rel_path(Path(self.git_dir).joinpath(diff), filepath.parent)))).getOrElse(link)
 
     def toLocaMarkdownlLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
-            lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filterNot(is_url).map(
+            lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filter(lambda x: x != link).map(
                 lambda id: Maybe(self.getFilePathById(id)).map(lambda fp: str(rel_path(fp, filepath.parent))).getOrElse(f"{id}.md"))).getOrElse(link)
 
     def toLocalFormat(self, article: QiitaArticle) -> QiitaArticle:
