@@ -23,6 +23,10 @@ jobs:
           git rev-parse --show-toplevel
           git config --get remote.origin.url
           git rev-parse --abbrev-ref HEAD
+          git rev-parse --abbrev-ref HEAD
+          git log origin/main -4 --pretty=%cI qiita_sync/qiita_sync.py
+          git fetch
+          git log origin/main -4 --pretty=%cI qiita_sync/qiita_sync.py
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:

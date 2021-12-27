@@ -214,11 +214,11 @@ def test_get_utc():
 ########################################################################
 
 
-def test_git_get_committer_date():
-    result = git_get_committer_datetime('qiita_sync/qiita_sync.py', 3)
-    assert len(result) == 3
-    assert result[0] > result[1]
-    assert result[1] > result[2]
+#def test_git_get_committer_date():
+#    result = git_get_committer_datetime('qiita_sync/qiita_sync.py', 3)
+#    assert len(result) == 3
+#    assert result[0] > result[1]
+#    assert result[1] > result[2]
 
 
 ########################################################################
