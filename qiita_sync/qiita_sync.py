@@ -127,7 +127,10 @@ def add_path(path: Path, sub: Path) -> Path:
 def url_add_path(url: str, sub: Path) -> str:
     parts = urlparse(url)
     return urlunparse(parts._replace(path=str(add_path(Path(parts.path), sub))))
-    
+
+
+def get_utc(iso8601: str) -> datetime:
+    return datetime.strptime(iso8601, "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc)
 
 ########################################################################
 # Maybe
@@ -186,9 +189,13 @@ def git_get_remote_url() -> str:
     return exec_command("git config --get remote.origin.url".split())
 
 
-def git_get_committer_date(filename: str) -> str:
+def git_get_committer_date(filename: str, count: int = 1) -> str:
     # "%cI", committer date, strict ISO 8601 format
-    return exec_command("git log -1 --pretty='%cI'".split() + [filename])
+    return exec_command(f"git log -{str(count)} --pretty=%cI".split() + [filename])
+
+
+def git_get_committer_datetime(filename: str, count: int = 1) -> List[datetime]:    
+    return list(map(get_utc, git_get_committer_date(filename, count).splitlines()))
 
 
 @functools.lru_cache(maxsize=1)
@@ -445,9 +452,10 @@ class QiitaArticle(NamedTuple):
         }
 
     @classmethod
-    def fromFile(cls, filepath: Path) -> QiitaArticle:
+    def fromFile(cls, filepath: Path, git_timestamp: bool = False) -> QiitaArticle:
         text = filepath.read_text()
-        timestamp = datetime.fromtimestamp(filepath.stat().st_mtime, timezone.utc)
+        timestamp = git_get_committer_datetime(str(filepath))[0] if git_timestamp else \
+             datetime.fromtimestamp(filepath.stat().st_mtime, timezone.utc)
         m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
         logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')
         qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
@@ -469,7 +477,7 @@ class QiitaArticle(NamedTuple):
         return cls(
             data=QiitaData.fromApi(item),
             body=item["body"],
-            timestamp=datetime.strptime(item["updated_at"], "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc),
+            timestamp=get_utc(item["updated_at"]),
             filepath=None)
 
 
@@ -583,15 +591,16 @@ class QiitaSync(NamedTuple):
     qiita_id: str
     atcl_path_map: Dict[Path, QiitaArticle]
     atcl_id_map: Dict[str, QiitaArticle]
+    git_timestamp: bool
 
     @classmethod
-    def getInstance(cls, qiita_token: str, file_list: List[Path]) -> QiitaSync:
+    def getInstance(cls, qiita_token: str, file_list: List[Path], git_timestamp: bool) -> QiitaSync:
         url = git_get_remote_url()
         user_repo = match_github_https_url(url) or match_github_ssh_url(url) if url is not None else None
         if user_repo is None:
             raise ApplicationError(f"{url} is not GitHub")
 
-        atcl_list = [QiitaArticle.fromFile(fp) for fp in file_list if fp.is_file()]
+        atcl_list = [QiitaArticle.fromFile(fp, git_timestamp) for fp in file_list if fp.is_file()]
         caller = qiita_create_caller(qiita_token)
 
         return cls(
@@ -603,6 +612,7 @@ class QiitaSync(NamedTuple):
             qiita_get_authenticated_user_id(caller),
             dict([(atcl.filepath, atcl) for atcl in atcl_list if atcl.filepath is not None]),
             dict([(atcl.data.id, atcl) for atcl in atcl_list if atcl.data.id is not None]),
+            git_timestamp
         )
 
     @property
@@ -662,8 +672,9 @@ class QiitaSync(NamedTuple):
     def toGlobalMarkdownLink(self, link: str, article: QiitaArticle):
         return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(lambda x:
             add_path(self.getArticleDir(article), Path(x))).filter(lambda p: p.is_file()).map(
-                QiitaArticle.fromFile).optionalMap(lambda article: article.data.id).map(
-                    lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
+                lambda f: QiitaArticle.fromFile(f, self.git_timestamp)).optionalMap(
+                    lambda article: article.data.id).map(
+                        lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
 
     def toGlobalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
@@ -738,7 +749,7 @@ def qsync_argparse() -> ArgumentParser:
         parser.add_argument("-i", "--include", nargs='*', default=DEFAULT_INCLUDE_GLOB, help="include glob")
         parser.add_argument("-e", "--exclude", nargs='*', default=DEFAULT_EXCLUDE_GLOB, help="exclude glob")
         parser.add_argument("-v", "--verbose", action='store_true', help="debug logging")
-        parser.add_argument("-m", "--mtime", action='store_true', help="Use fs mtime instead of git commit time")
+        parser.add_argument("--git-timestamp", action='store_true', help="Use git time instead of mtime")
 
         return parser
 
@@ -757,7 +768,7 @@ def qsync_init(args) -> QiitaSync:
     access_token = qsync_get_access_token(args.token)
     local_article = qsync_get_local_article(args.include, args.exclude)
 
-    return QiitaSync.getInstance(access_token, local_article)
+    return QiitaSync.getInstance(access_token, local_article, args.git_timestamp)
 
 
 def qsync_main():

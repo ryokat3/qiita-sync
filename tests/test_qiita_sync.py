@@ -8,7 +8,8 @@ from typing import Generator, List, Optional
 from qiita_sync.qiita_sync import QiitaArticle
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse
-from qiita_sync.qiita_sync import rel_path, add_path, url_add_path
+from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc
+from qiita_sync.qiita_sync import git_get_committer_datetime, git_get_committer_date, git_get_topdir
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
 from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
 
@@ -201,12 +202,24 @@ def test_add_path(path, subpath, expected):
     ("https://www.exapmle.com/main", "..", "https://www.exapmle.com/"),
     ("https://www.exapmle.com/main/", "..", "https://www.exapmle.com/")
 ])
-def test_url_add_path(url, subpath, expected):    
+def test_url_add_path(url, subpath, expected):
     assert url_add_path(url, Path(subpath)) == expected
+
+
+def test_get_utc():
+    assert str(get_utc('2021-12-27T00:40:01+09:00')).endswith("+00:00")
 
 ########################################################################
 # Git Test
 ########################################################################
+
+
+def test_git_get_committer_date():
+    result = git_get_committer_datetime('qiita_sync/qiita_sync.py', 3)
+    assert len(result) == 3
+    assert result[0] > result[1]
+    assert result[1] > result[2]
+
 
 ########################################################################
 # Markdown Parser Test
@@ -331,7 +344,6 @@ def test_QiitaSync_format_conversion(topdir_fx: Path):
     args = qsync_argparse().parse_args("download .".split())
     qsync = qsync_init(args)
 
-    print(qsync.toLocalFormat(markdown1_article).body)
     assert qsync.toLocalFormat(qsync.toGlobalFormat(markdown1_article)).body.lower() == markdown1_article.body.lower()
     assert qsync.toLocalFormat(qsync.toGlobalFormat(markdown1_article)).body.lower() == qsync.toLocalFormat(markdown1_article).body.lower()
     assert qsync.toGlobalFormat(qsync.toLocalFormat(markdown3_article)).body.lower() == markdown3_article.body.lower()
