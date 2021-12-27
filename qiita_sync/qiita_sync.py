@@ -132,6 +132,7 @@ def url_add_path(url: str, sub: Path) -> str:
 def get_utc(iso8601: str) -> datetime:
     return datetime.strptime(iso8601, "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc)
 
+
 ########################################################################
 # Maybe
 ########################################################################
@@ -191,10 +192,10 @@ def git_get_remote_url() -> str:
 
 def git_get_committer_date(filename: str, count: int = 1) -> str:
     # "%cI", committer date, strict ISO 8601 format
-    return exec_command(f"git log -{str(count)} --pretty=%cI".split() + [filename])
+    return exec_command(f"git log origin/main -{str(count)} --pretty=%cI".split() + [filename])
 
 
-def git_get_committer_datetime(filename: str, count: int = 1) -> List[datetime]:    
+def git_get_committer_datetime(filename: str, count: int = 1) -> List[datetime]:
     return list(map(get_utc, git_get_committer_date(filename, count).splitlines()))
 
 
@@ -475,10 +476,7 @@ class QiitaArticle(NamedTuple):
     @classmethod
     def fromApi(cls, item) -> QiitaArticle:
         return cls(
-            data=QiitaData.fromApi(item),
-            body=item["body"],
-            timestamp=get_utc(item["updated_at"]),
-            filepath=None)
+            data=QiitaData.fromApi(item), body=item["body"], timestamp=get_utc(item["updated_at"]), filepath=None)
 
 
 #######################################################################
@@ -603,23 +601,16 @@ class QiitaSync(NamedTuple):
         atcl_list = [QiitaArticle.fromFile(fp, git_timestamp) for fp in file_list if fp.is_file()]
         caller = qiita_create_caller(qiita_token)
 
-        return cls(
-            caller,
-            user_repo[0],
-            user_repo[1],
-            git_get_default_branch(),
-            git_get_topdir(),
-            qiita_get_authenticated_user_id(caller),
-            dict([(atcl.filepath, atcl) for atcl in atcl_list if atcl.filepath is not None]),
-            dict([(atcl.data.id, atcl) for atcl in atcl_list if atcl.data.id is not None]),
-            git_timestamp
-        )
+        return cls(caller, user_repo[0], user_repo[1], git_get_default_branch(), git_get_topdir(),
+                   qiita_get_authenticated_user_id(caller),
+                   dict([(atcl.filepath, atcl) for atcl in atcl_list if atcl.filepath is not None]),
+                   dict([(atcl.data.id, atcl) for atcl in atcl_list if atcl.data.id is not None]), git_timestamp)
 
     @property
     def github_url(self):
         return f"{GITHUB_CONTENT_URL}{self.git_user}/{self.git_repository}/{self.git_branch}/"
 
-    def getGitHubUrl(self, pathname: Path) -> Optional[str]:        
+    def getGitHubUrl(self, pathname: Path) -> Optional[str]:
         try:
             _relative_path = pathname.resolve().relative_to(self.git_dir).as_posix()
             relative_path = _relative_path if _relative_path != "." else ""
@@ -651,8 +642,9 @@ class QiitaSync(NamedTuple):
 
     def toLocaMarkdownlLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
-            lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filter(lambda x: x != link).map(
-                lambda id: Maybe(self.getFilePathById(id)).map(lambda fp: str(rel_path(fp, filepath.parent))).getOrElse(f"{id}.md"))).getOrElse(link)
+            lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filter(
+                lambda x: x != link).map(lambda id: Maybe(self.getFilePathById(id)).map(lambda fp: str(
+                    rel_path(fp, filepath.parent))).getOrElse(f"{id}.md"))).getOrElse(link)
 
     def toLocalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
@@ -662,17 +654,18 @@ class QiitaSync(NamedTuple):
         def convert_link(text: str) -> str:
             return markdown_replace_link(lambda link: self.toLocaMarkdownlLink(link, article), text)
 
-        return article._replace(body=markdown_replace_text(
-            lambda text: convert_image_link(convert_link(text), article), article.body))
+        return article._replace(
+            body=markdown_replace_text(lambda text: convert_image_link(convert_link(text), article), article.body))
 
     def toGlobalImageLink(self, link: str, article: QiitaArticle) -> str:
-        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(lambda x:
-            add_path(self.getArticleDir(article), Path(x))).optionalMap(lambda p: self.getGitHubUrl(p)).getOrElse(link)
+        return Maybe(link).filterNot(
+            os.path.isabs).filterNot(is_url).map(lambda x: add_path(self.getArticleDir(article), Path(x))).optionalMap(
+                lambda p: self.getGitHubUrl(p)).getOrElse(link)
 
     def toGlobalMarkdownLink(self, link: str, article: QiitaArticle):
-        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(lambda x:
-            add_path(self.getArticleDir(article), Path(x))).filter(lambda p: p.is_file()).map(
-                lambda f: QiitaArticle.fromFile(f, self.git_timestamp)).optionalMap(
+        return Maybe(link).filterNot(
+            os.path.isabs).filterNot(is_url).map(lambda x: add_path(self.getArticleDir(article), Path(x))).filter(
+                lambda p: p.is_file()).map(lambda f: QiitaArticle.fromFile(f, self.git_timestamp)).optionalMap(
                     lambda article: article.data.id).map(
                         lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
 
@@ -684,12 +677,12 @@ class QiitaSync(NamedTuple):
         def convert_link(text: str) -> str:
             return markdown_replace_link(lambda link: self.toGlobalMarkdownLink(link, article), text)
 
-        return article._replace(body=markdown_replace_text(
-            lambda text: convert_image_link(convert_link(text)), article.body))
+        return article._replace(
+            body=markdown_replace_text(lambda text: convert_image_link(convert_link(text)), article.body))
 
     def addFilepath(self, article: QiitaArticle) -> QiitaArticle:
         if article.data.id is not None and article.data.id in self.atcl_id_map:
-            return article._replace(filepath=self.atcl_id_map[article.data.id].filepath)                             
+            return article._replace(filepath=self.atcl_id_map[article.data.id].filepath)
         else:
             return article
 
