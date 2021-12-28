@@ -686,6 +686,13 @@ class QiitaSync(NamedTuple):
         else:
             return article
 
+    def download(self, article: QiitaArticle):
+        if article.data.id is not None:
+            Maybe(qiita_get_item(self.caller, article.data.id)).map(
+                QiitaArticle.fromApi).map(lambda x: x._replace(filepath=article.filepath)).map(self.save)
+        else:
+            pass
+
     def upload(self, article: QiitaArticle):
         if article.data.id is not None:
             qiita_patch_item(self.caller, article.data.id, article.toApi())
@@ -714,7 +721,8 @@ class QiitaSync(NamedTuple):
 
 def qsync_subcommand_download(qsync: QiitaSync, target: Path):
     logger.debug(f"{target} download")
-    print(qsync.getArticleByPath(target))
+    for article in qsync.getArticleByPath(target).values():
+        qsync.download(article)
 
 
 def qsync_subcommand_upload(qsync: QiitaSync, target: Path):
