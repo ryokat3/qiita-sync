@@ -653,7 +653,7 @@ class QiitaSync(NamedTuple):
         return article.filepath.parent if article.filepath is not None else Path(self.git_dir)
 
     def getArticleById(self, id: str) -> Optional[QiitaArticle]:
-        return self.atcl_id_map[id]
+        return self.atcl_id_map[id] if id in self.atcl_id_map else None
 
     def getFilePathById(self, id: str) -> Optional[Path]:
         return self.atcl_id_map[id].filepath if id in self.atcl_id_map else None
