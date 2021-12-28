@@ -190,13 +190,13 @@ def git_get_remote_url() -> str:
     return exec_command("git config --get remote.origin.url".split())
 
 
-def git_get_committer_date(filename: str, count: int = 1) -> str:
+def git_get_committer_date(filename: str) -> str:
     # "%cI", committer date, strict ISO 8601 format
-    return exec_command(f"git log origin/main -{str(count)} --pretty=%cI".split() + [filename])
+    return exec_command("git log origin/main -1 --pretty=%cI".split() + [filename])
 
 
-def git_get_committer_datetime(filename: str, count: int = 1) -> List[datetime]:
-    return list(map(get_utc, git_get_committer_date(filename, count).splitlines()))
+def git_get_committer_datetime(filename: str) -> datetime:
+    return get_utc(git_get_committer_date(filename))
 
 
 @functools.lru_cache(maxsize=1)
@@ -455,7 +455,7 @@ class QiitaArticle(NamedTuple):
     @classmethod
     def fromFile(cls, filepath: Path, git_timestamp: bool = False) -> QiitaArticle:
         text = filepath.read_text()
-        timestamp = git_get_committer_datetime(str(filepath))[0] if git_timestamp else \
+        timestamp = git_get_committer_datetime(str(filepath)) if git_timestamp else \
              datetime.fromtimestamp(filepath.stat().st_mtime, timezone.utc)
         m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
         logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')

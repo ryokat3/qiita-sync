@@ -20,12 +20,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Check GitHub repository
         run: |
+          echo "git rev-parse --show-toplevel"
           git rev-parse --show-toplevel
+          echo "git config --get remote.origin.url"
           git config --get remote.origin.url
+          echo "git rev-parse --abbrev-ref HEAD"
           git rev-parse --abbrev-ref HEAD
-          git rev-parse --abbrev-ref HEAD
-          git log origin/main -4 --pretty=%cI qiita_sync/qiita_sync.py
-          git fetch
+          echo "git log origin/main -4 --pretty=%cI qiita_sync/qiita_sync.py"    
           git log origin/main -4 --pretty=%cI qiita_sync/qiita_sync.py
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
