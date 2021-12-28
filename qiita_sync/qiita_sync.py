@@ -9,6 +9,7 @@ import subprocess
 import re
 import logging
 import sys
+import difflib
 from argparse import ArgumentParser
 from itertools import dropwhile
 from pathlib import Path
@@ -369,10 +370,16 @@ def qiita_get_temporary_title(body: str) -> str:
 
 class QiitaTag(NamedTuple):
     name: str
-    versions: List[str]
+    versions: Tuple[str, ...]
 
     def __str__(self) -> str:
         return (f"{self.name}={'|'.join(self.versions)}" if len(self.versions) > 0 else self.name)
+
+    def __eq__(self, other) -> bool:   
+        return isinstance(other, QiitaTag) and self.name.lower() == other.name.lower() and self.versions == other.versions
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other) 
 
     def toApi(self) -> Dict[str, Any]:
         return {"name": self.name, "versions": self.versions}
@@ -380,10 +387,10 @@ class QiitaTag(NamedTuple):
     @classmethod
     def fromString(cls, text: str) -> QiitaTag:
         tpl = text.split("=", 1)
-        return cls(tpl[0], tpl[1].split("|")) if len(tpl) == 2 else cls(tpl[0], [])
+        return cls(tpl[0], tuple(sorted(tpl[1].split("|")))) if len(tpl) == 2 else cls(tpl[0], tuple())
 
 
-class QiitaTags(List[QiitaTag]):
+class QiitaTags(Tuple[QiitaTag, ...]):
 
     def __str__(self) -> str:
         return ",".join(map(str, self))
@@ -393,11 +400,11 @@ class QiitaTags(List[QiitaTag]):
 
     @classmethod
     def fromString(cls, text: str) -> QiitaTags:
-        return cls(map(lambda s: QiitaTag.fromString(s), text.split(",")))
+        return cls(tuple(sorted(map(lambda s: QiitaTag.fromString(s), text.split(",")))))
 
     @classmethod
     def fromApi(cls, value) -> QiitaTags:
-        return cls(map(lambda data: QiitaTag(data["name"], data["versions"]), value))
+        return cls(tuple(sorted(map(lambda data: QiitaTag(data["name"], tuple(sorted(data["versions"]))), value))))
 
 
 class QiitaData(NamedTuple):
@@ -416,6 +423,12 @@ class QiitaData(NamedTuple):
                     f"private: {'true' if self.private else 'false'}"
                 ],
             ))
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, QiitaData) and self.title == other.title and self.tags == other.tags
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
 
     @classmethod
     def fromString(cls, text: str) -> Union[QiitaData, Dict[str, str]]:
@@ -441,6 +454,12 @@ class QiitaArticle(NamedTuple):
     timestamp: datetime
     filepath: Optional[Path]
 
+    def __eq__(self, other) -> bool:        
+        return isinstance(other, QiitaArticle) and self.data == other.data and self.body.strip() == other.body.strip()
+
+    def __ne__(self, other) -> bool:        
+        return not self.__eq__(other) 
+
     def toText(self) -> str:
         return (f"{os.linesep.join(['<!--', str(self.data), '-->'])}{os.linesep}{self.body}")
 
@@ -455,8 +474,8 @@ class QiitaArticle(NamedTuple):
     @classmethod
     def fromFile(cls, filepath: Path, git_timestamp: bool = False) -> QiitaArticle:
         text = filepath.read_text()
-        timestamp = git_get_committer_datetime(str(filepath)) if git_timestamp else \
-             datetime.fromtimestamp(filepath.stat().st_mtime, timezone.utc)
+        timestamp = git_get_committer_datetime(str(filepath)) if git_timestamp else datetime.fromtimestamp(
+            filepath.stat().st_mtime, timezone.utc)
         m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
         logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')
         qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
@@ -618,6 +637,9 @@ class QiitaSync(NamedTuple):
         except Exception:
             return None
 
+    def getQiitaUrl(self, id: str) -> str:
+        return f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}"
+
     def getArticleDir(self, article: QiitaArticle) -> Path:
         return article.filepath.parent if article.filepath is not None else Path(self.git_dir)
 
@@ -666,8 +688,8 @@ class QiitaSync(NamedTuple):
         return Maybe(link).filterNot(
             os.path.isabs).filterNot(is_url).map(lambda x: add_path(self.getArticleDir(article), Path(x))).filter(
                 lambda p: p.is_file()).map(lambda f: QiitaArticle.fromFile(f, self.git_timestamp)).optionalMap(
-                    lambda article: article.data.id).map(
-                        lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
+                    lambda article: article.data.id).map(self.getQiitaUrl).getOrElse(link)
+        # lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
 
     def toGlobalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
@@ -679,12 +701,7 @@ class QiitaSync(NamedTuple):
 
         return article._replace(
             body=markdown_replace_text(lambda text: convert_image_link(convert_link(text)), article.body))
-
-    def addFilepath(self, article: QiitaArticle) -> QiitaArticle:
-        if article.data.id is not None and article.data.id in self.atcl_id_map:
-            return article._replace(filepath=self.atcl_id_map[article.data.id].filepath)
-        else:
-            return article
+            
 
     def download(self, article: QiitaArticle):
         if article.data.id is not None:
@@ -704,11 +721,6 @@ class QiitaSync(NamedTuple):
         with (article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")).open("w") as fp:
             fp.write(article.toText())
 
-    def download_all(self):
-        return list(
-            map(self.toLocalFormat,
-                map(self.addFilepath, [QiitaArticle.fromApi(elem) for elem in qiita_get_item_list(self.caller)])))
-
     def delete(self, article: QiitaArticle):
         if article.data.id is not None:
             qiita_delete_item(self.caller, article.data.id)
@@ -719,10 +731,67 @@ class QiitaSync(NamedTuple):
 ########################################################################
 
 
+def qsync_check(
+    qsync: QiitaSync,
+    on_diff: Callable[[QiitaArticle, QiitaArticle], None],
+    on_global_only: Callable[[QiitaArticle], None],
+    on_local_only: Callable[[QiitaArticle], None]
+):
+    item_list = qiita_get_item_list(qsync.caller)
+    if item_list is not None:
+        global_article_list = [QiitaArticle.fromApi(elem) for elem in item_list]
+        for global_article in global_article_list:
+            if global_article.data.id is None:
+                logger.critical('No ID is defined in Qiita items API')
+                continue
+            local_article = qsync.getArticleById(global_article.data.id)
+            if local_article is not None:
+                if qsync.toLocalFormat(local_article) != qsync.toLocalFormat(global_article._replace(filepath=local_article.filepath)):
+                    on_diff(local_article, global_article)
+            else:
+                on_global_only(global_article)
+
+        global_article_id_list = [
+            global_article.data.id for global_article in global_article_list if global_article.data.id is not None
+        ]
+        for local_article in qsync.atcl_path_map.values():
+            if local_article.data.id is None or local_article.data.id not in global_article_id_list:
+                on_local_only(local_article)
+
+
+def qsync_show_on_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle):
+    la = qsync.toLocalFormat(local_article)
+    ga = qsync.toLocalFormat(global_article)
+    if la.body != ga.body:
+        for diff in difflib.ndiff(la.body.splitlines(), ga.body.splitlines()):
+            print(diff)
+
+    if local_article.timestamp > global_article.timestamp:
+        if local_article.filepath is None:
+            raise ApplicationError('No filepath defined')
+        print(f"{local_article.filepath} is newer")
+    else:
+        if global_article.data.id is None:
+            raise ApplicationError('No id defined')
+        print(f"{qsync.getQiitaUrl(global_article.data.id)} is new")
+
+
+def qsync_show_on_local_only(local_article: QiitaArticle):
+    if local_article.filepath is None:
+        raise ApplicationError('No filepath defined')
+    print(f"{local_article.filepath} is new article")
+
+
+def qsync_show_on_global_only(qsync: QiitaSync, global_article: QiitaArticle):
+    if global_article.data.id is None:
+        raise ApplicationError('No id defined')
+    print(f"{qsync.getQiitaUrl(global_article.data.id)} is new article")
+
+
 def qsync_subcommand_download(qsync: QiitaSync, target: Path):
     logger.debug(f"{target} download")
-    for article in qsync.getArticleByPath(target).values():
-        qsync.download(article)
+    for global_article in qsync.getArticleByPath(target).values():
+        qsync.download(global_article)
 
 
 def qsync_subcommand_upload(qsync: QiitaSync, target: Path):
@@ -739,7 +808,10 @@ def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
 
 def qsync_subcommand_check(qsync: QiitaSync, target: Path):
     logger.debug(f"{target} check")
-    print(qsync.atcl_path_map)
+    qsync_check(qsync,
+        lambda l, g: qsync_show_on_diff(qsync, l, g),
+        lambda atcl: qsync_show_on_global_only(qsync, atcl),
+        qsync_show_on_local_only)
 
 
 def qsync_argparse() -> ArgumentParser:
