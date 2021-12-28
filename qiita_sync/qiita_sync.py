@@ -767,8 +767,10 @@ def qsync_check_all(qsync: QiitaSync, on_diff: Callable[[QiitaArticle, QiitaArti
 
 def qsync_sync(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle):
     if local_article.timestamp > global_article.timestamp:
+        print("local is new")
         qsync.upload(local_article)
     else:
+        print("global is new")
         qsync.save(global_article._replace(filepath=local_article.filepath))
 
 
