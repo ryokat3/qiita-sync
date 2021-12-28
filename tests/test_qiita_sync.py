@@ -142,6 +142,7 @@ def topdir_fx(mocker: MockerFixture, tmpdir) -> Generator[Path, None, None]:
 
     yield topdir
 
+
 ########################################################################
 # CLI Test
 ########################################################################
@@ -172,36 +173,28 @@ def test_QiitaSync_instance(topdir_fx: Path):
 # Util Test
 ########################################################################
 
-@pytest.mark.parametrize("to_path, from_path, relpath",
-[
+
+@pytest.mark.parametrize("to_path, from_path, relpath", [
     ("/h1", "/h2", "../h1"),
     ("/h1", "/", "h1"),
     ("/", "/h2", ".."),
     ("/h1", "/h1", "."),
 ])
-def test_rel_path(to_path, from_path, relpath):    
+def test_rel_path(to_path, from_path, relpath):
     assert rel_path(Path(to_path), Path(from_path)) == Path(relpath)
 
 
-@pytest.mark.parametrize("path, subpath, expected",
-[
-    ("/h1", "../h2", "/h2"),
-    ("/h1", "h2", "/h1/h2"),
-    ("/h1", ".", "/h1"),
-    ("/h1", "..", "/"),
-    ("/h1/h2", "..", "/h1")
-])
-def test_add_path(path, subpath, expected):    
+@pytest.mark.parametrize("path, subpath, expected", [("/h1", "../h2", "/h2"), ("/h1", "h2", "/h1/h2"),
+                                                     ("/h1", ".", "/h1"), ("/h1", "..", "/"), ("/h1/h2", "..", "/h1")])
+def test_add_path(path, subpath, expected):
     assert add_path(Path(path), Path(subpath)) == Path(expected)
 
 
 @pytest.mark.parametrize("url, subpath, expected",
-[
-    ("https://www.exapmle.com/main/doc", "../img/", "https://www.exapmle.com/main/img"),
-    ("https://www.exapmle.com/main/doc", "hehe", "https://www.exapmle.com/main/doc/hehe"),
-    ("https://www.exapmle.com/main", "..", "https://www.exapmle.com/"),
-    ("https://www.exapmle.com/main/", "..", "https://www.exapmle.com/")
-])
+                         [("https://www.exapmle.com/main/doc", "../img/", "https://www.exapmle.com/main/img"),
+                          ("https://www.exapmle.com/main/doc", "hehe", "https://www.exapmle.com/main/doc/hehe"),
+                          ("https://www.exapmle.com/main", "..", "https://www.exapmle.com/"),
+                          ("https://www.exapmle.com/main/", "..", "https://www.exapmle.com/")])
 def test_url_add_path(url, subpath, expected):
     assert url_add_path(url, Path(subpath)) == expected
 
@@ -209,16 +202,10 @@ def test_url_add_path(url, subpath, expected):
 def test_get_utc():
     assert str(get_utc('2021-12-27T00:40:01+09:00')).endswith("+00:00")
 
+
 ########################################################################
 # Git Test
 ########################################################################
-
-
-#def test_git_get_committer_date():
-#    result = git_get_committer_datetime('qiita_sync/qiita_sync.py', 3)
-#    assert len(result) == 3
-#    assert result[0] > result[1]
-#    assert result[1] > result[2]
 
 
 ########################################################################
@@ -279,13 +266,8 @@ def test_markdown_replace_image(text, func, replaced):
 ########################################################################
 
 
-@pytest.mark.parametrize("md1, md2, img",
-[
-    (None, None, 'img'),
-    (None, 'doc', 'img'),
-    ('doc', None, 'img'),
-    ('doc/more', None, None)
-])
+@pytest.mark.parametrize("md1, md2, img", [(None, None, 'img'), (None, 'doc', 'img'), ('doc', None, 'img'),
+                                           ('doc/more', None, None)])
 def test_QiitaSync_toGlobalFormat(md1, md2, img, topdir_fx: Path):
     md1dir = topdir_fx.joinpath(md1) if md1 is not None else topdir_fx
     md2dir = topdir_fx.joinpath(md2) if md2 is not None else topdir_fx
@@ -307,11 +289,17 @@ def test_QiitaSync_toGlobalFormat(md1, md2, img, topdir_fx: Path):
     qsync = qsync_init(args)
     converted = qsync.toGlobalFormat(markdown_1_article)
 
-    assert markdown_find_line(converted.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{TEST_QIITA_ID}/items/{TEST_ARTICLE_ID1})'
+    assert markdown_find_line(
+        converted.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{TEST_QIITA_ID}/items/{TEST_ARTICLE_ID1})'
     assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/markdown_2.md)'
-    assert markdown_find_line(converted.body, 'ImageTest1:')[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(imgrel2)}ImageTest.png)'
-    assert markdown_find_line(converted.body, 'ImageTest2:')[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(imgrel2)}ImageTest.png description)'
-    assert markdown_find_line(converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
+    assert markdown_find_line(
+        converted.body, 'ImageTest1:'
+    )[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(imgrel2)}ImageTest.png)'
+    assert markdown_find_line(
+        converted.body, 'ImageTest2:'
+    )[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(imgrel2)}ImageTest.png description)'
+    assert markdown_find_line(
+        converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
 
 
 def test_QiitaSync_toLocalFormat(topdir_fx: Path):
@@ -325,11 +313,12 @@ def test_QiitaSync_toLocalFormat(topdir_fx: Path):
     qsync = qsync_init(args)
     converted = qsync.toLocalFormat(markdown_3_article)
 
-    assert markdown_find_line(converted.body, 'LinkTest1:')[0] == f'[dlink](markdown_2.md)'
+    assert markdown_find_line(converted.body, 'LinkTest1:')[0] == '[dlink](markdown_2.md)'
     assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/markdown_2.md)'
-    assert markdown_find_line(converted.body, 'ImageTest1:')[0] == f'![ImageTest](img/ImageTest.png)'
-    assert markdown_find_line(converted.body, 'ImageTest2:')[0] == f'![ImageTest](img/ImageTest.png description)'
-    assert markdown_find_line(converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
+    assert markdown_find_line(converted.body, 'ImageTest1:')[0] == '![ImageTest](img/ImageTest.png)'
+    assert markdown_find_line(converted.body, 'ImageTest2:')[0] == '![ImageTest](img/ImageTest.png description)'
+    assert markdown_find_line(
+        converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
 
 
 def test_QiitaSync_format_conversion(topdir_fx: Path):
@@ -344,7 +333,7 @@ def test_QiitaSync_format_conversion(topdir_fx: Path):
     args = qsync_argparse().parse_args("download .".split())
     qsync = qsync_init(args)
 
-    assert qsync.toLocalFormat(qsync.toGlobalFormat(markdown1_article)).body.lower() == markdown1_article.body.lower()
-    assert qsync.toLocalFormat(qsync.toGlobalFormat(markdown1_article)).body.lower() == qsync.toLocalFormat(markdown1_article).body.lower()
-    assert qsync.toGlobalFormat(qsync.toLocalFormat(markdown3_article)).body.lower() == markdown3_article.body.lower()
-    assert qsync.toGlobalFormat(qsync.toLocalFormat(markdown3_article)).body.lower() == qsync.toGlobalFormat(markdown3_article).body.lower()
+    assert qsync.toLocalFormat(
+        qsync.toGlobalFormat(markdown1_article)).body.lower() == qsync.toLocalFormat(markdown1_article).body.lower()
+    assert qsync.toGlobalFormat(
+        qsync.toLocalFormat(markdown3_article)).body.lower() == qsync.toGlobalFormat(markdown3_article).body.lower()

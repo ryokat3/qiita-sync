@@ -1,4 +1,5 @@
 access_token.txt
+setup.sh
 qiita
 .venv
 .python-version

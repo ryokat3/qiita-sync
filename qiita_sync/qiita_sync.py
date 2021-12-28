@@ -134,6 +134,14 @@ def get_utc(iso8601: str) -> datetime:
     return datetime.strptime(iso8601, "%Y-%m-%dT%H:%M:%S%z").astimezone(timezone.utc)
 
 
+def to_normalize_body(content: str, linesep: str = os.linesep) -> str:
+    return linesep.join(
+        reversed(
+            list(
+                dropwhile(lambda line: line.strip() == '',
+                          reversed(list(dropwhile(lambda line: line.strip() == '', content.splitlines())))))))
+
+
 ########################################################################
 # Maybe
 ########################################################################
@@ -375,11 +383,12 @@ class QiitaTag(NamedTuple):
     def __str__(self) -> str:
         return (f"{self.name}={'|'.join(self.versions)}" if len(self.versions) > 0 else self.name)
 
-    def __eq__(self, other) -> bool:   
-        return isinstance(other, QiitaTag) and self.name.lower() == other.name.lower() and self.versions == other.versions
+    def __eq__(self, other) -> bool:
+        return isinstance(other,
+                          QiitaTag) and self.name.lower() == other.name.lower() and self.versions == other.versions
 
     def __ne__(self, other) -> bool:
-        return not self.__eq__(other) 
+        return not self.__eq__(other)
 
     def toApi(self) -> Dict[str, Any]:
         return {"name": self.name, "versions": self.versions}
@@ -454,11 +463,11 @@ class QiitaArticle(NamedTuple):
     timestamp: datetime
     filepath: Optional[Path]
 
-    def __eq__(self, other) -> bool:        
+    def __eq__(self, other) -> bool:
         return isinstance(other, QiitaArticle) and self.data == other.data and self.body.strip() == other.body.strip()
 
-    def __ne__(self, other) -> bool:        
-        return not self.__eq__(other) 
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
 
     def toText(self) -> str:
         return (f"{os.linesep.join(['<!--', str(self.data), '-->'])}{os.linesep}{self.body}")
@@ -677,7 +686,8 @@ class QiitaSync(NamedTuple):
             return markdown_replace_link(lambda link: self.toLocaMarkdownlLink(link, article), text)
 
         return article._replace(
-            body=markdown_replace_text(lambda text: convert_image_link(convert_link(text), article), article.body))
+            body=to_normalize_body(
+                markdown_replace_text(lambda text: convert_image_link(convert_link(text), article), article.body)))
 
     def toGlobalImageLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(link).filterNot(
@@ -689,7 +699,6 @@ class QiitaSync(NamedTuple):
             os.path.isabs).filterNot(is_url).map(lambda x: add_path(self.getArticleDir(article), Path(x))).filter(
                 lambda p: p.is_file()).map(lambda f: QiitaArticle.fromFile(f, self.git_timestamp)).optionalMap(
                     lambda article: article.data.id).map(self.getQiitaUrl).getOrElse(link)
-        # lambda id: f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}").getOrElse(link)
 
     def toGlobalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
@@ -700,8 +709,8 @@ class QiitaSync(NamedTuple):
             return markdown_replace_link(lambda link: self.toGlobalMarkdownLink(link, article), text)
 
         return article._replace(
-            body=markdown_replace_text(lambda text: convert_image_link(convert_link(text)), article.body))
-            
+            body=to_normalize_body(
+                markdown_replace_text(lambda text: convert_image_link(convert_link(text)), article.body), '\n'))
 
     def download(self, article: QiitaArticle):
         if article.data.id is not None:
@@ -731,12 +740,8 @@ class QiitaSync(NamedTuple):
 ########################################################################
 
 
-def qsync_check(
-    qsync: QiitaSync,
-    on_diff: Callable[[QiitaArticle, QiitaArticle], None],
-    on_global_only: Callable[[QiitaArticle], None],
-    on_local_only: Callable[[QiitaArticle], None]
-):
+def qsync_check_all(qsync: QiitaSync, on_diff: Callable[[QiitaArticle, QiitaArticle], None],
+                    on_global_only: Callable[[QiitaArticle], None], on_local_only: Callable[[QiitaArticle], None]):
     item_list = qiita_get_item_list(qsync.caller)
     if item_list is not None:
         global_article_list = [QiitaArticle.fromApi(elem) for elem in item_list]
@@ -746,7 +751,8 @@ def qsync_check(
                 continue
             local_article = qsync.getArticleById(global_article.data.id)
             if local_article is not None:
-                if qsync.toLocalFormat(local_article) != qsync.toLocalFormat(global_article._replace(filepath=local_article.filepath)):
+                if qsync.toLocalFormat(local_article) != qsync.toLocalFormat(
+                        global_article._replace(filepath=local_article.filepath)):
                     on_diff(local_article, global_article)
             else:
                 on_global_only(global_article)
@@ -759,11 +765,18 @@ def qsync_check(
                 on_local_only(local_article)
 
 
+def qsync_sync(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle):
+    if local_article.timestamp > global_article.timestamp:
+        qsync.upload(local_article)
+    else:
+        qsync.save(global_article._replace(filepath=local_article.filepath))
+
+
 def qsync_show_on_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle):
     la = qsync.toLocalFormat(local_article)
     ga = qsync.toLocalFormat(global_article)
     if la.body != ga.body:
-        for diff in difflib.ndiff(la.body.splitlines(), ga.body.splitlines()):
+        for diff in difflib.unified_diff(la.body.splitlines(), ga.body.splitlines()):
             print(diff)
 
     if local_article.timestamp > global_article.timestamp:
@@ -808,10 +821,13 @@ def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
 
 def qsync_subcommand_check(qsync: QiitaSync, target: Path):
     logger.debug(f"{target} check")
-    qsync_check(qsync,
-        lambda l, g: qsync_show_on_diff(qsync, l, g),
-        lambda atcl: qsync_show_on_global_only(qsync, atcl),
-        qsync_show_on_local_only)
+    qsync_check_all(qsync, lambda l, g: qsync_show_on_diff(qsync, l, g),
+                    lambda atcl: qsync_show_on_global_only(qsync, atcl), qsync_show_on_local_only)
+
+
+def qsync_subcommand_sync(qsync: QiitaSync, target: Path):
+    logger.debug(f"{target} sync")
+    qsync_check_all(qsync, lambda l, g: qsync_sync(qsync, l, g), qsync.save, qsync.upload)
 
 
 def qsync_argparse() -> ArgumentParser:
@@ -833,6 +849,7 @@ def qsync_argparse() -> ArgumentParser:
     common_arg(subparsers.add_parser("upload", help="upload help")).set_defaults(func=qsync_subcommand_upload)
     common_arg(subparsers.add_parser("check", help="check help")).set_defaults(func=qsync_subcommand_check)
     common_arg(subparsers.add_parser("delete", help="delete help")).set_defaults(func=qsync_subcommand_delete)
+    common_arg(subparsers.add_parser("sync", help="sync help")).set_defaults(func=qsync_subcommand_sync)
 
     return parser
 
