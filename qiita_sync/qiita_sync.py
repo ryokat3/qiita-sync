@@ -727,8 +727,9 @@ class QiitaSync(NamedTuple):
                 lambda x: article._replace(data=x.data, timestamp=x.timestamp)).map(lambda x: self.save(x))
 
     def save(self, article: QiitaArticle):
-        with (article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")).open("w") as fp:
-            fp.write(self.toLocalFormat(article).toText())
+        filepath = article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")
+        with filepath.open("w") as fp:
+            fp.write(self.toLocalFormat(article._replace(filepath=filepath)).toText())
 
     def delete(self, article: QiitaArticle):
         if article.data.id is not None:
