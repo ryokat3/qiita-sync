@@ -723,7 +723,7 @@ class QiitaSync(NamedTuple):
         if article.data.id is not None:
             qiita_patch_item(self.caller, article.data.id, self.toGlobalFormat(article).toApi())
         else:
-            Maybe(qiita_post_item(self.caller, article.toApi())).map(QiitaArticle.fromApi).map(
+            Maybe(qiita_post_item(self.caller, self.toGlobalFormat(article).toApi())).map(QiitaArticle.fromApi).map(
                 lambda x: article._replace(data=x.data, timestamp=x.timestamp)).map(lambda x: self.save(x))
 
     def save(self, article: QiitaArticle):
