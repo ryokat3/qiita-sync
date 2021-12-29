@@ -2,10 +2,11 @@ import os
 import random
 import string
 import pytest
+import datetime
 from pathlib import Path
-from typing import Generator, List, Optional
+from typing import Generator, List, Optional, NamedTuple, Dict
 
-from qiita_sync.qiita_sync import QiitaArticle
+from qiita_sync.qiita_sync import QiitaArticle, QiitaSync
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc
@@ -119,7 +120,7 @@ ImageTest3: ![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)
 
 
 def markdown4():
-    return f"""
+    return """
 <!--
 private: true
 -->
@@ -139,10 +140,25 @@ def topdir_fx(mocker: MockerFixture, tmpdir) -> Generator[Path, None, None]:
     mocker.patch(f'{QSYNC_MODULE_PATH}git_get_remote_url', return_value=TEST_GITHUB_SSH_URL)
     mocker.patch(f'{QSYNC_MODULE_PATH}git_get_default_branch', return_value=TEST_GITHUB_BRANCH)
     mocker.patch(f'{QSYNC_MODULE_PATH}git_get_topdir', return_value=str(topdir))
+    mocker.patch(f'{QSYNC_MODULE_PATH}git_get_committer_datetime', return_value=datetime.datetime.now())
 
     yield topdir
 
 
+class MarkdownFile(NamedTuple):
+    filepath: Path
+    body: str
+    id: str
+
+
+class MarkdownRepo(NamedTuple):
+    qsync: QiitaSync
+    file_dict: Dict[str, MarkdownFile]
+
+    @staticmethod
+    def getInstance(cls, qsync: QiitaSync, file_list: List[MarkdownFile]):
+        return MarkdownRepo(qsync, dict([(mf.filepath.name, mf) for mf in file_list]))
+            
 ########################################################################
 # CLI Test
 ########################################################################
