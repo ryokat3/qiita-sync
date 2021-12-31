@@ -35,17 +35,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added "workflow_dispatch" event tigger for github actions
-- Added Python version 3.6 ,3.7, and 3.10.1 to GitHub Actions
 
+### Changed
+
+- Changed Python version to 3.6 and 3.10.1 in GitHub Actions
+
+### Fixed
+
+- Fixed get double-underscores to display in CHANGELOG.md
 
 ## 1.0.0 - 2021-12-31
 
 ### Added
 
 - qiita_sync/qiita_sync.py
-- qiita_sync/__init__.py
+- qiita_sync/\__init__.py
 - tests/test_qiita_sync.py
-- tests/__init__.py
+- tests/\__init__.py
 - github_actions/qiita_sync.yml
 - github_actions/qiita_sync_check.yml
 - README.md
