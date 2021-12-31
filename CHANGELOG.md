@@ -49,9 +49,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - qiita_sync/qiita_sync.py
-- qiita_sync/\__init__.py
+- qiita_sync/\_\_init_\_.py
 - tests/test_qiita_sync.py
-- tests/\__init__.py
+- tests/\_\_init_\_.py
 - github_actions/qiita_sync.yml
 - github_actions/qiita_sync_check.yml
 - README.md
