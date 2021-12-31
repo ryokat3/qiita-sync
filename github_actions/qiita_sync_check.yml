@@ -1,0 +1,31 @@
+name: Qiita Sync Check
+
+on:
+  schedule:
+    - cron: "29 17 * * *"
+  workflow_run:
+    workflows: ["Qiita Sync"]
+    types:
+      - completed
+
+jobs:
+  qiita_sync_check:
+    name: qiita-sync check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install qiita-sync
+        run: |
+          curl -OL https://raw.githubusercontent.com/wak109/qiita-sync/v1.0.0/qiita_sync/qiita_sync.py
+      - name: Run qiita-sync check
+        run: |
+          python qiita_sync.py check . > ./qiita_sync_output.txt
+          cat ./qiita_sync_output.txt
+          [ ! -s "qiita_sync_output.txt" ] || exit 1
+        env: 
+          QIITA_ACCESS_TOKEN: ${{ secrets.QIITA_ACCESS_TOKEN }}

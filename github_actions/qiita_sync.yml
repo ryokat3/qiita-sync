@@ -1,0 +1,37 @@
+name: Qiita Sync
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  qiita_sync_check:
+    name: Run qiita-sync sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install qiita-sync
+        run: |
+          curl -OL https://raw.githubusercontent.com/wak109/qiita-sync/v1.0.0/qiita_sync/qiita_sync.py
+      - name: Run qiita-sync
+        run: |
+          python qiita_sync.py sync .
+        env: 
+          QIITA_ACCESS_TOKEN: ${{ secrets.QIITA_ACCESS_TOKEN }}
+      - name: Git
+        run: |
+          find . -name '*.md' -not -path './.*' | xargs git add
+          if ! git diff --staged --exit-code --quiet
+          then
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            find . -name '*.md' -not -path './.*' | xargs git add
+            git commit -m "updated by qiita-sync"
+            git push
+          fi
