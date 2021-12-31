@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added "workflow_dispatch" event tigger for github actions
+- Added Python version 3.6 and 3.7 to GitHub Actions
 
 
 ## 1.0.0 - 2021-12-31
