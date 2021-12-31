@@ -32,6 +32,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Added "workflow_dispatch" event tigger for github actions
+
 
 ## 1.0.0 - 2021-12-31
 
