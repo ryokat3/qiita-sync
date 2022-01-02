@@ -1,11 +1,13 @@
 [tool.poetry]
 name = "qiita-sync"
-version = "0.1.0"
-description = ""
-authors = ["wak109 <wak109@gmail.com>"]
+version = "1.0.3"
+description = "Synchronize GitHub with Qiita"
+authors = ["Ryoji Kato <ryokat3@gmail.com>"]
+readme = "README.md"
+homepage = "https://github.com/wak109/qiita-sync"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
@@ -22,3 +24,6 @@ build-backend = "poetry.core.masonry.api"
 based_on_style = "yapf"
 column_limit = 119
 indent_width = 4
+
+[tool.poetry.scripts]
+qiita_sync = 'qiita_sync:qsync_main'

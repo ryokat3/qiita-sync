@@ -2,13 +2,18 @@
 
 ![pytest](https://github.com/wak109/qiita-sync/actions/workflows/pytest.yml/badge.svg)
 
+qiita-sync can make Qiita synchronized with GitHub.
+
+If an article is updated in GitHub repository, this update is also applied to Qiita.
+The vise-versa is also possible.
+
+
 ## Get Started
 
 ### Requirement
 
-- Python           (>= 3.6)
-- Git CLI          (Optional)
-- GitHub Account   (optional)
+- Qiita Account
+- GitHub repository
 
 ### Preparation
 

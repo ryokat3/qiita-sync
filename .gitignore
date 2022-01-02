@@ -1,6 +1,6 @@
 access_token.txt
 setup.sh
-qiita
+dist
 .venv
 .python-version
 .pytest_cache

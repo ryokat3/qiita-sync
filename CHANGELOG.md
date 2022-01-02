@@ -23,6 +23,7 @@ Policy:
 - PATCH version     when you make backwards compatible bug fixes.
 
 -->
+
 # Change Log
 
 All notable changes to this project will be documented in this file.
@@ -35,10 +36,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added "workflow_dispatch" event tigger for github actions
+- Added "[tool.poetry.scripts]" to pyproject.toml
 
 ### Changed
 
 - Changed Python version to 3.6 and 3.10.1 in GitHub Actions
+- Changed project information in pyproject.toml
+- Changed .gitignore to exlucde dist directory
+- Removed \_\_version_\_ from \_\_init_\_.py 
 
 ### Fixed
 
