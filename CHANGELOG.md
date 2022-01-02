@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Changed Python version to 3.6 and 3.10.1 in GitHub Actions
+- Changed Python version to 3.7 and 3.10.1 in GitHub Actions
 - Changed project information in pyproject.toml
 - Changed .gitignore to exlucde dist directory
 - Removed \_\_version_\_ from \_\_init_\_.py 

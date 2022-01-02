@@ -39,3 +39,9 @@ The vise-versa is also possible.
    curl -sH "Authorization: Bearer $(cat access_token.txt)" https://qiita.com/api/v2/authenticated_user/items
    ```
 #### GitHub Repository (Optional)
+
+
+
+## Note
+
+- Supported version is 3.7 or newer because "future feature annotations is not defined" in 3.6
