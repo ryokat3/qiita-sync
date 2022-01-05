@@ -4,11 +4,11 @@ import string
 import pytest
 import datetime
 from pathlib import Path
-from typing import Generator, List, Optional, NamedTuple, Dict
+from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 
 from qiita_sync.qiita_sync import QiitaArticle, QiitaSync
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
-from qiita_sync.qiita_sync import qsync_init, qsync_argparse
+from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc
 from qiita_sync.qiita_sync import git_get_committer_datetime, git_get_committer_date, git_get_topdir
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
@@ -147,8 +147,7 @@ def topdir_fx(mocker: MockerFixture, tmpdir) -> Generator[Path, None, None]:
 
 class MarkdownFile(NamedTuple):
     filepath: Path
-    body: str
-    id: str
+    getBody: Callable[[Callable[[str],str], Callable[[str],str]], str]
 
 
 class MarkdownRepo(NamedTuple):
@@ -158,7 +157,15 @@ class MarkdownRepo(NamedTuple):
     @staticmethod
     def getInstance(cls, qsync: QiitaSync, file_list: List[MarkdownFile]):
         return MarkdownRepo(qsync, dict([(mf.filepath.name, mf) for mf in file_list]))
-            
+
+    def getLocalMarkdown(self, filename: str):
+        return Maybe(self.file_dict.get(filename)).map(lambda mf: (mf, lambda target: os.path.relpath(target, mf.filepath))).map(lambda tpl: tpl[0].getBody(tpl[1], tpl[1])).getOrElse(filename)
+
+    def getGlobalMarkdown(self, filename: str):
+        Maybe(QiitaArticle.fromFile(Path(self.qsync.git_dir).joinpath(str)).data.id).map()
+
+
+        
 ########################################################################
 # CLI Test
 ########################################################################
