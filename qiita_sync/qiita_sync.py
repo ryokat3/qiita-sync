@@ -48,6 +48,9 @@ DEFAULT_EXCLUDE_GLOB = ['**/README.md', '.*/**/*.md']
 
 ACCESS_TOKEN_ENV = "QIITA_ACCESS_TOKEN"
 
+DEFAULT_TITLE = "No Title"
+DEFAULT_TAGS = "No Tag"
+
 ########################################################################
 # Logger
 ########################################################################
@@ -373,7 +376,13 @@ def qiita_get_first_line(body: str) -> Optional[str]:
 
 
 def qiita_get_temporary_title(body: str) -> str:
-    return qiita_get_first_section(body) or qiita_get_first_line(body) or "No Title"
+    # TODO: smarter implementation if exists
+    return qiita_get_first_section(body) or qiita_get_first_line(body) or DEFAULT_TITLE
+
+
+def qiita_get_temporary_tags(_: str) -> str:
+    # TODO: smarter implementation if exists
+    return DEFAULT_TAGS
 
 
 class QiitaTag(NamedTuple):
@@ -440,21 +449,20 @@ class QiitaData(NamedTuple):
         return not self.__eq__(other)
 
     @classmethod
-    def fromString(cls, text: str) -> Union[QiitaData, Dict[str, str]]:
-        data = (
-            dict(
-                map(
-                    lambda tpl: (tpl[0].strip(), tpl[1].strip()),
+    def fromString(cls, text: str, default_title=DEFAULT_TITLE, default_tags=DEFAULT_TAGS) -> QiitaData:
+        data = dict({"title": default_title, "tags": default_tags},
+            **dict(map(lambda tpl: (tpl[0].strip(), tpl[1].strip()),
                     map(lambda line: line.split(":", 1),
-                        filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None, text.splitlines()))))
-            if text is not None else {})
-        return (cls(data["title"], QiitaTags.fromString(data["tags"]), data["id"] if "id" in data else None,
-                    str2bool(data["private"]) if "private" in data else False)
-                if "title" in data and "tags" in data else data)
+                        filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None, text.splitlines())))))
+        return cls(data["title"], QiitaTags.fromString(
+            data["tags"]), data.get("id"), Maybe(data.get("private")).map(str2bool).getOrElse(False))
 
     @classmethod
     def fromApi(cls, item) -> QiitaData:
         return cls(title=item["title"], tags=QiitaTags.fromApi(item["tags"]), id=item["id"], private=item["private"])
+
+
+HEADER_REGEX = re.compile(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", re.MULTILINE | re.DOTALL)
 
 
 class QiitaArticle(NamedTuple):
@@ -485,26 +493,18 @@ class QiitaArticle(NamedTuple):
         text = filepath.read_text()
         timestamp = git_get_committer_datetime(str(filepath)) if git_timestamp else datetime.fromtimestamp(
             filepath.stat().st_mtime, timezone.utc)
-        m = re.match(r"^\s*\<\!\-\-\s(.*?)\s\-\-\>(.*)$", text, re.MULTILINE | re.DOTALL)
-        logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')
-        qiita_data = QiitaData.fromString(m.group(1)) if m is not None else {}
+        m = HEADER_REGEX.match(text)
+        logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')        
+        body = Maybe(m).map(lambda m: m.group(2)).getOrElse(text)
+        data = QiitaData.fromString(Maybe(m).map(lambda m: m.group(1)).getOrElse(""),
+                qiita_get_temporary_title(body), qiita_get_temporary_tags(body))
 
-        if isinstance(qiita_data, QiitaData):
-            return cls(
-                data=qiita_data, body=m.group(2) if m is not None else "", timestamp=timestamp, filepath=filepath)
-        else:
-            return cls(
-                data=QiitaData(qiita_data["title"] if "title" in qiita_data else qiita_get_temporary_title(text),
-                               QiitaTags.fromString(qiita_data["tags"] if "tags" in qiita_data else "NoTag"), None,
-                               str2bool(qiita_data["private"]) if "private" in qiita_data else True),
-                body=m.group(2) if m is not None else text,
-                timestamp=timestamp,
-                filepath=filepath)
+        return cls(data=data, body=body, timestamp=timestamp, filepath=filepath)
 
     @classmethod
     def fromApi(cls, item) -> QiitaArticle:
-        return cls(
-            data=QiitaData.fromApi(item), body=item["body"], timestamp=get_utc(item["updated_at"]), filepath=None)
+        return cls(data=QiitaData.fromApi(item), body=item["body"],
+                timestamp=get_utc(item["updated_at"]), filepath=None)
 
 
 #######################################################################
@@ -518,22 +518,13 @@ MARKDOWN_IMAGE_REGEX = re.compile(r"(\!\[[^\]]*\]\()([^\ \)]+)(.*?\))", re.MULTI
 
 
 def markdown_code_block_split(text: str) -> List[str]:
-    return list(
-        filter(
-            lambda elm: elm is not None and re.match(r"^````*$", elm) is None,
-            re.split(CODE_BLOCK_REGEX, text),
-        ))
+    return list(filter(lambda elm: elm is not None and re.match(r"^````*$", elm) is None,
+                re.split(CODE_BLOCK_REGEX, text)))
 
 
 def markdown_code_inline_split(text: str) -> List[str]:
-    return list(
-        filter(
-            None,
-            filter(
-                lambda elm: elm is not None and re.match(r"^``*$", elm) is None,
-                re.split(CODE_INLINE_REGEX, text),
-            ),
-        ))
+    return list(filter(None, filter(lambda elm: elm is not None and re.match(r"^``*$", elm) is None,
+                re.split(CODE_INLINE_REGEX, text))))
 
 
 def markdown_replace_block_text(func: Callable[[str], str], text: str):

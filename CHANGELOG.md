@@ -44,6 +44,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changed project information in pyproject.toml
 - Changed .gitignore to exlucde dist directory
 - Removed \_\_version_\_ from \_\_init_\_.py 
+- Changed QiitaArticle.fromFile not to return dict even if title is not defined
+- Changed the setup of markdown test files to be smarter
 
 ### Fixed
 

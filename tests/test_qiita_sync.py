@@ -59,79 +59,6 @@ QSYNC_MODULE_PATH = "qiita_sync.qiita_sync."
 TEST_ARTICLE_ID1 = "1234567890ABCDEFG"
 
 
-def mkpath(p: Optional[str]):
-    return f"{p}/" if p is not None and p != "." else ""
-
-
-def markdown1(md: Optional[str] = None, img: Optional[str] = "img"):
-    return f"""
-# section
-
-LinkTest1: [dlink]({mkpath(md)}markdown_2.md)
-LinkTest2: [dlink](https://example.com/markdown/markdown_2.md)
-
-`````shell
-Short sequence of backticks
-```
-#LinkTest   [LinkTest](LintTest.md)
-#ImageTest ![ImageTest](image/ImageTest.png)
-`````
-
-## sub-section
-
-ImageTest1: ![ImageTest]({mkpath(img)}ImageTest.png)
-ImageTest2: ![ImageTest]({mkpath(img)}ImageTest.png description)
-ImageTest3: ![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)
-"""
-
-
-def markdown2():
-    return f"""
-<!--
-title: test
-tags:  test
-id:    {TEST_ARTICLE_ID1}
--->
-
-# test
-"""
-
-
-def markdown3(md: Optional[str] = None, img: Optional[str] = "img"):
-    return f"""
-# section
-
-LinkTest1: [dlink](https://qiita.com/{TEST_QIITA_ID}/items/{TEST_ARTICLE_ID1})
-LinkTest2: [dlink](https://example.com/markdown/markdown_2.md)
-
-`````shell
-Short sequence of backticks
-```
-#LinkTest   [LinkTest](LintTest.md)
-#ImageTest ![ImageTest](image/ImageTest.png)
-`````
-
-## sub-section
-
-ImageTest1: ![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(img)}ImageTest.png)
-ImageTest2: ![ImageTest](HTTPS://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(img)}ImageTest.png description)
-ImageTest3: ![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)
-"""
-
-
-def markdown4():
-    return """
-<!--
-private: true
--->
-
-LinkTest1: [dlink](markdown_2.md)
-
-ImageTest1: ![ImageTest](img/ImageTest.png)
-
-"""
-
-
 @pytest.fixture
 def topdir_fx(mocker: MockerFixture, tmpdir) -> Generator[Path, None, None]:
     topdir = Path(tmpdir)
@@ -145,27 +72,95 @@ def topdir_fx(mocker: MockerFixture, tmpdir) -> Generator[Path, None, None]:
     yield topdir
 
 
-class MarkdownFile(NamedTuple):
-    filepath: Path
-    getBody: Callable[[Callable[[str],str], Callable[[str],str]], str]
+class Asset(NamedTuple):
+    filepath: str
+    getBody: Optional[Callable[[Callable[[str], str], Callable[[str], str]], str]] = None
+
+    def isMarkdown(self) -> bool:
+        return self.getBody is not None
 
 
-class MarkdownRepo(NamedTuple):
+class Repository(NamedTuple):
     qsync: QiitaSync
-    file_dict: Dict[str, MarkdownFile]
+    asset_dict: Dict[str, Asset]
 
-    @staticmethod
-    def getInstance(cls, qsync: QiitaSync, file_list: List[MarkdownFile]):
-        return MarkdownRepo(qsync, dict([(mf.filepath.name, mf) for mf in file_list]))
+    @classmethod
+    def getInstance(cls, qsync: QiitaSync, asset_list: List[Asset]):
+        return Repository(qsync, dict([(Path(mf.filepath).name, mf) for mf in asset_list]))
 
-    def getLocalMarkdown(self, filename: str):
-        return Maybe(self.file_dict.get(filename)).map(lambda mf: (mf, lambda target: os.path.relpath(target, mf.filepath))).map(lambda tpl: tpl[0].getBody(tpl[1], tpl[1])).getOrElse(filename)
+    def writeMarkdown(self):
+        for asset in self.asset_dict.values():
+            if asset.isMarkdown():
+                target = Path(self.qsync.git_dir).joinpath(asset.filepath)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with target.open("w") as fp:
+                    fp.write(self.getLocalMarkdown(target.name))
+
+    def genGetLocalLink(self, source: str) -> Callable[[str], str]:
+        return lambda target: os.path.relpath(self.asset_dict.get(target).filepath, os.path.dirname(source))        
+
+    def getGlobalMarkdownLink(self, _target: str):
+        return Maybe(self.asset_dict.get(_target)).optionalMap(
+            lambda target: QiitaArticle.fromFile(Path(self.qsync.git_dir).joinpath(target.filepath)).data.id).map(
+                self.qsync.getQiitaUrl).getOrElse(_target)
+
+    def getGlobalImageLink(self, filename: str):        
+        return f"{self.qsync.github_url}{self.asset_dict.get(filename).filepath}"
+
+    def getLocalMarkdown(self, filename: str):        
+        return Maybe(self.asset_dict.get(filename)).filter(lambda mf: mf.isMarkdown()).map(
+            lambda mf: mf.getBody(self.genGetLocalLink(mf.filepath), self.genGetLocalLink(mf.filepath))).get()
 
     def getGlobalMarkdown(self, filename: str):
-        Maybe(QiitaArticle.fromFile(Path(self.qsync.git_dir).joinpath(str)).data.id).map()
+        return Maybe(self.asset_dict.get(filename)).filter(lambda mf: mf.isMarkdown()).map(
+            lambda mf: mf.getBody(self.getGlobalMarkdownLink, self.getGlobalImageLink)).get()
 
 
-        
+def get_qsync(asset_list: List[Asset]):
+    args = qsync_argparse().parse_args("download .".split())
+    repo = Repository.getInstance(qsync_init(args), asset_list)
+    repo.writeMarkdown()
+    return qsync_init(args)
+
+
+def identity(x: str) -> str:
+    return x
+
+
+def gen_md1(mdlink: Callable[[str], str], imglink: Callable[[str], str]):
+    return f"""
+# section
+
+LinkTest1: [dlink]({mdlink("md2.md")})
+LinkTest2: [dlink](https://example.com/markdown/md2.md)
+
+`````shell
+Short sequence of backticks
+```
+#LinkTest   [LinkTest](md2.md)
+#ImageTest ![ImageTest](img1.png)
+`````
+
+## sub-section
+
+ImageTest1: ![ImageTest]({imglink("img1.png")})
+ImageTest2: ![ImageTest]({imglink("img1.png")} description)
+ImageTest3: ![ImageTest](http://example.com/img/img1.png img/img1.png)
+"""
+
+
+def gen_md2(mdlink: Callable[[str], str], imglink: Callable[[str], str]):
+    return f"""
+<!--
+title:  Hello
+tags:   python
+id:     {TEST_ARTICLE_ID1}
+-->
+[md1]({mdlink('md1.md')})
+![img1]({imglink("img1.png")})
+"""
+
+    
 ########################################################################
 # CLI Test
 ########################################################################
@@ -230,21 +225,21 @@ def test_get_utc():
 # Git Test
 ########################################################################
 
-
 ########################################################################
 # Markdown Parser Test
 ########################################################################
 
 
 def test_QiitaArticle_fromFile(topdir_fx: Path):
-    topdir_fx.joinpath("markdown_1.md").write_text(markdown1())
+    get_qsync([Asset("md1.md", gen_md1), Asset("md2.md", gen_md2), Asset("img1.png")])
+    doc = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
 
-    doc = QiitaArticle.fromFile(topdir_fx.joinpath("markdown_1.md"))
-    assert doc.data.title == markdown_find_line(markdown1(), '# ')[0]
+    assert doc.data.title == markdown_find_line(doc.body, '# ')[0]
 
 
 def test_markdown_code_block_split():
-    assert ''.join(markdown_code_block_split(markdown1())) == markdown1()
+    md = gen_md1(identity, identity)
+    assert ''.join(markdown_code_block_split(md)) == md
 
 
 ########################################################################
@@ -266,7 +261,8 @@ def test_markdown_code_inline_split(text, num, idx, item):
 
 
 def test_markdown_replace_text():
-    assert markdown_replace_text(lambda x: "x", markdown1())[1] != "x"
+    md = gen_md1(identity, identity)
+    assert markdown_replace_text(lambda x: "x", md)[1] != "x"
 
 
 @pytest.mark.parametrize("text, func, replaced", [(r"[](hello)", lambda x: x + x, r"[](hellohello)"),
@@ -289,74 +285,56 @@ def test_markdown_replace_image(text, func, replaced):
 ########################################################################
 
 
-@pytest.mark.parametrize("md1, md2, img", [(None, None, 'img'), (None, 'doc', 'img'), ('doc', None, 'img'),
-                                           ('doc/more', None, None)])
-def test_QiitaSync_toGlobalFormat(md1, md2, img, topdir_fx: Path):
-    md1dir = topdir_fx.joinpath(md1) if md1 is not None else topdir_fx
-    md2dir = topdir_fx.joinpath(md2) if md2 is not None else topdir_fx
-    imgdir = topdir_fx.joinpath(img) if img is not None else topdir_fx
-
-    mdrel = os.path.relpath(md2dir, md1dir)
-    imgrel = os.path.relpath(imgdir, md1dir)
-    imgrel2 = os.path.relpath(imgdir, topdir_fx)
-
-    md1dir.mkdir(parents=True, exist_ok=True)
-    md1dir.joinpath('markdown_1.md').write_text(markdown1(md=mdrel, img=imgrel))
-
-    md2dir.mkdir(parents=True, exist_ok=True)
-    md2dir.joinpath('markdown_2.md').write_text(markdown2())
-
-    markdown_1_article = QiitaArticle.fromFile(md1dir.joinpath('markdown_1.md'))
-
-    args = qsync_argparse().parse_args("download .".split())
-    qsync = qsync_init(args)
-    converted = qsync.toGlobalFormat(markdown_1_article)
+@pytest.mark.parametrize("md1, md2, img1", [
+    ("md1.md", "md2.md", 'img1.png'),
+    ("md1.md", "doc/md2.md", 'img1.png'),
+    ("doc/md1.md", "md2.md", 'img1.png'),
+    ("doc/md1.md", "doc2/md2.md", 'images/img1.png')
+])
+def test_QiitaSync_toGlobalFormat(md1, md2, img1, topdir_fx: Path):
+    qsync = get_qsync([Asset(md1, gen_md1), Asset(md2, gen_md2), Asset(img1)])
+    converted = qsync.toGlobalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
 
     assert markdown_find_line(
-        converted.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{TEST_QIITA_ID}/items/{TEST_ARTICLE_ID1})'
-    assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/markdown_2.md)'
+        converted.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{qsync.qiita_id}/items/{TEST_ARTICLE_ID1})'
+    assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/md2.md)'
     assert markdown_find_line(
         converted.body, 'ImageTest1:'
-    )[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(imgrel2)}ImageTest.png)'
+    )[0] == f"![ImageTest](https://raw.githubusercontent.com/{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1})"
     assert markdown_find_line(
         converted.body, 'ImageTest2:'
-    )[0] == f'![ImageTest](https://raw.githubusercontent.com/{TEST_GITHUB_ID}/{TEST_GITHUB_REPO}/{TEST_GITHUB_BRANCH}/{mkpath(imgrel2)}ImageTest.png description)'
+    )[0] == f"![ImageTest](https://raw.githubusercontent.com/{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1} description)"
     assert markdown_find_line(
-        converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
+        converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/img1.png img/img1.png)'
 
 
-def test_QiitaSync_toLocalFormat(topdir_fx: Path):
+@pytest.mark.parametrize("md1, md2, img1", [
+    ("md1.md", "md2.md", 'img1.png'),
+    ("md1.md", "doc/md2.md", 'img1.png'),
+    ("doc/md1.md", "md2.md", 'img1.png'),
+    ("doc/md1.md", "doc2/md2.md", 'images/img1.png')
+])
+def test_QiitaSync_toLocalFormat(md1, md2, img1, topdir_fx: Path):
+    qsync = get_qsync([Asset(md1, gen_md1), Asset(md2, gen_md2), Asset(img1)])
+    converted = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
 
-    topdir_fx.joinpath('markdown_2.md').write_text(markdown2())
-    topdir_fx.joinpath('markdown_3.md').write_text(markdown3())
-
-    markdown_3_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_3.md'))
-
-    args = qsync_argparse().parse_args("download .".split())
-    qsync = qsync_init(args)
-    converted = qsync.toLocalFormat(markdown_3_article)
-
-    assert markdown_find_line(converted.body, 'LinkTest1:')[0] == '[dlink](markdown_2.md)'
-    assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/markdown_2.md)'
-    assert markdown_find_line(converted.body, 'ImageTest1:')[0] == '![ImageTest](img/ImageTest.png)'
-    assert markdown_find_line(converted.body, 'ImageTest2:')[0] == '![ImageTest](img/ImageTest.png description)'
+    assert markdown_find_line(converted.body, 'LinkTest1:')[0] == f'[dlink]({os.path.relpath(md2, os.path.dirname(md1))})'
+    assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/md2.md)'
+    assert markdown_find_line(converted.body, 'ImageTest1:')[0] == f'![ImageTest]({os.path.relpath(img1, os.path.dirname(md1))})'
+    assert markdown_find_line(converted.body, 'ImageTest2:')[0] == f'![ImageTest]({os.path.relpath(img1, os.path.dirname(md1))} description)'
     assert markdown_find_line(
-        converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/ImageTest.png img/ImageTest.png)'
+        converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/img1.png img/img1.png)'
 
 
-def test_QiitaSync_format_conversion(topdir_fx: Path):
+@pytest.mark.parametrize("md1, md2, img1", [
+    ("md1.md", "md2.md", 'img1.png'),
+    ("md1.md", "doc/md2.md", 'img1.png'),
+    ("doc/md1.md", "md2.md", 'img1.png'),
+    ("doc/md1.md", "doc2/md2.md", 'images/img1.png')
+])
+def test_QiitaSync_format_conversion(md1, md2, img1, topdir_fx: Path):
+    qsync = get_qsync([Asset(md1, gen_md1), Asset(md2, gen_md2), Asset(img1)])
+    article = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
 
-    topdir_fx.joinpath('markdown_1.md').write_text(markdown1())
-    topdir_fx.joinpath('markdown_2.md').write_text(markdown2())
-    topdir_fx.joinpath('markdown_3.md').write_text(markdown3())
-
-    markdown1_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_1.md'))
-    markdown3_article = QiitaArticle.fromFile(topdir_fx.joinpath('markdown_3.md'))
-
-    args = qsync_argparse().parse_args("download .".split())
-    qsync = qsync_init(args)
-
-    assert qsync.toLocalFormat(
-        qsync.toGlobalFormat(markdown1_article)).body.lower() == qsync.toLocalFormat(markdown1_article).body.lower()
-    assert qsync.toGlobalFormat(
-        qsync.toLocalFormat(markdown3_article)).body.lower() == qsync.toGlobalFormat(markdown3_article).body.lower()
+    assert qsync.toLocalFormat(qsync.toGlobalFormat(article)).body.lower() == qsync.toLocalFormat(article).body.lower()
+    assert qsync.toGlobalFormat(qsync.toLocalFormat(article)).body.lower() == qsync.toGlobalFormat(article).body.lower()
