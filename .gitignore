@@ -1,6 +1,8 @@
 access_token.txt
 setup.sh
 dist
+htmlcov
+coverage.xml
 .venv
 .python-version
 .pytest_cache

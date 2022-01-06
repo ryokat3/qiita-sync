@@ -40,6 +40,11 @@ jobs:
       - name: Install Dependencies
         run: poetry install --no-interaction
       - name: Run Tests
-        run: poetry run pytest -s tests
+        run: poetry run pytest -s --cov=./ --cov-report=xml tests
         env: 
           QIITA_ACCESS_TOKEN: ${{ secrets.QIITA_ACCESS_TOKEN }}
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
