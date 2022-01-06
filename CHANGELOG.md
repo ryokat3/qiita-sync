@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added code coverage to github actions
 - Added CODECOV_TOKEN to github repository
 - Added coverage badge in README.md
+- Added various badge from shields.io in README.md
 
 ### Changed
 

@@ -1,7 +1,9 @@
 # qiita-sync
 
 ![pytest](https://github.com/wak109/qiita-sync/actions/workflows/pytest.yml/badge.svg)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/wak109/qiita-sync/Python%20Test/main)
 ![Codecov branch](https://img.shields.io/codecov/c/github/wak109/qiita-sync/main)
+![GitHub](https://img.shields.io/github/license/wak109/qiita-sync)
 
 qiita-sync can make Qiita synchronized with GitHub.
 
