@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added "[tool.poetry.scripts]" to pyproject.toml
 - Added code coverage to github actions
 - Added CODECOV_TOKEN to github repository
+- Added coverage badge in README.md
 
 ### Changed
 
