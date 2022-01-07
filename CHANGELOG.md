@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Removed \_\_version_\_ from \_\_init_\_.py 
 - Changed QiitaArticle.fromFile not to return dict even if title is not defined
 - Changed the setup of markdown test files to be smarter
+- Changed strtobool to be removed because it wll be deprecated in python 3.12
 
 ### Fixed
 

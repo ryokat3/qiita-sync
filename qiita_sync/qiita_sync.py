@@ -14,7 +14,6 @@ from argparse import ArgumentParser
 from itertools import dropwhile
 from pathlib import Path
 from datetime import datetime, timezone
-from distutils.util import strtobool
 from urllib import request
 from urllib.parse import urlparse, urlunparse
 from urllib.error import HTTPError
@@ -114,11 +113,6 @@ def diff_url(target: str, pre: str) -> str:
     return target if len(target) < len(pre) or target[:len(pre)].lower() != pre.lower() else target[len(pre):]
 
 
-def str2bool(x: str) -> bool:
-    '''Return True/False (strtobool returns 1/0)'''
-    return True if strtobool(x) else False
-
-
 def rel_path(to_path: Path, from_path: Path) -> Path:
     return Path(os.path.relpath(to_path, from_path))
 
@@ -142,6 +136,12 @@ def to_normalize_body(content: str, linesep: str = os.linesep) -> str:
             list(
                 dropwhile(lambda line: line.strip() == '',
                           reversed(list(dropwhile(lambda line: line.strip() == '', content.splitlines())))))))
+
+
+def str2bool(value: Any) -> bool:
+    if not value:
+        return False
+    return str(value).lower() in ("y", "yes", "t", "true", "on", "1")
 
 
 ########################################################################
