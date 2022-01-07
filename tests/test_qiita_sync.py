@@ -5,12 +5,12 @@ import pytest
 import datetime
 from pathlib import Path
 from typing import Generator, List, Optional, NamedTuple, Dict, Callable
+from dataclasses import dataclass
 
 from qiita_sync.qiita_sync import QiitaArticle, QiitaSync
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc
-from qiita_sync.qiita_sync import git_get_committer_datetime, git_get_committer_date, git_get_topdir
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
 from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
 
@@ -72,12 +72,30 @@ def topdir_fx(mocker: MockerFixture, tmpdir) -> Generator[Path, None, None]:
     yield topdir
 
 
-class Asset(NamedTuple):
+# @dataclass(frozen=True)
+@dataclass
+class Asset:
     filepath: str
-    getBody: Optional[Callable[[Callable[[str], str], Callable[[str], str]], str]] = None
 
-    def isMarkdown(self) -> bool:
-        return self.getBody is not None
+
+# @dataclass(frozen=True)
+@dataclass
+class MarkdownAsset(Asset):
+    body: Callable[[Callable[[str], str], Callable[[str], str]], str]
+
+    def getBody(self, mdlink: Callable[[str], str], imglink: Callable[[str], str]) -> str:
+        # NOTE:
+        #
+        # Call 'body' attribute cause mypy error (Invalid self argument "MarkdownAsset" to attribute function "body")
+        # Workaround is to remove (frozen=True)
+        #
+        # reference: https://github.com/python/mypy/issues/5485
+        #
+        return self.body(mdlink, imglink)
+
+
+def filterMarkdownAsset(asset: Asset) -> Optional[MarkdownAsset]:
+    return asset if isinstance(asset, MarkdownAsset) else None
 
 
 class Repository(NamedTuple):
@@ -90,30 +108,32 @@ class Repository(NamedTuple):
 
     def writeMarkdown(self):
         for asset in self.asset_dict.values():
-            if asset.isMarkdown():
+            if isinstance(asset, MarkdownAsset):
                 target = Path(self.qsync.git_dir).joinpath(asset.filepath)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 with target.open("w") as fp:
                     fp.write(self.getLocalMarkdown(target.name))
 
     def genGetLocalLink(self, source: str) -> Callable[[str], str]:
-        return lambda target: os.path.relpath(self.asset_dict.get(target).filepath, os.path.dirname(source))        
+        return lambda target: Maybe(self.asset_dict.get(target)).map(
+            lambda asset: os.path.relpath(asset.filepath, os.path.dirname(source))).getOrElse(target)
 
     def getGlobalMarkdownLink(self, _target: str):
         return Maybe(self.asset_dict.get(_target)).optionalMap(
             lambda target: QiitaArticle.fromFile(Path(self.qsync.git_dir).joinpath(target.filepath)).data.id).map(
                 self.qsync.getQiitaUrl).getOrElse(_target)
 
-    def getGlobalImageLink(self, filename: str):        
-        return f"{self.qsync.github_url}{self.asset_dict.get(filename).filepath}"
+    def getGlobalImageLink(self, filename: str):
+        return Maybe(self.asset_dict.get(filename)).map(
+            lambda asset: f"{self.qsync.github_url}{asset.filepath}").getOrElse(filename)
 
-    def getLocalMarkdown(self, filename: str):        
-        return Maybe(self.asset_dict.get(filename)).filter(lambda mf: mf.isMarkdown()).map(
-            lambda mf: mf.getBody(self.genGetLocalLink(mf.filepath), self.genGetLocalLink(mf.filepath))).get()
+    def getLocalMarkdown(self, filename: str):
+        return Maybe(self.asset_dict.get(filename)).optionalMap(filterMarkdownAsset).map(
+            lambda md: md.getBody(self.genGetLocalLink(md.filepath), self.genGetLocalLink(md.filepath))).get()
 
     def getGlobalMarkdown(self, filename: str):
-        return Maybe(self.asset_dict.get(filename)).filter(lambda mf: mf.isMarkdown()).map(
-            lambda mf: mf.getBody(self.getGlobalMarkdownLink, self.getGlobalImageLink)).get()
+        return Maybe(self.asset_dict.get(filename)).optionalMap(filterMarkdownAsset).map(
+            lambda md: md.getBody(self.getGlobalMarkdownLink, self.getGlobalImageLink)).get()
 
 
 def get_qsync(asset_list: List[Asset]):
@@ -231,7 +251,7 @@ def test_get_utc():
 
 
 def test_QiitaArticle_fromFile(topdir_fx: Path):
-    get_qsync([Asset("md1.md", gen_md1), Asset("md2.md", gen_md2), Asset("img1.png")])
+    get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
     doc = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
 
     assert doc.data.title == markdown_find_line(doc.body, '# ')[0]
@@ -292,20 +312,18 @@ def test_markdown_replace_image(text, func, replaced):
     ("doc/md1.md", "doc2/md2.md", 'images/img1.png')
 ])
 def test_QiitaSync_toGlobalFormat(md1, md2, img1, topdir_fx: Path):
-    qsync = get_qsync([Asset(md1, gen_md1), Asset(md2, gen_md2), Asset(img1)])
-    converted = qsync.toGlobalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
+    qsync = get_qsync([MarkdownAsset(md1, gen_md1), MarkdownAsset(md2, gen_md2), Asset(img1)])
+    article = qsync.toGlobalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
 
     assert markdown_find_line(
-        converted.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{qsync.qiita_id}/items/{TEST_ARTICLE_ID1})'
-    assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/md2.md)'
-    assert markdown_find_line(
-        converted.body, 'ImageTest1:'
-    )[0] == f"![ImageTest](https://raw.githubusercontent.com/{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1})"
-    assert markdown_find_line(
-        converted.body, 'ImageTest2:'
-    )[0] == f"![ImageTest](https://raw.githubusercontent.com/{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1} description)"
-    assert markdown_find_line(
-        converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/img1.png img/img1.png)'
+        article.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{qsync.qiita_id}/items/{TEST_ARTICLE_ID1})'
+    assert markdown_find_line(article.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/md2.md)'
+    assert markdown_find_line(article.body, 'ImageTest1:')[0] ==\
+        f"![ImageTest](https://raw.githubusercontent.com/{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1})"
+    assert markdown_find_line(article.body, 'ImageTest2:')[0] ==\
+        f"![ImageTest](https://raw.githubusercontent.com/{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1} description)"
+    assert markdown_find_line(article.body, 'ImageTest3:')[0] ==\
+        '![ImageTest](http://example.com/img/img1.png img/img1.png)'
 
 
 @pytest.mark.parametrize("md1, md2, img1", [
@@ -315,15 +333,19 @@ def test_QiitaSync_toGlobalFormat(md1, md2, img1, topdir_fx: Path):
     ("doc/md1.md", "doc2/md2.md", 'images/img1.png')
 ])
 def test_QiitaSync_toLocalFormat(md1, md2, img1, topdir_fx: Path):
-    qsync = get_qsync([Asset(md1, gen_md1), Asset(md2, gen_md2), Asset(img1)])
-    converted = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
+    qsync = get_qsync([MarkdownAsset(md1, gen_md1), MarkdownAsset(md2, gen_md2), Asset(img1)])
+    article = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
 
-    assert markdown_find_line(converted.body, 'LinkTest1:')[0] == f'[dlink]({os.path.relpath(md2, os.path.dirname(md1))})'
-    assert markdown_find_line(converted.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/md2.md)'
-    assert markdown_find_line(converted.body, 'ImageTest1:')[0] == f'![ImageTest]({os.path.relpath(img1, os.path.dirname(md1))})'
-    assert markdown_find_line(converted.body, 'ImageTest2:')[0] == f'![ImageTest]({os.path.relpath(img1, os.path.dirname(md1))} description)'
-    assert markdown_find_line(
-        converted.body, 'ImageTest3:')[0] == '![ImageTest](http://example.com/img/img1.png img/img1.png)'
+    assert markdown_find_line(article.body, 'LinkTest1:')[0] ==\
+        f'[dlink]({os.path.relpath(md2, os.path.dirname(md1))})'
+    assert markdown_find_line(article.body, 'LinkTest2:')[0] ==\
+        '[dlink](https://example.com/markdown/md2.md)'
+    assert markdown_find_line(article.body, 'ImageTest1:')[0] ==\
+        f'![ImageTest]({os.path.relpath(img1, os.path.dirname(md1))})'
+    assert markdown_find_line(article.body, 'ImageTest2:')[0] ==\
+        f'![ImageTest]({os.path.relpath(img1, os.path.dirname(md1))} description)'
+    assert markdown_find_line(article.body, 'ImageTest3:')[0] ==\
+        '![ImageTest](http://example.com/img/img1.png img/img1.png)'
 
 
 @pytest.mark.parametrize("md1, md2, img1", [
@@ -333,8 +355,10 @@ def test_QiitaSync_toLocalFormat(md1, md2, img1, topdir_fx: Path):
     ("doc/md1.md", "doc2/md2.md", 'images/img1.png')
 ])
 def test_QiitaSync_format_conversion(md1, md2, img1, topdir_fx: Path):
-    qsync = get_qsync([Asset(md1, gen_md1), Asset(md2, gen_md2), Asset(img1)])
+    qsync = get_qsync([MarkdownAsset(md1, gen_md1), MarkdownAsset(md2, gen_md2), Asset(img1)])
     article = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
 
-    assert qsync.toLocalFormat(qsync.toGlobalFormat(article)).body.lower() == qsync.toLocalFormat(article).body.lower()
-    assert qsync.toGlobalFormat(qsync.toLocalFormat(article)).body.lower() == qsync.toGlobalFormat(article).body.lower()
+    assert qsync.toLocalFormat(
+        qsync.toGlobalFormat(article)).body.lower() == qsync.toLocalFormat(article).body.lower()
+    assert qsync.toGlobalFormat(
+        qsync.toLocalFormat(article)).body.lower() == qsync.toGlobalFormat(article).body.lower()

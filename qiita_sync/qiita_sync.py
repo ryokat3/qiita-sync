@@ -29,7 +29,6 @@ from typing import (
     TypeVar,
     NamedTuple,
     Tuple,
-    Union,
     Dict,
     Any,
     List,
@@ -494,7 +493,7 @@ class QiitaArticle(NamedTuple):
         timestamp = git_get_committer_datetime(str(filepath)) if git_timestamp else datetime.fromtimestamp(
             filepath.stat().st_mtime, timezone.utc)
         m = HEADER_REGEX.match(text)
-        logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')        
+        logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')
         body = Maybe(m).map(lambda m: m.group(2)).getOrElse(text)
         data = QiitaData.fromString(Maybe(m).map(lambda m: m.group(1)).getOrElse(""),
                 qiita_get_temporary_title(body), qiita_get_temporary_tags(body))
@@ -594,8 +593,9 @@ def qsync_get_local_article(include_patterns: List[str], exclude_patterns: List[
     topdir = Path(git_get_topdir())
     return [
         Path(fp).resolve()
-        for fp in (functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) -
-                   functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in exclude_patterns]))
+        for fp in (functools.reduce(
+            lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) - functools.reduce(
+                lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in exclude_patterns]))
     ]
 
 
