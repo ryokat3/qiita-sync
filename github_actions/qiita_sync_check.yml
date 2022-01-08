@@ -22,7 +22,7 @@ jobs:
           python-version: '3.9'
       - name: Install qiita-sync
         run: |
-          curl -OL https://raw.githubusercontent.com/wak109/qiita-sync/v1.0.0/qiita_sync/qiita_sync.py
+          curl -OL https://raw.githubusercontent.com/ryokat3/qiita-sync/v1.0.0/qiita_sync/qiita_sync.py
       - name: Run qiita-sync check
         run: |
           python qiita_sync.py check . > ./qiita_sync_output.txt
