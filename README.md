@@ -8,7 +8,7 @@
 Qiita-Sync is a GitHub Actions that can synchronize your markdown files in GitHub repository with Qiita articles.
 
 It can be also used as a command line tool.
-See more details [Qiita-Sync Command Usage](https://github.com/ryokat3/qiita-sync/blob/main/doc/command_usage.mdd) for command usage.
+See more details [Qiita-Sync Command Usage](https://github.com/ryokat3/qiita-sync/blob/main/doc/command_usage.md) for command usage.
 
 # Installation
 
