@@ -55,8 +55,10 @@ Please replaece `<Your-ID>` and `<Your-Respository>` as your own.
 
 Then, the badge will be displayed in your README file.
 
-- Passing: ![Passing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_passing.png)
-- Failing: ![Failing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_failing.png)
+- when synchronized:
+  ![Passing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_passing.png)
+- when not synchronized:
+  ![Failing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_failing.png)
 
 # Synchronization
 
