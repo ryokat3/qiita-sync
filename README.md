@@ -139,7 +139,7 @@ This link will be automatically changed to the URL when uploaded to Qiita site.
 
 And, it will be automatically changed to the relative file path when downloaded from Qiita site.
 
-# Command Usage
+# Usage
 
 ## Synchronize all articles
 
@@ -149,7 +149,7 @@ Synchronize all articles after wrting new articles and/or updating existing arti
 qiita_sync sync <git-directory-path>
 ```
 
-## Upload a article
+## Upload an article
 
 Upload a newly created article or updated article to Qiita site
 
@@ -157,7 +157,7 @@ Upload a newly created article or updated article to Qiita site
 qiita_sync upload <updated-file>
 ```
 
-## Download a article
+## Download an article
 
 Update an article that was updated by Qiita Web Application (So, not locally updated yet)
 
@@ -173,7 +173,7 @@ Check the difference between Qiita site and local files
 qiita_sync check <git-directory-path>
 ```
 
-## Delete a article from Qiita
+## Delete an article from Qiita
 
 Remove an article from Qiita site (not remove from git repository)
 
