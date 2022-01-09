@@ -7,7 +7,8 @@
 
 Qiita-Sync is a GitHub Actions that can synchronize your markdown files in GitHub repository with Qiita articles.
 
-It can be also used as a command line tool. See more details [Qiita-Sync Command Usage](https://github.com/ryokat3/Qiita-Sync/doc/command_usage.md)
+It can be also used as a command line tool.
+See more details [Qiita-Sync Command Usage](https://github.com/ryokat3/qiita-sync/blob/main/doc/command_usage.mdd) for command usage.
 
 # Installation
 
@@ -78,8 +79,8 @@ Please note some features of Qiita-Sync when writing articles.
 
 ## File Name
 
-When downloading Qiita articles at first, their file names are like `a5b5328c93bad615c5b2.md` whose naming convention is "<Qiita-Article-ID>.md".
-However you can rename those files and can move to any subdirectories within the git repository directory.
+When downloading Qiita articles at first, their file names are like `a5b5328c93bad615c5b2.md` whose naming convention is "\<Qiita-Article-ID\>.md".
+However you can rename those files as you like and can move to any subdirectories within the git repository directory.
 
 ## Article Header
 
