@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "qiita-sync"
-version = "1.0.3"
+version = "1.0.8"
 description = "Synchronize GitHub with Qiita"
 authors = ["Ryoji Kato <ryokat3@gmail.com>"]
 readme = "README.md"
@@ -27,4 +27,4 @@ column_limit = 119
 indent_width = 4
 
 [tool.poetry.scripts]
-qiita_sync = 'qiita_sync:qsync_main'
+qiita_sync = 'qiita_sync:main'
