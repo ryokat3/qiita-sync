@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added CODECOV_TOKEN to github repository
 - Added coverage badge in README.md
 - Added various badge from shields.io in README.md
+- Added doc/command_usage.md
+- Added some PNG files under img directory
 
 ### Changed
 

@@ -5,14 +5,9 @@
 ![Codecov branch](https://img.shields.io/codecov/c/github/ryokat3/Qiita-Sync/main)
 ![GitHub](https://img.shields.io/github/license/ryokat3/Qiita-Sync)
 
-Qiita-Sync is a python command line tool that can synchronize your local markdown files with Qiita articles.
+Qiita-Sync is a GitHub Actions that can synchronize your markdown files in GitHub repository with Qiita articles.
 
-# Requirement
-
-- Qiita Account
-- GitHub repository
-- Python (v3.7 or higher)
-- Qiita-Sync
+It can be also used as a command line tool. See more details [Qiita-Sync Command Usage](https://github.com/ryokat3/Qiita-Sync/doc/command_usage.md)
 
 # Installation
 
@@ -24,57 +19,52 @@ Qiita-Sync is a python command line tool that can synchronize your local markdow
    2. Click "Generate new token"
    3. Copy the access token displayed.
 
-2. Make your access token available as environment variable QIITA_ACCESS_TOKEN
+2. Save the access token to GitHub
 
-   Your access token must be availble as environment varialbe **QIITA_ACCESS_TOKEN** whenever
-   you execute Qiita-Sync. You need to make the access token secret, not to make it available in public.
+   1. Open your GitHub repository
+   2. Go "Settings" >> "Secrets"
+   3. Click "New repository secrets"
+   4. Save the access token with the name QIITA_ACCESS_TOKEN
 
-3. Check if your access token is valid
- 
-   Your qiita account information will be displayed with the command below.
+## GitHub Actions
 
-   ```bash
-   curl -sH "Authorization: Bearer $(echo ${QIITA_ACCESS_TOKEN})" https://qiita.com/api/v2/authenticated_user | python -m json.tool
-   ```
+1. Download 2 YAML files of GitHub Actions
 
-## Install Qiita-Sync
+   - [qiita_sync.yml](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/github_actions/qiita_sync.yml)
+   - [qiita_sync_check.yml](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/github_actions/qiita_sync_check.yml)
 
-1. Check the python version
+2. Save them in your repository as:
 
-   Check if the Python version is 3.7 or higher with the command below
+   - `.github/workflow/qiita_sync.yml`
+   - `.github/workflow/qiita_sync_check.yml`
 
-   ```bash
-   python --version
-   ```
+   **NOTE**: Change the cron time `cron: "29 17 * * *"` of `qiita_sync_check.yml` when the this action is sheduled to be executed.
+             This example means this action is executed every day at 17:29 UTC, which is kind of inactive time for me.
+             Please adjust it to you.
 
-2. Install Qiita-Sync
+3. Push them to GitHub
 
-   ```bash
-   pip install qiita-sync
-   ```
+4. Add a badge in your README
 
-3. Check if Qiita-Sync is successfully installed
+You can add the link to badge below in your README file. Please replaece `<Your-ID>` and `<Your-Respository>` as your own.
 
-   ```bash
-   qiita_sync --help
-   ```
-
-## Download articles
-
-Change the directory to your git repository, and execute the command below to download your Qiita articles.
-
-```bash
-qiita_sync sync .
+```markdown
+![Qiita Sync](https://github.com/<Your-ID>/<Your-Repository>/actions/workflows/qiita_sync_check.yml/badge.svg)
 ```
 
-## Organize articles
+Then, the badge will be displayed in your README file.
 
-The file name of downloaded Qiita articles are like `a5b5328c93bad615c5b2.md` whose naming convention is "<Qiita-Article-ID>.md".
-However you can rename those files and can move to any subdirectories within the git repository directory.
+- Passing: ![Passing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_passing.png)
+- Failing: ![Failing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_failingpng))
 
 # Writing Articles
 
 Please note some features of Qiita-Sync when writing articles.
+
+## File Name
+
+When downloading Qiita articles at first, their file names are like `a5b5328c93bad615c5b2.md` whose naming convention is "<Qiita-Article-ID>.md".
+However you can rename those files and can move to any subdirectories within the git repository directory.
 
 ## Article Header
 
@@ -138,49 +128,3 @@ This link will be automatically changed to the URL when uploaded to Qiita site.
 ```
 
 And, it will be automatically changed to the relative file path when downloaded from Qiita site.
-
-# Usage
-
-## Synchronize all articles
-
-Synchronize all articles after wrting new articles and/or updating existing articles.
-
-```bash
-qiita_sync sync <git-directory-path>
-```
-
-## Upload an article
-
-Upload a newly created article or updated article to Qiita site
-
-```bash
-qiita_sync upload <updated-file>
-```
-
-## Download an article
-
-Update an article that was updated by Qiita Web Application (So, not locally updated yet)
-
-```bash
-qiita_sync download <not-updated-file>
-```
-
-## Check differences
-
-Check the difference between Qiita site and local files
-
-```bash
-qiita_sync check <git-directory-path>
-```
-
-## Delete an article from Qiita
-
-Remove an article from Qiita site (not remove from git repository)
-
-```bash
-qiita_sync delete <deleting-file>
-```
-
-# Note
-
-- Supported Python version is 3.7 or higher because "future feature annotations is not defined" as of 3.6
