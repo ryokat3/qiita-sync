@@ -39,14 +39,15 @@ It can be also used as a command line tool. See more details [Qiita-Sync Command
    - `.github/workflow/qiita_sync_check.yml`
 
    **NOTE**: Change the cron time `cron: "29 17 * * *"` of `qiita_sync_check.yml` when the this action is sheduled to be executed.
-             This example means this action is executed every day at 17:29 UTC, which is kind of inactive time for me.
-             Please adjust it to you.
+             This example indicates that this action is executed every day at 17:29 UTC, which is kind of inactive time for me who is living in Japan.
+             Please adjust it to your convenience.
 
 3. Push them to GitHub
 
-4. Add a badge in your README
+## Badge
 
-You can add the link to badge below in your README file. Please replaece `<Your-ID>` and `<Your-Respository>` as your own.
+You can add the link to badge below in your README file to show if it is successfully synchronized or not.
+Please replaece `<Your-ID>` and `<Your-Respository>` as your own.
 
 ```markdown
 ![Qiita Sync](https://github.com/<Your-ID>/<Your-Repository>/actions/workflows/qiita_sync_check.yml/badge.svg)
@@ -55,7 +56,16 @@ You can add the link to badge below in your README file. Please replaece `<Your-
 Then, the badge will be displayed in your README file.
 
 - Passing: ![Passing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_passing.png)
-- Failing: ![Failing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_failingpng))
+- Failing: ![Failing Badge](https://raw.githubusercontent.com/ryokat3/qiita-sync/main/img/qiita_sync_badge_failing.png)
+
+# Synchronization
+
+When you find the failure of synchronization with the badge in README or e-mail notification from GitHub,
+you can manually invoke Qiita-Sync GitHub Actions to synchronize them.
+
+1. Open your GitHub repository
+2. Go "Actions" >> "Qiita Sync" (in left pane)
+3. Click "Run workflow" (in right pane)
 
 # Writing Articles
 

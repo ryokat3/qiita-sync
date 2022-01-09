@@ -67,11 +67,6 @@ Change the directory to your git repository, and execute the command below to do
 qiita_sync sync .
 ```
 
-## Organize articles
-
-The file name of downloaded Qiita articles are like `a5b5328c93bad615c5b2.md` whose naming convention is "<Qiita-Article-ID>.md".
-However you can rename those files and can move to any subdirectories within the git repository directory.
-
 # Usage
 
 ## Synchronize all articles
