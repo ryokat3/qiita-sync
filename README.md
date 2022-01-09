@@ -99,6 +99,8 @@ tags:  qiita-sync
 -->
 ```
 
+The `id` will be automatically added to the header after uploaded to Qiita site.
+
 ## Links to your Qiita articles
 
 You can write a link to another your Qiita article as a relative file path like below.
@@ -109,12 +111,13 @@ You can write a link to another your Qiita article as a relative file path like 
 ```
 
 This link will be automatically changed to the URL when uploaded to Qiita site.
-And, it will be automatically changed to the relative file path when downloaded from Qiita site.
 
 ```markdown
 <!-- An example of link to another Qiita article -->
 [My Article](https://qiita.com/ryokat3/items/a5b5328c93bad615c5b2)
 ```
+
+And, it will be automatically changed to the relative file path when downloaded from Qiita site.
 
 ## Link to image files
 
@@ -126,12 +129,13 @@ You can write a link to an image file as a relative file path like below.
 ```
 
 This link will be automatically changed to the URL when uploaded to Qiita site.
-And, it will be automatically changed to the relative file path when downloaded from Qiita site.
 
 ```markdown
 <!-- An example of link to image file 'earth.png' -->
 ![My Image](https://raw.githubusercontent.com/ryokat3/qiita-articles/main/image/earth.png)
 ```
+
+And, it will be automatically changed to the relative file path when downloaded from Qiita site.
 
 # Note
 
