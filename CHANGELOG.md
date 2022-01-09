@@ -31,7 +31,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## 1.1.0 - 2021-01-09
 
 ### Added
 
@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Changed to use pip when installing qiita-sync in GitHub Actions
 - Changed Python version to 3.7 and 3.10.1 in GitHub Actions
 - Changed project information in pyproject.toml
 - Changed .gitignore to exlucde dist directory

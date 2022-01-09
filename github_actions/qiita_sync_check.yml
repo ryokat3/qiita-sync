@@ -22,10 +22,10 @@ jobs:
           python-version: '3.9'
       - name: Install qiita-sync
         run: |
-          curl -OL https://raw.githubusercontent.com/ryokat3/qiita-sync/v1.0.0/qiita_sync/qiita_sync.py
+          python -m pip install qiita-sync
       - name: Run qiita-sync check
         run: |
-          python qiita_sync.py check . > ./qiita_sync_output.txt
+          qiita_sync check . > ./qiita_sync_output.txt
           cat ./qiita_sync_output.txt
           [ ! -s "qiita_sync_output.txt" ] || exit 1
         env: 

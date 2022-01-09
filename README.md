@@ -39,8 +39,8 @@ See more details [Qiita-Sync Command Usage](https://github.com/ryokat3/qiita-syn
    - `.github/workflow/qiita_sync.yml`
    - `.github/workflow/qiita_sync_check.yml`
 
-   **NOTE**: Change the cron time `cron: "29 17 * * *"` of `qiita_sync_check.yml` when the this action is sheduled to be executed.
-             This example indicates that this action is executed every day at 17:29 UTC, which is kind of inactive time for me who is living in Japan.
+   **NOTE**: Change the cron time `cron: "29 17 * * *"` of `qiita_sync_check.yml` which is the time when this action is sheduled to be executed.
+             `29 17 * * *` indicates that this action is executed every day at 17:29 UTC, which is kind of inactive time for me who is living in Japan.
              Please adjust it to your convenience.
 
 3. Push them to GitHub
