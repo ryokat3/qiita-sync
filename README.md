@@ -7,7 +7,6 @@
 
 qiita-sync is a python command line tool that can synchronize your local markdown files with Qiita articles.
 
-
 # Requirement
 
 - Qiita Account
@@ -59,7 +58,7 @@ qiita-sync is a python command line tool that can synchronize your local markdow
    ```bash
    qiita_sync --help
    ```
-   
+
 ## Download articles
 
 Change the directory to your git repository, and execute the command below to download your Qiita articles.
@@ -104,7 +103,7 @@ tags:  qiita-sync
 
 The `id` will be automatically added to the header after uploaded to Qiita site.
 
-## Links to Qiita articles
+## Links to Qiita article
 
 You can write a link to another your Qiita article as a relative file path like below.
 
@@ -122,7 +121,7 @@ This link will be automatically changed to the URL when uploaded to Qiita site.
 
 And, it will be automatically changed to the relative file path when downloaded from Qiita site.
 
-## Links to image files
+## Links to image file
 
 You can write a link to an image file as a relative file path like below.
 
@@ -139,6 +138,48 @@ This link will be automatically changed to the URL when uploaded to Qiita site.
 ```
 
 And, it will be automatically changed to the relative file path when downloaded from Qiita site.
+
+# Command Usage
+
+## Synchronize all articles
+
+Synchronize all articles after wrting new articles and/or updating existing articles.
+
+```bash
+qiita_sync sync <git-directory-path>
+```
+
+## Upload a article
+
+Upload a newly created article or updated article to Qiita site
+
+```bash
+qiita_sync upload <updated-file>
+```
+
+## Download a article
+
+Update an article that was updated by Qiita Web Application (So, not locally updated yet)
+
+```bash
+qiita_sync download <not-updated-file>
+```
+
+## Check differences
+
+Check the difference between Qiita site and local files
+
+```bash
+qiita_sync check <git-directory-path>
+```
+
+## Delete a article from Qiita
+
+Remove an article from Qiita site (not remove from git repository)
+
+```bash
+qiita_sync delete <deleting-file>
+```
 
 # Note
 
