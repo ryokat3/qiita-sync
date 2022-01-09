@@ -58,23 +58,23 @@ qiita-sync is a python command line tool that can synchronize your local markdow
 
 ### Download your Qiita articles
 
-    Change the directory to your git repository, and execute the command below to download your Qiita articles.
+Change the directory to your git repository, and execute the command below to download your Qiita articles.
 
-    ```bash
-    qiita_sync sync .
-    ```
+```bash
+qiita_sync sync .
+```
 
 ### (Optional) Change filenames of your Qiita articles
 
-   The file name of downloaded Qiita articles are like `a5b5328c93bad615c5b2.md` whose naming convention is "<Qiita-Article-ID>.md".
-   However you can rename those files and can move to any subdirectories within the git repository directory.
+The file name of downloaded Qiita articles are like `a5b5328c93bad615c5b2.md` whose naming convention is "<Qiita-Article-ID>.md".
+However you can rename those files and can move to any subdirectories within the git repository directory.
 
 
-## Edit Qiita articles
+# Editing
 
 qiita-sync has some rules/features for Qiita article files to make them synchronized with Qiita site.
 
-### Article Header
+## Article Header
 
 Each downloaded articles has a header. This header is automatically generated when downloaded from Qiita site.
 And, it is automatically removed when uploaded to Qiita site.
@@ -99,7 +99,7 @@ tags:  qiita-sync
 -->
 ```
 
-### Links to your Qiita articles
+## Links to your Qiita articles
 
 You can write a link to another your Qiita article as a relative file path like below.
 
@@ -116,7 +116,7 @@ And, it will be automatically changed to the relative file path when downloaded 
 [My Article](https://qiita.com/ryokat3/items/a5b5328c93bad615c5b2)
 ```
 
-### Link to image files
+## Link to image files
 
 You can write a link to an image file as a relative file path like below.
 
