@@ -30,7 +30,7 @@ qiita-sync is a python command line tool that can synchronize your local markdow
    Your access token must be availble as environment varialbe **QIITA_ACCESS_TOKEN** whenever
    you execute qiita-sync. You need to make the access token secret, not to make it available in public.
 
-3. (Optional) Check if your access token is valid
+3. Check if your access token is valid
  
    Your qiita account information will be displayed with the command below.
 
@@ -54,7 +54,13 @@ qiita-sync is a python command line tool that can synchronize your local markdow
    pip install qiita-sync
    ```
 
-## Download your Qiita articles
+3. Check if qiita-sync is successfully installed
+
+   ```bash
+   qiita_sync --help
+   ```
+   
+## Download articles
 
 Change the directory to your git repository, and execute the command below to download your Qiita articles.
 
@@ -62,7 +68,7 @@ Change the directory to your git repository, and execute the command below to do
 qiita_sync sync .
 ```
 
-## (Optional) Change filenames of your Qiita articles
+## Organize articles
 
 The file name of downloaded Qiita articles are like `a5b5328c93bad615c5b2.md` whose naming convention is "<Qiita-Article-ID>.md".
 However you can rename those files and can move to any subdirectories within the git repository directory.
@@ -98,7 +104,7 @@ tags:  qiita-sync
 
 The `id` will be automatically added to the header after uploaded to Qiita site.
 
-## Links to your Qiita articles
+## Links to Qiita articles
 
 You can write a link to another your Qiita article as a relative file path like below.
 
