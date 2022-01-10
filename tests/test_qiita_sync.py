@@ -6,11 +6,14 @@ import datetime
 from pathlib import Path
 from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
+from argparse import ArgumentError
 
-from qiita_sync.qiita_sync import QiitaArticle, QiitaSync
+from qiita_sync.qiita_sync import CommandError, QiitaArticle, QiitaSync, exec_command, qsync_get_access_token
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
-from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc
+from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
+from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch, git_get_committer_datetime
+from qiita_sync.qiita_sync import qiita_create_caller, qiita_get_authenticated_user_id
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
 from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
 
@@ -180,10 +183,14 @@ id:     {TEST_ARTICLE_ID1}
 ![img1]({imglink("img1.png")})
 """
 
-    
 ########################################################################
 # CLI Test
 ########################################################################
+
+
+def test_invalid_subcommand(topdir_fx: Path):
+    with pytest.raises(SystemExit):
+        qsync_argparse().parse_args("invalid .".split())
 
 
 def test_qsync_argparse():
@@ -241,9 +248,77 @@ def test_get_utc():
     assert str(get_utc('2021-12-27T00:40:01+09:00')).endswith("+00:00")
 
 
+def test_get_str2bool():
+    assert str2bool('true')
+    assert not str2bool('false')
+    assert not str2bool(None)
+
+
+def test_is_url():
+    assert is_url('http://www.example.com/')
+    assert not is_url('../img/image.png')
+
+
+def test_exec_command_file_not_founc():
+    with pytest.raises(FileNotFoundError):
+        exec_command("invalid command".split())
+
+
+def test_exec_command_command_error():
+    with pytest.raises(CommandError):
+        exec_command("ls /foobar".split())
+
+
 ########################################################################
-# Git Test
+# Maybe
 ########################################################################
+
+
+def test_Maybe_tryCatch():
+    assert not Maybe("hello").tryCatch(lambda _: 1 / 0).get()
+    assert Maybe("hello").tryCatch(lambda _: 1 / 1).get() == 1
+
+
+def test_Maybe_fold():
+    assert Maybe("hello").fold(lambda : 'left', lambda _: f'{_} right') == "hello right"
+    assert Maybe(None).fold(lambda : 'left', lambda _: f'{_} right') == "left"
+
+
+########################################################################
+# Git Command
+########################################################################
+
+def test_git_get_topdir():    
+    try:
+        exec_command(["ls", git_get_topdir()])
+        assert True
+    except CommandError:
+        assert False
+
+
+def test_git_get_remote_url():
+    assert git_get_remote_url().startswith("git@github.com:")
+
+
+def test_git_get_committer_datetime():
+    assert isinstance(git_get_committer_datetime(git_get_topdir()), datetime.datetime)
+
+
+def test_git_get_default_branch():
+    branch = git_get_default_branch()
+    # assert branch == 'main' or branch == 'master'
+
+
+########################################################################
+# Qiita API
+########################################################################
+
+def test_qsync():
+    # Get token from environment variable
+    access_token = qsync_get_access_token('foobar')
+    caller = qiita_create_caller(access_token)
+    print(qiita_get_authenticated_user_id(caller))
+
 
 ########################################################################
 # Markdown Parser Test
@@ -255,6 +330,58 @@ def test_QiitaArticle_fromFile(topdir_fx: Path):
     doc = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
 
     assert doc.data.title == markdown_find_line(doc.body, '# ')[0]
+
+
+def test_QiitaArticle_fromApi(topdir_fx: Path):
+    qsync = get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
+    article1 = qsync.toGlobalFormat(QiitaArticle.fromFile(topdir_fx.joinpath("md1.md")))
+    api_data = {
+        "body": article1.body,
+        "updated_at": '2021-06-09T11:22:33+0900',
+        "title": article1.data.title,
+        "id": article1.data.id,
+        "tags": article1.data.tags.toApi(),
+        "private": "false"
+    }
+    article2 = QiitaArticle.fromApi(api_data)
+
+    assert article1.body == article2.body
+
+
+def test_QiitaArticle_equal(topdir_fx: Path):
+    get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
+    doc1 = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
+    doc2 = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
+
+    assert doc1 == doc2
+
+
+def test_QiitaArticle_not_equal(topdir_fx: Path):
+    get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
+    doc1 = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
+    doc2 = QiitaArticle.fromFile(topdir_fx.joinpath("md2.md"))
+
+    assert doc1 != doc2
+
+
+def test_QiitaArticle_toText(topdir_fx: Path):
+    qsync = get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
+    doc2 = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath("md2.md")))
+    assert doc2.toText() == """<!--
+title:   Hello
+tags:    python
+id:      1234567890ABCDEFG
+private: false
+-->
+[md1](md1.md)
+![img1](img1.png)"""
+
+
+def test_QiitaArticle_toApi(topdir_fx: Path):
+    qsync = get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
+    data = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath("md2.md"))).toApi()
+    assert data['body'] == """[md1](md1.md)
+![img1](img1.png)"""
 
 
 def test_markdown_code_block_split():
