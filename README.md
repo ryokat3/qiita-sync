@@ -4,6 +4,7 @@
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/ryokat3/Qiita-Sync/Python%20Test/main)
 ![Codecov branch](https://img.shields.io/codecov/c/github/ryokat3/Qiita-Sync/main)
 ![GitHub](https://img.shields.io/github/license/ryokat3/Qiita-Sync)
+[![Downloads](https://pepy.tech/badge/qiita-sync)](https://pepy.tech/project/qiita-sync)
 
 Qiita-Sync is a GitHub Actions that can synchronize your markdown files in GitHub repository with Qiita articles.
 
@@ -25,7 +26,7 @@ See more details [Qiita-Sync Command Usage](https://github.com/ryokat3/qiita-syn
    1. Open your GitHub repository
    2. Go "Settings" >> "Secrets"
    3. Click "New repository secrets"
-   4. Save the access token with the name QIITA_ACCESS_TOKEN
+   4. Save the access token with the name `QIITA_ACCESS_TOKEN`
 
 ## GitHub Actions
 
@@ -39,22 +40,23 @@ See more details [Qiita-Sync Command Usage](https://github.com/ryokat3/qiita-syn
    - `.github/workflow/qiita_sync.yml`
    - `.github/workflow/qiita_sync_check.yml`
 
-   **NOTE**: Change the cron time `cron: "29 17 * * *"` of `qiita_sync_check.yml` which is the time when this action is sheduled to be executed.
-             `29 17 * * *` indicates that this action is executed every day at 17:29 UTC, which is kind of inactive time for me who is living in Japan.
+   **NOTE**: Change the cron time `cron: "29 17 * * *"` of `qiita_sync_check.yml` which is the time
+             when this action is sheduled to be executed. `29 17 * * *` indicates that this action is
+             executed every day at 17:29 UTC, which is kind of inactive time for me who is living in Japan.
              Please adjust it to your convenience.
 
 3. Push them to GitHub
 
 ## Badge
 
-You can add the link to badge below in your README file to show if it is successfully synchronized or not.
-Please replaece `<Your-ID>` and `<Your-Respository>` as your own.
+You can add the link to badge in your README file to show if Qiita and GitHub are successfully synchronized or not.
+Please replaece `<Your-ID>` and `<Your-Respository>` of your own.
 
 ```markdown
 ![Qiita Sync](https://github.com/<Your-ID>/<Your-Repository>/actions/workflows/qiita_sync_check.yml/badge.svg)
 ```
 
-Then, the badge will be displayed in your README file.
+Then the badge will be displayed in your README file.
 
 - synchronized badge:
 
@@ -66,8 +68,8 @@ Then, the badge will be displayed in your README file.
 
 # Synchronization
 
-When you find the failure of synchronization with the badge in README or e-mail notification from GitHub,
-you can manually invoke Qiita-Sync GitHub Actions to synchronize them.
+When you notice the failure of synchronization by the badge in README or e-mail notification from GitHub,
+you can manually run Qiita-Sync GitHub Actions to synchronize them again.
 
 1. Open your GitHub repository
 2. Go "Actions" >> "Qiita Sync" (in left pane)
@@ -79,16 +81,20 @@ Please note some features of Qiita-Sync when writing articles.
 
 ## File Name
 
-When downloading Qiita articles at first, their file names are like `a5b5328c93bad615c5b2.md` whose naming convention is "\<Qiita-Article-ID\>.md".
-However you can rename those files as you like and can move to any subdirectories within the git repository directory.
+When downloading Qiita article files at first, their file names are like `a5b5328c93bad615c5b2.md` whose
+naming convention is "\<Qiita-Article-ID\>.md". For your convenience,
+you can rename those files as you like and can move them to any subdirectories within your git repository directory.
 
 ## Article Header
 
-Each downloaded articles has a header. This header is automatically generated when downloaded from Qiita site.
-And, it is automatically removed when uploaded to Qiita site.
+Each downloaded article file has a header. This header is automatically generated when downloaded from Qiita site.
+And it is automatically removed when uploaded to Qiita site.
 
-You can cange `title` and `tags` as you like. However **you must not remove `id`**.
+You can cange `title` and `tags` as you like. However **you must not remove `id`** from the header.
 It's a key information for synchronization with Qiita site.
+
+And this `id` must be unique. Only one file can included it in the header.
+Please not to create article files that have same `id`, which can happen when copying an article file.
 
 ```markdown
 <!--
@@ -98,7 +104,7 @@ id:    a5b5328c93bad615c5b2
 -->
 ```
 
-But, you don't need `id` in the header when you create new articles.
+When creating new article file, you don't need `id` in the header.
 
 ```markdown
 <!--
@@ -111,7 +117,7 @@ The `id` will be automatically added to the header after uploaded to Qiita site.
 
 ## Links to Qiita article
 
-You can write a link to another your Qiita article as a relative file path like below.
+You can use a relative file path as a link to another your article file.
 
 ```markdown
 <!-- An example of link to another Qiita article when writing -->
@@ -125,11 +131,11 @@ This link will be automatically changed to the URL when uploaded to Qiita site.
 [My Article](https://qiita.com/ryokat3/items/a5b5328c93bad615c5b2)
 ```
 
-And, it will be automatically changed to the relative file path when downloaded from Qiita site.
+And it will be automatically changed to the relative file path when downloaded from Qiita site.
 
 ## Links to image file
 
-You can write a link to an image file as a relative file path like below.
+You can use a relative file path as a link to an image file.
 
 ```markdown
 <!-- An example of link to image file 'earth.png' when writing-->
@@ -143,4 +149,4 @@ This link will be automatically changed to the URL when uploaded to Qiita site.
 ![My Image](https://raw.githubusercontent.com/ryokat3/qiita-articles/main/image/earth.png)
 ```
 
-And, it will be automatically changed to the relative file path when downloaded from Qiita site.
+And it will be automatically changed to the relative file path when downloaded from Qiita site.
