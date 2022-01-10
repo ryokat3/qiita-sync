@@ -297,7 +297,7 @@ def test_git_get_topdir():
 
 
 def test_git_get_remote_url():
-    assert git_get_remote_url().startswith("git@github.com:")
+    assert "github.com" in git_get_remote_url()
 
 
 def test_git_get_committer_datetime():
