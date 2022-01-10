@@ -49,6 +49,8 @@ ACCESS_TOKEN_ENV = "QIITA_ACCESS_TOKEN"
 DEFAULT_TITLE = "No Title"
 DEFAULT_TAGS = "No Tag"
 
+GITHUB_REF = "GITHUB_REF"
+
 ########################################################################
 # Logger
 ########################################################################
@@ -203,7 +205,18 @@ def git_get_remote_url() -> str:
 
 def git_get_committer_date(filename: str) -> str:
     # "%cI", committer date, strict ISO 8601 format
-    return exec_command("git log origin/main -1 --pretty=%cI".split() + [filename])
+    #
+    # NOTE:
+    # When invoked on pull request, the command "git rev-parse --abbrev-ref HEAD"
+    # return "HEAD", which is not a branch name.
+    # Instead, in GitHub Actions, environment variable "GITHUB_REF" has
+    # "refs/pull/11/merge". "pull/11/merg" seems to be used as branch name.
+    #
+    # So, at first try to get "GITHUB_REF", then "git rev-parse --abbrev-ref HEAD"
+    #
+    branch = Maybe(os.environ.get(GITHUB_REF)).map(lambda s: s.replace('refs/', '', 1)).getOrElse(
+        f'origin/{exec_command("git rev-parse --abbrev-ref HEAD".split())}')
+    return exec_command(f"git log {branch} -1 --pretty=%cI".split() + [filename])
 
 
 def git_get_committer_datetime(filename: str) -> datetime:
@@ -212,7 +225,17 @@ def git_get_committer_datetime(filename: str) -> datetime:
 
 @functools.lru_cache(maxsize=1)
 def git_get_default_branch() -> str:
-    return exec_command("git rev-parse --abbrev-ref HEAD".split())
+    #
+    # NOTE:
+    # When invoked on pull request, the command "git rev-parse --abbrev-ref HEAD"
+    # return "HEAD", which is not a branch name.
+    # Instead, in GitHub Actions, environment variable "GITHUB_REF" has
+    # "refs/pull/11/merge". "pull/11/merg" seems to be used as branch name.
+    #
+    # So, at first try to get "GITHUB_REF", then "git rev-parse --abbrev-ref HEAD"
+    #
+    return Maybe(os.environ.get(GITHUB_REF)).map(lambda s: s.replace('refs/', '', 1)).getOrElse(
+        exec_command("git rev-parse --abbrev-ref HEAD".split()))
 
 
 ########################################################################
