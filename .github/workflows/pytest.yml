@@ -6,7 +6,7 @@ on:
       - main
   pull_request:
     branches:
-      - develop
+      - dev
 
 jobs:
   pytest:
@@ -26,8 +26,10 @@ jobs:
           git config --get remote.origin.url
           echo "git rev-parse --abbrev-ref HEAD"
           git rev-parse --abbrev-ref HEAD
-          echo "git log origin/main -4 --pretty=%cI qiita_sync/qiita_sync.py"    
-          git log origin/main -4 --pretty=%cI qiita_sync/qiita_sync.py
+          echo "git branch --all"
+          git branch --all
+          echo "git log ${GITHUB_REF#refs/} -1 --pretty=%cI qiita_sync/qiita_sync.py"    
+          git log ${GITHUB_REF#refs/} -1 --pretty=%cI qiita_sync/qiita_sync.py
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
