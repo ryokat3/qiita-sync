@@ -150,3 +150,10 @@ This link will be automatically changed to the URL when uploaded to Qiita site.
 ```
 
 And it will be automatically changed to the relative file path when downloaded from Qiita site.
+
+# Revision History
+
+| Version  | Date       | Summary                                                           |
+|----------|------------|-------------------------------------------------------------------|
+| v1.1.1   | 2021-01-11 | - Changed the logic to get Git branch name                        |
+| v1.1.0   | 2021-01-10 | - Initial release                                                 |
