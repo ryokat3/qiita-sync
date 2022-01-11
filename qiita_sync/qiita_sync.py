@@ -262,7 +262,11 @@ def git_get_committer_date(filename: str) -> str:
     # "%cI", committer date, strict ISO 8601 format
     head = git_get_HEAD()
     branch = f"origin/{head}" if head != "HEAD" else head
-    return exec_command(f"git log --reverse {branch} --pretty=%cI".split() + [filename]).splitlines()[0]
+    result = exec_command(f"git log {branch} --pretty=%cI".split() + [filename]).splitlines()
+    print(f"0 = {result[0]}")
+    print(f"1 = {result[1]}")
+    print(f"2 = {result[2]}")
+    return result[0]
 
 
 def git_get_committer_datetime(filename: str) -> datetime:
