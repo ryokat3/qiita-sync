@@ -300,7 +300,7 @@ def test_git_get_remote_url():
     assert "github.com" in git_get_remote_url()
 
 
-def test_git_get_committer_datetime():
+def test_git_get_committer_datetime():        
     assert isinstance(git_get_committer_datetime(git_get_topdir()), datetime.datetime)
 
 
