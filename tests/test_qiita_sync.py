@@ -8,8 +8,8 @@ from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
 from argparse import ArgumentError
 
-from qiita_sync.qiita_sync import CommandError, QiitaArticle, QiitaSync, exec_command, qsync_get_access_token
-from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
+from qiita_sync.qiita_sync import ApplicationError, CommandError, QiitaArticle, QiitaSync, exec_command, qsync_get_access_token
+from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB, GITHUB_REF
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
 from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch, git_get_committer_datetime
@@ -305,13 +305,23 @@ def test_git_get_committer_datetime():
 
 
 def test_git_get_default_branch():
-    branch = git_get_default_branch()
-    # assert branch == 'main' or branch == 'master'
+    try:
+        git_get_default_branch()
+        assert True
+    except ApplicationError:
+        assert False
 
+
+def test_git_get_HEAD():
+    head = git_get_default_branch()
+    if head == "HEAD":
+        ref = os.environ.get(GITHUB_REF)
+        assert ref.startswith('refs/')
 
 ########################################################################
 # Qiita API
 ########################################################################
+
 
 def test_qsync():
     # Get token from environment variable
