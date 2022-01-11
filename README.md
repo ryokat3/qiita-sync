@@ -155,5 +155,6 @@ And it will be automatically changed to the relative file path when downloaded f
 
 | Version  | Date       | Summary                                                           |
 |----------|------------|-------------------------------------------------------------------|
-| v1.1.1   | 2021-01-11 | - Withdrawn from PyPI
+| v1.2.0   | 2021-01-11 | - Fixed getting Git timestamp and branch name                     |
+| v1.1.1   | 2021-01-11 | - Withdrawn from PyPI                                             |
 | v1.1.0   | 2021-01-10 | - Initial release                                                 |
