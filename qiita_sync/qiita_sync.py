@@ -1,5 +1,60 @@
 #!/usr/bin/env python
 #
+
+#
+# Git Command Result on GitHub
+# ============================
+#
+# On PR to 'dev' branch
+# ---------------------
+#
+# git rev-parse --show-toplevel
+#     /home/runner/work/qiita-sync-test/qiita-sync-test
+# git config --get remote.origin.url
+#     https://github.com/ryokat3/qiita-sync-test
+# git rev-parse --abbrev-ref HEAD
+#     HEAD
+# git branch --all
+#     * (HEAD detached at pull/2/merge)
+#       remotes/pull/2/merge
+# echo ${GITHUB_REF}
+#     refs/pull/2/merge
+# git log pull/2/merge -1 --pretty=%cI README.md
+#     2022-01-10T23:08:24+00:00
+#
+#
+# On push to 'main'
+# -----------------
+#
+# git rev-parse --show-toplevel
+#     /home/runner/work/qiita-sync-test/qiita-sync-test
+# git config --get remote.origin.url
+#     https://github.com/ryokat3/qiita-sync-test
+# git rev-parse --abbrev-ref HEAD
+#     main
+# git branch --all
+#     * main
+#       remotes/origin/main
+# echo ${GITHUB_REF}
+#     refs/heads/main
+# git log heads/main -1 --pretty=%cI README.md
+#     2022-01-11T07:50:58+09:00
+#
+#
+# NOTE:
+#
+# How to get branch name (2022-01-11)
+# -----------------------------------
+#
+# When invoked on pull request, the command "git rev-parse --abbrev-ref HEAD"
+# return "HEAD", which is not a branch name (HEAD is detached).
+#
+# Instead, in GitHub Actions, environment variable "GITHUB_REF" has
+# "refs/pull/11/merge". "pull/11/merg" seems to be used as branch name.
+#
+# So, at first try "git rev-parse --abbrev-ref HEAD", and if it's 'HEAD', then get "GITHUB_REF"
+#
+
 from __future__ import annotations
 
 import functools
@@ -205,17 +260,8 @@ def git_get_remote_url() -> str:
 
 def git_get_committer_date(filename: str) -> str:
     # "%cI", committer date, strict ISO 8601 format
-    #
-    # NOTE:
-    # When invoked on pull request, the command "git rev-parse --abbrev-ref HEAD"
-    # return "HEAD", which is not a branch name.
-    # Instead, in GitHub Actions, environment variable "GITHUB_REF" has
-    # "refs/pull/11/merge". "pull/11/merg" seems to be used as branch name.
-    #
-    # So, at first try to get "GITHUB_REF", then "git rev-parse --abbrev-ref HEAD"
-    #
-    branch = Maybe(os.environ.get(GITHUB_REF)).map(lambda s: s.replace('refs/', '', 1)).getOrElse(
-        f'origin/{exec_command("git rev-parse --abbrev-ref HEAD".split())}')
+    head = git_get_HEAD()
+    branch = f"origin/{head}" if head != "HEAD" else head    
     return exec_command(f"git log {branch} -1 --pretty=%cI".split() + [filename])
 
 
@@ -225,18 +271,20 @@ def git_get_committer_datetime(filename: str) -> datetime:
 
 @functools.lru_cache(maxsize=1)
 def git_get_default_branch() -> str:
-    #
-    # NOTE:
-    # When invoked on pull request, the command "git rev-parse --abbrev-ref HEAD"
-    # return "HEAD", which is not a branch name.
-    # Instead, in GitHub Actions, environment variable "GITHUB_REF" has
-    # "refs/pull/11/merge". "pull/11/merg" seems to be used as branch name.
-    #
-    # So, at first try to get "GITHUB_REF", then "git rev-parse --abbrev-ref HEAD"
-    #
-    return Maybe(os.environ.get(GITHUB_REF)).map(lambda s: s.replace('refs/', '', 1)).getOrElse(
-        exec_command("git rev-parse --abbrev-ref HEAD".split()))
+    head = git_get_HEAD()
+    if head == "HEAD":
+        github_ref = os.environ.get(GITHUB_REF)
+        if github_ref is None:
+            raise ApplicationError("Failed to get Gig branch name")
+        else:
+            return github_ref.replace('refs/', '', 1)
+    else:
+        return head
 
+
+@functools.lru_cache(maxsize=1)
+def git_get_HEAD() -> str:
+    return exec_command("git rev-parse --abbrev-ref HEAD".split())
 
 ########################################################################
 # Rest API
