@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "qiita-sync"
-version = "1.1.1"
+version = "1.1.2"
 description = "Synchronize GitHub with Qiita"
 authors = ["Ryoji Kato <ryokat3@gmail.com>"]
 readme = "README.md"
-homepage = "https://github.com/wak109/qiita-sync"
+homepage = "https://github.com/ryokat3/qiita-sync"
 
 [tool.poetry.dependencies]
 python = "^3.7"

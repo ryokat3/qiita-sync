@@ -261,7 +261,7 @@ def git_get_remote_url() -> str:
 def git_get_committer_date(filename: str) -> str:
     # "%cI", committer date, strict ISO 8601 format
     head = git_get_HEAD()
-    branch = f"origin/{head}" if head != "HEAD" else head    
+    branch = f"origin/{head}" if head != "HEAD" else head
     return exec_command(f"git log {branch} -1 --pretty=%cI".split() + [filename])
 
 
@@ -285,6 +285,7 @@ def git_get_default_branch() -> str:
 @functools.lru_cache(maxsize=1)
 def git_get_HEAD() -> str:
     return exec_command("git rev-parse --abbrev-ref HEAD".split())
+
 
 ########################################################################
 # Rest API
@@ -520,12 +521,18 @@ class QiitaData(NamedTuple):
 
     @classmethod
     def fromString(cls, text: str, default_title=DEFAULT_TITLE, default_tags=DEFAULT_TAGS) -> QiitaData:
-        data = dict({"title": default_title, "tags": default_tags},
-            **dict(map(lambda tpl: (tpl[0].strip(), tpl[1].strip()),
-                    map(lambda line: line.split(":", 1),
-                        filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None, text.splitlines())))))
-        return cls(data["title"], QiitaTags.fromString(
-            data["tags"]), data.get("id"), Maybe(data.get("private")).map(str2bool).getOrElse(False))
+        data = dict({
+            "title": default_title,
+            "tags": default_tags
+        },
+                    **dict(
+                        map(
+                            lambda tpl: (tpl[0].strip(), tpl[1].strip()),
+                            map(lambda line: line.split(":", 1),
+                                filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None,
+                                       text.splitlines())))))
+        return cls(data["title"], QiitaTags.fromString(data["tags"]), data.get("id"),
+                   Maybe(data.get("private")).map(str2bool).getOrElse(False))
 
     @classmethod
     def fromApi(cls, item) -> QiitaData:
@@ -566,15 +573,16 @@ class QiitaArticle(NamedTuple):
         m = HEADER_REGEX.match(text)
         logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')
         body = Maybe(m).map(lambda m: m.group(2)).getOrElse(text)
-        data = QiitaData.fromString(Maybe(m).map(lambda m: m.group(1)).getOrElse(""),
-                qiita_get_temporary_title(body), qiita_get_temporary_tags(body))
+        data = QiitaData.fromString(
+            Maybe(m).map(lambda m: m.group(1)).getOrElse(""), qiita_get_temporary_title(body),
+            qiita_get_temporary_tags(body))
 
         return cls(data=data, body=body, timestamp=timestamp, filepath=filepath)
 
     @classmethod
     def fromApi(cls, item) -> QiitaArticle:
-        return cls(data=QiitaData.fromApi(item), body=item["body"],
-                timestamp=get_utc(item["updated_at"]), filepath=None)
+        return cls(
+            data=QiitaData.fromApi(item), body=item["body"], timestamp=get_utc(item["updated_at"]), filepath=None)
 
 
 #######################################################################
@@ -588,13 +596,16 @@ MARKDOWN_IMAGE_REGEX = re.compile(r"(\!\[[^\]]*\]\()([^\ \)]+)(.*?\))", re.MULTI
 
 
 def markdown_code_block_split(text: str) -> List[str]:
-    return list(filter(lambda elm: elm is not None and re.match(r"^````*$", elm) is None,
-                re.split(CODE_BLOCK_REGEX, text)))
+    return list(
+        filter(lambda elm: elm is not None and re.match(r"^````*$", elm) is None, re.split(CODE_BLOCK_REGEX, text)))
 
 
 def markdown_code_inline_split(text: str) -> List[str]:
-    return list(filter(None, filter(lambda elm: elm is not None and re.match(r"^``*$", elm) is None,
-                re.split(CODE_INLINE_REGEX, text))))
+    return list(
+        filter(
+            None,
+            filter(lambda elm: elm is not None and re.match(r"^``*$", elm) is None, re.split(CODE_INLINE_REGEX,
+                                                                                             text))))
 
 
 def markdown_replace_block_text(func: Callable[[str], str], text: str):
@@ -664,9 +675,8 @@ def qsync_get_local_article(include_patterns: List[str], exclude_patterns: List[
     topdir = Path(git_get_topdir())
     return [
         Path(fp).resolve()
-        for fp in (functools.reduce(
-            lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) - functools.reduce(
-                lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in exclude_patterns]))
+        for fp in (functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) -
+                   functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in exclude_patterns]))
     ]
 
 
@@ -785,8 +795,10 @@ class QiitaSync(NamedTuple):
         if article.data.id is not None:
             qiita_patch_item(self.caller, article.data.id, self.toGlobalFormat(article).toApi())
         else:
-            Maybe(qiita_post_item(self.caller, self.toGlobalFormat(article).toApi())).map(QiitaArticle.fromApi).map(
-                lambda x: article._replace(data=x.data, timestamp=x.timestamp)).map(lambda x: self.save(x))
+            Maybe(qiita_post_item(
+                self.caller,
+                self.toGlobalFormat(article).toApi())).map(QiitaArticle.fromApi).map(
+                    lambda x: article._replace(data=x.data, timestamp=x.timestamp)).map(lambda x: self.save(x))
 
     def save(self, article: QiitaArticle):
         filepath = article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")
@@ -843,6 +855,9 @@ def qsync_show_on_diff(qsync: QiitaSync, local_article: QiitaArticle, global_art
     if la.body != ga.body:
         for diff in difflib.unified_diff(la.body.splitlines(), ga.body.splitlines()):
             print(diff)
+
+    print(f'Local Timestamp: {local_article.timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f%z")}')
+    print(f'Qiita Timestamp: {global_article.timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f%z")}')
 
     if local_article.timestamp > global_article.timestamp:
         if local_article.filepath is None:
