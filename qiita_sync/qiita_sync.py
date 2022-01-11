@@ -263,9 +263,6 @@ def git_get_committer_date(filename: str) -> str:
     head = git_get_HEAD()
     branch = f"origin/{head}" if head != "HEAD" else head
     result = exec_command(f"git log {branch} --pretty=%cI".split() + [filename]).splitlines()
-    print(f"0 = {result[0]}")
-    print(f"1 = {result[1]}")
-    print(f"2 = {result[2]}")
     return result[0]
 
 
@@ -570,7 +567,7 @@ class QiitaArticle(NamedTuple):
         }
 
     @classmethod
-    def fromFile(cls, filepath: Path, git_timestamp: bool = False) -> QiitaArticle:
+    def fromFile(cls, filepath: Path, git_timestamp: bool) -> QiitaArticle:
         text = filepath.read_text()
         timestamp = git_get_committer_datetime(str(filepath)) if git_timestamp else datetime.fromtimestamp(
             filepath.stat().st_mtime, timezone.utc)
@@ -922,7 +919,7 @@ def qsync_argparse() -> ArgumentParser:
         parser.add_argument("-i", "--include", nargs='*', default=DEFAULT_INCLUDE_GLOB, help="include glob")
         parser.add_argument("-e", "--exclude", nargs='*', default=DEFAULT_EXCLUDE_GLOB, help="exclude glob")
         parser.add_argument("-v", "--verbose", action='store_true', help="debug logging")
-        parser.add_argument("--git-timestamp", action='store_true', help="Use git time instead of mtime")
+        parser.add_argument("--file-timestamp", action='store_true', help="Use mtime instead of git time")
 
         return parser
 
@@ -942,7 +939,7 @@ def qsync_init(args) -> QiitaSync:
     access_token = qsync_get_access_token(args.token)
     local_article = qsync_get_local_article(args.include, args.exclude)
 
-    return QiitaSync.getInstance(access_token, local_article, args.git_timestamp)
+    return QiitaSync.getInstance(access_token, local_article, not args.file_timestamp)    
 
 
 def qsync_main():
