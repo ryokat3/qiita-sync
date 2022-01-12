@@ -939,7 +939,7 @@ def qsync_init(args) -> QiitaSync:
     access_token = qsync_get_access_token(args.token)
     local_article = qsync_get_local_article(args.include, args.exclude)
 
-    return QiitaSync.getInstance(access_token, local_article, not args.file_timestamp)    
+    return QiitaSync.getInstance(access_token, local_article, not args.file_timestamp)
 
 
 def qsync_main():
@@ -948,7 +948,7 @@ def qsync_main():
         args = qsync_argparse().parse_args()
         logger.setLevel(logging.DEBUG if args.verbose else logging.ERROR)
         target = Path(args.target).resolve()
-        qsync_chdir_git(target)
+        qsync_chdir_git(target if target.is_dir() else target.parent)
         args.func(qsync_init(args), target)
     except CommandError as err:
         print(err)
