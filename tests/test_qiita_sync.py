@@ -3,21 +3,25 @@ import random
 import string
 import pytest
 import datetime
+import re
 from pathlib import Path
 from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
-from argparse import ArgumentError
 
-from qiita_sync.qiita_sync import ApplicationError, CommandError, QiitaArticle, QiitaSync, exec_command, qsync_get_access_token
+from qiita_sync.qiita_sync import ApplicationError, CommandError, QiitaArticle, QiitaSync
+from qiita_sync.qiita_sync import exec_command, qsync_get_access_token
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB, GITHUB_REF
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
-from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch, git_get_committer_datetime
+from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch
+from qiita_sync.qiita_sync import git_get_committer_datetime
 from qiita_sync.qiita_sync import qiita_create_caller, qiita_get_authenticated_user_id
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
 from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
+from qiita_sync.qiita_sync import qsync_main
 
 from pytest_mock.plugin import MockerFixture
+from pytest import CaptureFixture
 
 ########################################################################
 # Test Utils
@@ -187,6 +191,30 @@ id:     {TEST_ARTICLE_ID1}
 ########################################################################
 # CLI Test
 ########################################################################
+
+
+def test_subcommand_download(mocker: MockerFixture):
+    mocker.patch('sys.argv', ['qiita_sync.py', 'download', '.', '--file-timestamp'])
+    #
+    # TODO: better assertion
+    #
+    try:
+        qsync_main()
+        assert True
+    except Exception:
+        assert False
+
+
+def test_subcommand_check(mocker: MockerFixture, capsys: CaptureFixture):
+    mocker.patch('sys.argv', ['qiita_sync.py', 'check', '.', '--file-timestamp'])
+    try:
+        qsync_main()
+        captured = capsys.readouterr()
+        print(captured.out)
+        assert re.match(r'^https://qiita\.com/.*is new article$', captured.out, re.MULTILINE | re.DOTALL)
+        assert "qiita-sync/CHANGELOG.md is new article" in captured.out
+    except Exception:
+        assert False
 
 
 def test_invalid_subcommand(topdir_fx: Path):
