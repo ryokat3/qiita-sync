@@ -188,6 +188,17 @@ id:     {TEST_ARTICLE_ID1}
 """
 
 
+def gen_md3(mdlink: Callable[[str], str], imglink: Callable[[str], str]):
+    return f"""
+<!--
+title:    temporary
+tags:     test
+private:  true
+-->
+![img1]({imglink("img1.png")})
+"""
+
+
 ########################################################################
 # CLI Test
 ########################################################################
@@ -215,6 +226,21 @@ def test_subcommand_check(mocker: MockerFixture, capsys: CaptureFixture):
         assert "qiita-sync/CHANGELOG.md is new article" in captured.out
     except Exception:
         assert False
+
+
+def test_subcommand_upload_and_delete(topdir_fx: Path, mocker: MockerFixture):    
+    get_qsync([MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
+    article = QiitaArticle.fromFile(topdir_fx.joinpath("md3.md"), False)    
+    assert article.data.id is None
+
+    mocker.patch('sys.argv', ['qiita_sync.py', 'upload', 'md3.md', '--file-timestamp'])    
+    qsync_main()    
+
+    article = QiitaArticle.fromFile(topdir_fx.joinpath("md3.md"), False)
+    assert article.data.id is not None
+
+    mocker.patch('sys.argv', ['qiita_sync.py', 'delete', 'md3.md', '--file-timestamp'])
+    qsync_main()
 
 
 def test_invalid_subcommand(topdir_fx: Path):
