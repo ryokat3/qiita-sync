@@ -31,7 +31,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.1.0 - 2021-01-09
+## 1.2.0 - 2022-01-11
+
+### Added
+
+- Added to show timestamps when checking the diffs
+- Added test cases
+
+### Changed
+
+- Changed the command line option from git-timestamp to file-timestamp
+
+### Fixed
+
+- Fixed the way to get branch name changed in 1.1.1 
+- Fixed the default timestamp from file-timestamp to git-timestamp
+
+## 1.1.1 - 2022-01-10
+
+### Added
+
+- Added test cases
+
+### Changed
+
+- Changed pytest command options in pytest.yml
+- Changed the way to get branch name when HEAD is detached
+- Changed the branch name from develop to dev
+
+## 1.1.0 - 2022-01-09
 
 ### Added
 
