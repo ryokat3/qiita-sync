@@ -10,6 +10,7 @@ from dataclasses import dataclass
 
 from qiita_sync.qiita_sync import ApplicationError, CommandError, QiitaArticle, QiitaSync
 from qiita_sync.qiita_sync import exec_command, qsync_get_access_token
+from qiita_sync.qiita_sync import qsync_subcommand_upload, qsync_subcommand_delete
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB, GITHUB_REF
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
@@ -204,43 +205,50 @@ private:  true
 ########################################################################
 
 
-def test_subcommand_download(mocker: MockerFixture):
+def test_subcommand_download(topdir_fx: Path, mocker: MockerFixture):
+    get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     mocker.patch('sys.argv', ['qiita_sync.py', 'download', '.', '--file-timestamp'])
-    #
-    # TODO: better assertion
-    #
-    try:
-        qsync_main()
-        assert True
-    except Exception:
-        assert False
-
-
-def test_subcommand_check(mocker: MockerFixture, capsys: CaptureFixture):
-    mocker.patch('sys.argv', ['qiita_sync.py', 'check', '.', '--file-timestamp'])
-    try:
-        qsync_main()
-        captured = capsys.readouterr()
-        print(captured.out)
-        assert re.match(r'^https://qiita\.com/.*is new article$', captured.out, re.MULTILINE | re.DOTALL)
-        assert "qiita-sync/CHANGELOG.md is new article" in captured.out
-    except Exception:
-        assert False
-
-
-def test_subcommand_upload_and_delete(topdir_fx: Path, mocker: MockerFixture):    
-    get_qsync([MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
-    article = QiitaArticle.fromFile(topdir_fx.joinpath("md3.md"), False)    
-    assert article.data.id is None
-
-    mocker.patch('sys.argv', ['qiita_sync.py', 'upload', 'md3.md', '--file-timestamp'])    
     qsync_main()    
 
-    article = QiitaArticle.fromFile(topdir_fx.joinpath("md3.md"), False)
-    assert article.data.id is not None
 
-    mocker.patch('sys.argv', ['qiita_sync.py', 'delete', 'md3.md', '--file-timestamp'])
+def test_subcommand_check(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
+    get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
+    mocker.patch('sys.argv', ['qiita_sync.py', 'check', '.', '--file-timestamp'])    
     qsync_main()
+    captured = capsys.readouterr()
+    assert re.match(r'^https://qiita\.com/.*is new article$', captured.out, re.MULTILINE | re.DOTALL)
+    assert "md2.md is new article" in captured.out
+    assert "md3.md is new article" in captured.out
+    
+    
+def test_subcommand_show_diff(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):    
+    mocker.patch('sys.argv', ['qiita_sync.py', 'sync', str(topdir_fx), '--file-timestamp'])
+    qsync_main()
+
+    for fp in topdir_fx.glob('*.md'):
+        print(f"rewrite = {fp}")
+        with open(fp, "a") as fd:
+            fd.write("\nHello, world")
+
+    mocker.patch('sys.argv', ['qiita_sync.py', 'check', str(topdir_fx), '--file-timestamp'])
+    qsync_main()
+    captured = capsys.readouterr()
+    assert '.md is newer' in captured.out
+
+
+def test_subcommand_upload_and_delete(topdir_fx: Path):
+    qsync = get_qsync([MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
+    target = topdir_fx.joinpath("md3.md")
+    article = QiitaArticle.fromFile(target, False)
+    assert article.data.id is None
+
+    qsync_subcommand_upload(qsync, target)
+
+    article = QiitaArticle.fromFile(target, False)
+    assert article.data.id is not None
+    qsync = qsync_init(qsync_argparse().parse_args("download .".split()))
+
+    qsync_subcommand_delete(qsync, target)
 
 
 def test_invalid_subcommand(topdir_fx: Path):
@@ -495,8 +503,18 @@ def test_markdown_replace_image(text, func, replaced):
 
 
 ########################################################################
-# Markdown Converter Test
+# Qiita Sync
 ########################################################################
+
+def test_QiitaSync_getArticleByPath(topdir_fx: Path):
+    qsync = get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
+    target = topdir_fx.joinpath("md3.md")
+
+    result = qsync.getArticleByPath(target)
+    assert target in result.keys()
+
+    result = qsync.getArticleByPath(topdir_fx)
+    assert target in result.keys()
 
 
 @pytest.mark.parametrize("md1, md2, img1", [("md1.md", "md2.md", 'img1.png'), ("md1.md", "doc/md2.md", 'img1.png'),
