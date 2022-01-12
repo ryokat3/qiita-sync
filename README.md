@@ -1,6 +1,8 @@
 # Qiita-Sync
 
 ![pytest](https://github.com/ryokat3/Qiita-Sync/actions/workflows/pytest.yml/badge.svg)
+[![PyPI version](https://badge.fury.io/py/qiita-sync.svg)](https://badge.fury.io/py/qiita-sync)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/qiita-sync)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/ryokat3/Qiita-Sync/Python%20Test/main)
 ![Codecov branch](https://img.shields.io/codecov/c/github/ryokat3/Qiita-Sync/main)
 ![GitHub](https://img.shields.io/github/license/ryokat3/Qiita-Sync)
