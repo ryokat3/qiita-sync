@@ -8,13 +8,13 @@ from pathlib import Path
 from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
 
-from qiita_sync.qiita_sync import ApplicationError, CommandError, QiitaArticle, QiitaSync
+from qiita_sync.qiita_sync import ApplicationError, CommandError, QiitaArticle, QiitaSync, git_get_HEAD
 from qiita_sync.qiita_sync import exec_command, qsync_get_access_token
 from qiita_sync.qiita_sync import qsync_subcommand_upload, qsync_subcommand_delete
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB, GITHUB_REF
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
-from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch
+from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch, git_get_HEAD
 from qiita_sync.qiita_sync import git_get_committer_datetime
 from qiita_sync.qiita_sync import qiita_create_caller, qiita_get_authenticated_user_id
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
@@ -22,7 +22,7 @@ from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
 from qiita_sync.qiita_sync import qsync_main
 
 from pytest_mock.plugin import MockerFixture
-from pytest import CaptureFixture
+from pytest import CaptureFixture, MonkeyPatch
 
 ########################################################################
 # Test Utils
@@ -200,6 +200,11 @@ private:  true
 """
 
 
+def update_test_file(fp: Path):
+    with open(fp, "a") as fd:
+        fd.write("\n# Hello, world")
+
+
 ########################################################################
 # CLI Test
 ########################################################################
@@ -208,33 +213,42 @@ private:  true
 def test_subcommand_download(topdir_fx: Path, mocker: MockerFixture):
     get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     mocker.patch('sys.argv', ['qiita_sync.py', 'download', '.', '--file-timestamp'])
-    qsync_main()    
+    qsync_main()
 
 
 def test_subcommand_check(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
-    mocker.patch('sys.argv', ['qiita_sync.py', 'check', '.', '--file-timestamp'])    
+    mocker.patch('sys.argv', ['qiita_sync.py', 'check', '.', '--file-timestamp'])
     qsync_main()
     captured = capsys.readouterr()
     assert re.match(r'^https://qiita\.com/.*is new article$', captured.out, re.MULTILINE | re.DOTALL)
     assert "md2.md is new article" in captured.out
     assert "md3.md is new article" in captured.out
-    
-    
-def test_subcommand_show_diff(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):    
+
+
+def test_subcommand_show_diff(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     mocker.patch('sys.argv', ['qiita_sync.py', 'sync', str(topdir_fx), '--file-timestamp'])
     qsync_main()
 
     for fp in topdir_fx.glob('*.md'):
-        print(f"rewrite = {fp}")
-        with open(fp, "a") as fd:
-            fd.write("\nHello, world")
+        update_test_file(fp)
 
     mocker.patch('sys.argv', ['qiita_sync.py', 'check', str(topdir_fx), '--file-timestamp'])
     qsync_main()
     captured = capsys.readouterr()
     assert '.md is newer' in captured.out
 
+
+def test_subcommand_upload(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
+    get_qsync([MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
+    mocker.patch('sys.argv', ['qiita_sync.py', 'sync', str(topdir_fx), '--file-timestamp'])
+    qsync_main()
+
+    mocker.patch('sys.argv', ['qiita_sync.py', 'upload', str(topdir_fx.joinpath("md3.md")), '--file-timestamp'])
+    qsync_main()
+
+    mocker.patch('sys.argv', ['qiita_sync.py', 'download', str(topdir_fx.joinpath("md3.md")), '--file-timestamp'])
+    qsync_main()
 
 def test_subcommand_upload_and_delete(topdir_fx: Path):
     qsync = get_qsync([MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
@@ -376,6 +390,26 @@ def test_git_get_default_branch():
         assert False
 
 
+def test_git_get_default_branch_from_GITHUB_REF(mocker: MockerFixture, monkeypatch: MonkeyPatch):
+    git_get_HEAD.cache_clear()
+    git_get_default_branch.cache_clear()
+    monkeypatch.setenv(GITHUB_REF, 'refs/patch/id/11')
+    mocker.patch(f'{QSYNC_MODULE_PATH}git_get_HEAD', return_value="HEAD")
+
+    assert git_get_default_branch() == "patch/id/11"
+
+
+def test_git_get_default_branch_raise_ApplicationError(mocker: MockerFixture, monkeypatch: MonkeyPatch):
+    git_get_HEAD.cache_clear()
+    git_get_default_branch.cache_clear()
+    if GITHUB_REF in os.environ:
+        monkeypatch.delenv(GITHUB_REF)
+    mocker.patch(f'{QSYNC_MODULE_PATH}git_get_HEAD', return_value="HEAD")
+
+    with pytest.raises(ApplicationError):
+        git_get_default_branch()
+
+
 def test_git_get_HEAD():
     head = git_get_default_branch()
     if head == "HEAD":
@@ -505,6 +539,7 @@ def test_markdown_replace_image(text, func, replaced):
 ########################################################################
 # Qiita Sync
 ########################################################################
+
 
 def test_QiitaSync_getArticleByPath(topdir_fx: Path):
     qsync = get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])

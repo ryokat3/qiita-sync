@@ -276,7 +276,7 @@ def git_get_default_branch() -> str:
     if head == "HEAD":
         github_ref = os.environ.get(GITHUB_REF)
         if github_ref is None:
-            raise ApplicationError("Failed to get Gig branch name")
+            raise ApplicationError("Failed to get Git branch name")
         else:
             return github_ref.replace('refs/', '', 1)
     else:
@@ -795,14 +795,14 @@ class QiitaSync(NamedTuple):
     def upload(self, article: QiitaArticle):
         if article.data.id is not None:
             qiita_patch_item(self.caller, article.data.id, self.toGlobalFormat(article).toApi())
-        else:            
+        else:
             Maybe(qiita_post_item(
                 self.caller,
                 self.toGlobalFormat(article).toApi())).map(QiitaArticle.fromApi).map(
                     lambda x: article._replace(data=x.data, timestamp=x.timestamp)).map(lambda x: self.save(x))
 
     def save(self, article: QiitaArticle):
-        filepath = article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")        
+        filepath = article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")
         with filepath.open("w") as fp:
             fp.write(self.toLocalFormat(article._replace(filepath=filepath)).toText())
 
