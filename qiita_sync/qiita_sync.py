@@ -409,12 +409,17 @@ def qiita_create_caller(auth_token: str):
 
 
 def qiita_get_item_page(caller: RESTAPI_CALLER_TYPE, page: int, per_page: int):
-    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/authenticated_user/items?page={page}&per_page={per_page}", "GET", None))
+    return restapi_json_response(
+        caller(f"{QIITA_API_ENDPOINT}/authenticated_user/items?page={page}&per_page={per_page}", "GET", None))
 
 
 def qiita_get_item_list(caller: RESTAPI_CALLER_TYPE, per_page: int = 10):
-    return reduce(lambda a, b: a + b, filter(None, takewhile(lambda resp: resp is not None and len(resp) != 0,
-        map(lambda page: qiita_get_item_page(caller, page, per_page), count(1)))), [])    
+    return reduce(
+        lambda a, b: a + b,
+        filter(
+            None,
+            takewhile(lambda resp: resp is not None and len(resp) != 0,
+                      map(lambda page: qiita_get_item_page(caller, page, per_page), count(1)))), [])
 
 
 def qiita_get_item(caller: RESTAPI_CALLER_TYPE, id: str):
@@ -782,7 +787,7 @@ class QiitaSync(NamedTuple):
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
             lambda filepath: Maybe(diff_url(link, self.github_url)).filter(lambda x: x != link).map(lambda diff: str(
                 rel_path(Path(self.git_dir).joinpath(diff), filepath.parent)))).getOrElse(link)
-
+                
     def toLocaMarkdownlLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
             lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filter(
@@ -791,7 +796,7 @@ class QiitaSync(NamedTuple):
 
     def toLocalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
-        def convert_image_link(text: str, article: QiitaArticle) -> str:
+        def convert_image_link(text: str, article: QiitaArticle) -> str:            
             return markdown_replace_image(lambda link: self.toLocalImageLink(link, article), text)
 
         def convert_link(text: str) -> str:
@@ -874,10 +879,11 @@ def qsync_check_status_local_article(
     if local_article.data.id is None:
         return (SyncStatus.LOCAL_ONLY, None)
     else:
-        global_article = get_global_article(local_article.data.id)
+        global_article = Maybe(get_global_article(local_article.data.id)).map(
+            lambda article: article._replace(filepath=local_article.filepath)).map(qsync.toLocalFormat).get()
         if global_article is None:
             return (SyncStatus.GLOBAL_DELETED, None)
-        elif qsync.toLocalFormat(local_article) == qsync.toLocalFormat(global_article):
+        elif qsync.toLocalFormat(local_article) == global_article:
             return (SyncStatus.SYNC, global_article)
         elif local_article.timestamp > global_article.timestamp:
             return (SyncStatus.LOCAL_NEW, global_article)
@@ -911,11 +917,11 @@ def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
             print(err)
 
 
-def qsync_str_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle) -> List[str]:
+def qsync_str_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle) -> List[str]:    
     return list(
         difflib.unified_diff(
             qsync.toLocalFormat(local_article).body.splitlines(),
-            qsync.toLocalFormat(global_article).body.splitlines()))
+            qsync.toLocalFormat(global_article._replace(filepath=local_article.filepath)).body.splitlines()))
 
 
 def qsync_str_timestamp(article: QiitaArticle) -> str:
@@ -989,7 +995,7 @@ def qsync_do_sync(qsync: QiitaSync, status: SyncStatus, local_article: QiitaArti
 
 
 def qsync_do_purge(qsync: QiitaSync, status: SyncStatus, local_article: QiitaArticle,
-                  global_article: Optional[QiitaArticle]):
+                   global_article: Optional[QiitaArticle]):
     if local_article.data.private:
         qsync.delete(local_article)
         if local_article.filepath is not None:
@@ -1020,7 +1026,6 @@ def qsync_foreach(qsync: QiitaSync, target: Path,
             for article in [QiitaArticle.fromApi(elem) for elem in (qiita_get_item_list(qsync.caller) or [])]
             if article.data.id is not None
         ])
-
         for local_article in qsync.atcl_path_map.values():
             resp = qsync_check_status_local_article(qsync, local_article, lambda id: global_article_dict.get(id))
             handler(qsync, resp[0], local_article, resp[1])
@@ -1070,7 +1075,7 @@ def qsync_argparse() -> ArgumentParser:
     common_arg(subparsers.add_parser("download", help="download help")).set_defaults(func=qsync_subcommand_download)
     common_arg(subparsers.add_parser("upload", help="upload help")).set_defaults(func=qsync_subcommand_upload)
     common_arg(subparsers.add_parser("check", help="check help")).set_defaults(func=qsync_subcommand_check)
-    common_arg(subparsers.add_parser("delete", help="delete help")).set_defaults(func=qsync_subcommand_delete)    
+    common_arg(subparsers.add_parser("delete", help="delete help")).set_defaults(func=qsync_subcommand_delete)
     common_arg(subparsers.add_parser("sync", help="sync help")).set_defaults(func=qsync_subcommand_sync)
     common_arg(subparsers.add_parser("purge", help="purge help")).set_defaults(func=qsync_subcommand_purge)
 
