@@ -3,18 +3,16 @@ import random
 import string
 import pytest
 import datetime
-import shutil
 from pathlib import Path
 from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
 
-from qiita_sync.qiita_sync import ApplicationError, CommandError, QiitaArticle, QiitaSync, git_get_HEAD
+from qiita_sync.qiita_sync import ApplicationError, CommandError, GitHubArticle, QiitaArticle, QiitaSync, git_get_HEAD
 from qiita_sync.qiita_sync import exec_command, qsync_get_access_token
-from qiita_sync.qiita_sync import qsync_subcommand_upload, qsync_subcommand_delete
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB, GITHUB_REF
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
-from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch, git_get_HEAD
+from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch
 from qiita_sync.qiita_sync import qsync_str_local_only, qsync_str_global_deleted
 from qiita_sync.qiita_sync import git_get_committer_datetime
 from qiita_sync.qiita_sync import qiita_create_caller, qiita_get_authenticated_user_id
@@ -128,7 +126,7 @@ class Repository(NamedTuple):
             asset.filepath, os.path.dirname(source))).getOrElse(target)
 
     def getGlobalMarkdownLink(self, _target: str):
-        return Maybe(self.asset_dict.get(_target)).optionalMap(lambda target: QiitaArticle.fromFile(
+        return Maybe(self.asset_dict.get(_target)).optionalMap(lambda target: GitHubArticle.fromFile(
             Path(self.qsync.git_dir).joinpath(target.filepath)).data.id).map(
                 self.qsync.getQiitaUrl).getOrElse(_target)
 
@@ -219,8 +217,8 @@ def test_subcommand_download(topdir_fx: Path, mocker: MockerFixture):
 
 def test_subcommand_check(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])    
-    article2 = QiitaArticle.fromFile(topdir_fx.joinpath("md2.md"))
-    article3 = QiitaArticle.fromFile(topdir_fx.joinpath("md3.md"))
+    article2 = GitHubArticle.fromFile(topdir_fx.joinpath("md2.md"))
+    article3 = GitHubArticle.fromFile(topdir_fx.joinpath("md3.md"))
 
     mocker.patch('sys.argv', ['qiita_sync.py', 'check', str(topdir_fx)])
     qsync_main()
@@ -251,13 +249,13 @@ def test_subcommand_upload(topdir_fx: Path, mocker: MockerFixture, capsys: Captu
     get_qsync([MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     target = topdir_fx.joinpath("md3.md")
 
-    article = QiitaArticle.fromFile(target)
+    article = GitHubArticle.fromFile(target)
     assert article.data.id is None
 
     mocker.patch('sys.argv', ['qiita_sync.py', 'upload', str(target)])
     qsync_main()
 
-    article = QiitaArticle.fromFile(target)
+    article = GitHubArticle.fromFile(target)
     assert article.data.id is not None
 
     mocker.patch('sys.argv', ['qiita_sync.py', 'delete', str(target)])
@@ -458,14 +456,14 @@ def test_qsync():
 
 def test_QiitaArticle_fromFile(topdir_fx: Path):
     get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
-    doc = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
+    doc = GitHubArticle.fromFile(topdir_fx.joinpath("md1.md"))
 
     assert doc.data.title == markdown_find_line(doc.body, '# ')[0]
 
 
 def test_QiitaArticle_fromApi(topdir_fx: Path):
     qsync = get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
-    article1 = qsync.toGlobalFormat(QiitaArticle.fromFile(topdir_fx.joinpath("md1.md")))
+    article1 = qsync.toQiitaArticle(GitHubArticle.fromFile(topdir_fx.joinpath("md1.md")))
     api_data = {
         "body": article1.body,
         "updated_at": '2021-06-09T11:22:33+0900',
@@ -481,23 +479,24 @@ def test_QiitaArticle_fromApi(topdir_fx: Path):
 
 def test_QiitaArticle_equal(topdir_fx: Path):
     get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
-    doc1 = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
-    doc2 = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
+    doc1 = GitHubArticle.fromFile(topdir_fx.joinpath("md1.md"))
+    doc2 = GitHubArticle.fromFile(topdir_fx.joinpath("md1.md"))
 
     assert doc1 == doc2
 
 
 def test_QiitaArticle_not_equal(topdir_fx: Path):
     get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
-    doc1 = QiitaArticle.fromFile(topdir_fx.joinpath("md1.md"))
-    doc2 = QiitaArticle.fromFile(topdir_fx.joinpath("md2.md"))
+    doc1 = GitHubArticle.fromFile(topdir_fx.joinpath("md1.md"))
+    doc2 = GitHubArticle.fromFile(topdir_fx.joinpath("md2.md"))
 
     assert doc1 != doc2
 
 
 def test_QiitaArticle_toText(topdir_fx: Path):
     qsync = get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
-    doc2 = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath("md2.md")))
+    md2path = topdir_fx.joinpath("md2.md")
+    doc2 = qsync.toGitHubArticle(GitHubArticle.fromFile(md2path), md2path)
     assert doc2.toText() == """<!--
 title:   Hello
 tags:    python
@@ -505,13 +504,6 @@ id:      1234567890ABCDEFG
 private: false
 -->
 [md1](md1.md)
-![img1](img1.png)"""
-
-
-def test_QiitaArticle_toApi(topdir_fx: Path):
-    qsync = get_qsync([MarkdownAsset("md1.md", gen_md1), MarkdownAsset("md2.md", gen_md2), Asset("img1.png")])
-    data = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath("md2.md"))).toApi()
-    assert data['body'] == """[md1](md1.md)
 ![img1](img1.png)"""
 
 
@@ -579,7 +571,7 @@ def test_QiitaSync_getArticleByPath(topdir_fx: Path):
                                             ("doc/md1.md", "doc2/md2.md", 'images/img1.png')])
 def test_QiitaSync_toGlobalFormat(md1, md2, img1, topdir_fx: Path):
     qsync = get_qsync([MarkdownAsset(md1, gen_md1), MarkdownAsset(md2, gen_md2), Asset(img1)])
-    article = qsync.toGlobalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
+    article = qsync.toQiitaArticle(GitHubArticle.fromFile(topdir_fx.joinpath(md1)))
 
     assert markdown_find_line(
         article.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{qsync.qiita_id}/items/{TEST_ARTICLE_ID1})'
@@ -597,7 +589,8 @@ def test_QiitaSync_toGlobalFormat(md1, md2, img1, topdir_fx: Path):
                                             ("doc/md1.md", "doc2/md2.md", 'images/img1.png')])
 def test_QiitaSync_toLocalFormat(md1, md2, img1, topdir_fx: Path):
     qsync = get_qsync([MarkdownAsset(md1, gen_md1), MarkdownAsset(md2, gen_md2), Asset(img1)])
-    article = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
+    md1path = topdir_fx.joinpath(md1)
+    article = qsync.toGitHubArticle(GitHubArticle.fromFile(md1path), md1path)
 
     assert markdown_find_line(article.body, 'LinkTest1:')[0] ==\
         f'[dlink]({os.path.relpath(md2, os.path.dirname(md1))})'
@@ -616,8 +609,10 @@ def test_QiitaSync_toLocalFormat(md1, md2, img1, topdir_fx: Path):
                                             ("doc/md1.md", "doc2/md2.md", 'images/img1.png')])
 def test_QiitaSync_format_conversion(md1, md2, img1, topdir_fx: Path):
     qsync = get_qsync([MarkdownAsset(md1, gen_md1), MarkdownAsset(md2, gen_md2), Asset(img1)])
-    article = qsync.toLocalFormat(QiitaArticle.fromFile(topdir_fx.joinpath(md1)))
+    md1path = topdir_fx.joinpath(md1)
+    article = qsync.toGitHubArticle(GitHubArticle.fromFile(md1path), md1path)
 
-    assert qsync.toLocalFormat(qsync.toGlobalFormat(article)).body.lower() == qsync.toLocalFormat(article).body.lower()
-    assert qsync.toGlobalFormat(
-        qsync.toLocalFormat(article)).body.lower() == qsync.toGlobalFormat(article).body.lower()
+    assert qsync.toGitHubArticle(qsync.toQiitaArticle(article), md1path).body.lower() ==\
+        qsync.toGitHubArticle(article, article.filepath).body.lower()
+    assert qsync.toQiitaArticle(
+        qsync.toGitHubArticle(article, article.filepath)).body.lower() == qsync.toQiitaArticle(article).body.lower()
