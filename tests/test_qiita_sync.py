@@ -127,8 +127,8 @@ class Repository(NamedTuple):
             asset.filepath, os.path.dirname(source))).getOrElse(target)
 
     def getGlobalMarkdownLink(self, _target: str):
-        return Maybe(self.asset_dict.get(_target)).optionalMap(lambda target: GitHubArticle.fromFile(
-            Path(self.qsync.git_dir).joinpath(target.filepath)).data.id).map(
+        return Maybe(self.asset_dict.get(_target)).optionalMap(
+            lambda target: GitHubArticle.fromFile(Path(self.qsync.git_dir).joinpath(target.filepath)).data.id).map(
                 self.qsync.getQiitaUrl).getOrElse(_target)
 
     def getGlobalImageLink(self, filename: str):
@@ -217,7 +217,7 @@ def test_subcommand_download(topdir_fx: Path, mocker: MockerFixture):
 
 
 def test_subcommand_check(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
-    get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])    
+    get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     article2 = GitHubArticle.fromFile(topdir_fx.joinpath("md2.md"))
     article3 = GitHubArticle.fromFile(topdir_fx.joinpath("md3.md"))
 
@@ -275,7 +275,7 @@ def test_subcommand_sync(topdir_fx: Path, mocker: MockerFixture, capsys: Capture
 
 
 def test_subcommand_purge(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
-    get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])    
+    get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     target = topdir_fx.joinpath("md2.md")
 
     assert target.is_file()
@@ -615,5 +615,5 @@ def test_QiitaSync_format_conversion(md1, md2, img1, topdir_fx: Path):
 
     assert qsync.toGitHubArticle(qsync.toQiitaArticle(article), md1path).body.lower() ==\
         qsync.toGitHubArticle(article, article.filepath).body.lower()
-    assert qsync.toQiitaArticle(
-        qsync.toGitHubArticle(article, article.filepath)).body.lower() == qsync.toQiitaArticle(article).body.lower()
+    assert qsync.toQiitaArticle(qsync.toGitHubArticle(
+        article, article.filepath)).body.lower() == qsync.toQiitaArticle(article).body.lower()
