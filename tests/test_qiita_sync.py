@@ -9,7 +9,8 @@ from dataclasses import dataclass
 
 from qiita_sync.qiita_sync import ApplicationError, CommandError, GitHubArticle, QiitaArticle, QiitaSync, git_get_HEAD
 from qiita_sync.qiita_sync import exec_command, qsync_get_access_token
-from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB, GITHUB_REF
+from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
+from qiita_sync.qiita_sync import GITHUB_REF, GITHUB_CONTENT_URL
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
 from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch
@@ -577,9 +578,9 @@ def test_QiitaSync_toGlobalFormat(md1, md2, img1, topdir_fx: Path):
         article.body, 'LinkTest1:')[0] == f'[dlink](https://qiita.com/{qsync.qiita_id}/items/{TEST_ARTICLE_ID1})'
     assert markdown_find_line(article.body, 'LinkTest2:')[0] == '[dlink](https://example.com/markdown/md2.md)'
     assert markdown_find_line(article.body, 'ImageTest1:')[0] ==\
-        f"![ImageTest](https://raw.githubusercontent.com/{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1})"
+        f"![ImageTest]({GITHUB_CONTENT_URL}{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1})"
     assert markdown_find_line(article.body, 'ImageTest2:')[0] ==\
-        f"![ImageTest](https://raw.githubusercontent.com/{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1} description)"
+        f"![ImageTest]({GITHUB_CONTENT_URL}{qsync.git_user}/{qsync.git_repository}/{qsync.git_branch}/{img1} description)"
     assert markdown_find_line(article.body, 'ImageTest3:')[0] ==\
         '![ImageTest](http://example.com/img/img1.png img/img1.png)'
 
