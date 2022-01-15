@@ -689,7 +689,7 @@ def qsync_on_github_actions() -> bool:
 
 
 def qsync_get_timestamp(filepath: Path) -> datetime:
-    return git_get_committer_datetime(str(filepath)) if qsync_on_github_actions() \
+    return git_get_committer_datetime(str(filepath)).astimezone(timezone.utc) if qsync_on_github_actions() \
         else datetime.fromtimestamp(filepath.stat().st_mtime, timezone.utc)
 
 
