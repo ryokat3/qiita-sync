@@ -272,7 +272,7 @@ def test_subcommand_sync(topdir_fx: Path, mocker: MockerFixture, capsys: Capture
     qsync_main()
     captured = capsys.readouterr()
 
-    assert captured.out == ""
+    assert "" == captured.out
 
 
 def test_subcommand_purge(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
