@@ -185,6 +185,10 @@ def add_path(path: Path, sub: Path) -> Path:
     return path.joinpath(sub).resolve()
 
 
+def is_sub_prefix(target: Path, parent: Path) -> bool:
+    return os.path.commonprefix([target, parent]) == str(parent)
+
+
 def url_add_path(url: str, sub: Path) -> str:
     parts = urlparse(url)
     return urlunparse(parts._replace(path=str(add_path(Path(parts.path), sub))))
@@ -1026,7 +1030,7 @@ def qsync_foreach(qsync: QiitaSync, target: Path,
     else:
         for local_article in [
                 article for article in qsync.atcl_path_map.values()
-                if article.filepath is not None and article.filepath.is_relative_to(target)
+                if article.filepath is not None and is_sub_prefix(article.filepath, target)
         ]:
             try:
                 resp = qsync_check_status_local_article(
