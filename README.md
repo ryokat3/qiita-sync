@@ -157,6 +157,7 @@ And it will be automatically changed to the relative file path when downloaded f
 
 | Version  | Date       | Summary                                                           |
 |----------|------------|-------------------------------------------------------------------|
+| v1.3.3   | 2021-01-16 | - Internal data enhancement                                       |
 | v1.3.2   | 2021-01-15 | - Fixed packaging failure                                         |
 | v1.3.1   | 2021-01-15 | - Fixed many issues when used as CLI                              |
 | v1.3.0   | 2021-01-15 | - Withdrawn from PyPI                                             |
