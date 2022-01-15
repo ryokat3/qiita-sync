@@ -562,12 +562,12 @@ class QiitaData(NamedTuple):
             "title": default_title,
             "tags": default_tags
         },
-                    **dict(
-                        map(
-                            lambda tpl: (tpl[0].strip(), tpl[1].strip()),
-                            map(lambda line: line.split(":", 1),
-                                filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None,
-                                       text.splitlines())))))
+            **dict(
+                map(
+                    lambda tpl: (tpl[0].strip(), tpl[1].strip()),
+                    map(lambda line: line.split(":", 1),
+                        filter(lambda line: re.match(r"^\s*\w+\s*:.*\S", line) is not None,
+                            text.splitlines())))))
         return cls(data["title"], QiitaTags.fromString(data["tags"]), data.get("id"),
                    Maybe(data.get("private")).map(str2bool).getOrElse(False))
 
@@ -583,16 +583,6 @@ class QiitaArticle(NamedTuple):
     data: QiitaData
     body: str
     timestamp: datetime
-    filepath: Optional[Path]
-
-    def __eq__(self, other) -> bool:
-        return isinstance(other, QiitaArticle) and self.data == other.data and self.body.strip() == other.body.strip()
-
-    def __ne__(self, other) -> bool:
-        return not self.__eq__(other)
-
-    def toText(self) -> str:
-        return (f"{os.linesep.join(['<!--', str(self.data), '-->'])}{os.linesep}{self.body}")
 
     def toApi(self) -> Dict[str, Any]:
         return {
@@ -603,7 +593,27 @@ class QiitaArticle(NamedTuple):
         }
 
     @classmethod
-    def fromFile(cls, filepath: Path) -> QiitaArticle:
+    def fromApi(cls, item) -> QiitaArticle:
+        return cls(data=QiitaData.fromApi(item), body=item["body"], timestamp=get_utc(item["updated_at"]))
+
+
+class GitHubArticle(NamedTuple):
+    data: QiitaData
+    body: str
+    timestamp: datetime
+    filepath: Path
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, GitHubArticle) and self.data == other.data and self.body.strip() == other.body.strip()
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
+
+    def toText(self) -> str:
+        return (f"{os.linesep.join(['<!--', str(self.data), '-->'])}{os.linesep}{self.body}")
+
+    @classmethod
+    def fromFile(cls, filepath: Path) -> GitHubArticle:
         text = filepath.read_text()
         timestamp = qsync_get_timestamp(filepath)
         m = HEADER_REGEX.match(text)
@@ -614,11 +624,6 @@ class QiitaArticle(NamedTuple):
             qiita_get_temporary_tags(body))
 
         return cls(data=data, body=body, timestamp=timestamp, filepath=filepath)
-
-    @classmethod
-    def fromApi(cls, item) -> QiitaArticle:
-        return cls(
-            data=QiitaData.fromApi(item), body=item["body"], timestamp=get_utc(item["updated_at"]), filepath=None)
 
 
 #######################################################################
@@ -717,13 +722,13 @@ def qsync_chdir_git(target: Path):
     os.chdir(str(target if target.is_dir() else target.parent))
 
 
-def qsync_get_local_article(include_patterns: List[str], exclude_patterns: List[str]) -> List[Path]:
+def qsync_get_github_article(include_patterns: List[str], exclude_patterns: List[str]) -> List[Path]:
     topdir = Path(git_get_topdir())
     return [
         Path(fp).resolve()
-        for fp in (functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) -
-                   functools.reduce(lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in exclude_patterns]))
-    ]
+        for fp in (functools.reduce(
+            lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in include_patterns]) - functools.reduce(
+                lambda a, b: a | b, [set(topdir.glob(pattern)) for pattern in exclude_patterns]))]
 
 
 class QiitaSync(NamedTuple):
@@ -733,8 +738,8 @@ class QiitaSync(NamedTuple):
     git_branch: str
     git_dir: str
     qiita_id: str
-    atcl_path_map: Dict[Path, QiitaArticle]
-    atcl_id_map: Dict[str, QiitaArticle]
+    atcl_path_map: Dict[Path, GitHubArticle]
+    atcl_id_map: Dict[str, GitHubArticle]
 
     @classmethod
     def getInstance(cls, qiita_token: str, file_list: List[Path]) -> QiitaSync:
@@ -742,7 +747,7 @@ class QiitaSync(NamedTuple):
         user_repo = match_github_https_url(url) or match_github_ssh_url(url) if url is not None else None
         if user_repo is None:
             raise ApplicationError(f"{url} is not GitHub")
-        atcl_list = [QiitaArticle.fromFile(fp) for fp in file_list if fp.is_file()]
+        atcl_list = [GitHubArticle.fromFile(fp) for fp in file_list if fp.is_file()]
         caller = qiita_create_caller(qiita_token)
 
         return cls(caller, user_repo[0], user_repo[1], git_get_default_branch(), git_get_topdir(),
@@ -765,16 +770,16 @@ class QiitaSync(NamedTuple):
     def getQiitaUrl(self, id: str) -> str:
         return f"{QIITA_URL_PREFIX}{self.qiita_id}/items/{id}"
 
-    def getArticleDir(self, article: QiitaArticle) -> Path:
+    def getArticleDir(self, article: GitHubArticle) -> Path:
         return article.filepath.parent if article.filepath is not None else Path(self.git_dir)
 
-    def getArticleById(self, id: str) -> Optional[QiitaArticle]:
+    def getArticleById(self, id: str) -> Optional[GitHubArticle]:
         return self.atcl_id_map[id] if id in self.atcl_id_map else None
 
     def getFilePathById(self, id: str) -> Optional[Path]:
         return self.atcl_id_map[id].filepath if id in self.atcl_id_map else None
 
-    def getArticleByPath(self, target: Path) -> Dict[Path, QiitaArticle]:
+    def getArticleByPath(self, target: Path) -> Dict[Path, GitHubArticle]:
         if Path(self.git_dir) == target:
             return self.atcl_path_map
         else:
@@ -782,75 +787,73 @@ class QiitaSync(NamedTuple):
                          for path, article in self.atcl_path_map.items()
                          if str(path).startswith(str(target.resolve()))])
 
-    def toLocalImageLink(self, link: str, article: QiitaArticle) -> str:
-        return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
-            lambda filepath: Maybe(diff_url(link, self.github_url)).filter(lambda x: x != link).map(lambda diff: str(
-                rel_path(Path(self.git_dir).joinpath(diff), filepath.parent)))).getOrElse(link)
+    def toGitHubImageLink(self, link: str, article: QiitaArticle, filepath: Path) -> str:
+        return Maybe(diff_url(link, self.github_url)).filter(lambda x: x != link).map(lambda diff: str(
+            rel_path(Path(self.git_dir).joinpath(diff), filepath.resolve().parent))).getOrElse(link)
 
-    def toLocaMarkdownlLink(self, link: str, article: QiitaArticle) -> str:
-        return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
-            lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filter(
-                lambda x: x != link).map(lambda id: Maybe(self.getFilePathById(id)).map(lambda fp: str(
-                    rel_path(fp, filepath.parent))).getOrElse(f"{id}.md"))).getOrElse(link)
+    def toGitHubMarkdownlLink(self, link: str, article: QiitaArticle, filepath: Path) -> str:
+        return Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filter(
+            lambda x: x != link).map(lambda id: Maybe(self.getFilePathById(id)).map(lambda fp: str(
+                rel_path(fp, filepath.resolve().parent))).getOrElse(f"{id}.md")).getOrElse(link)
 
-    def toLocalFormat(self, article: QiitaArticle) -> QiitaArticle:
+    def toGitHubArticle(self, article: QiitaArticle, filepath: Path) -> GitHubArticle:
 
-        def convert_image_link(text: str, article: QiitaArticle) -> str:
-            return markdown_replace_image(lambda link: self.toLocalImageLink(link, article), text)
+        def to_image_link(text: str, article: QiitaArticle) -> str:
+            return markdown_replace_image(lambda link: self.toGitHubImageLink(link, article, filepath), text)
 
-        def convert_link(text: str) -> str:
-            return markdown_replace_link(lambda link: self.toLocaMarkdownlLink(link, article), text)
+        def to_md_link(text: str) -> str:
+            return markdown_replace_link(lambda link: self.toGitHubMarkdownlLink(link, article, filepath), text)
 
-        return article._replace(
-            body=to_normalize_body(
-                markdown_replace_text(lambda text: convert_image_link(convert_link(text), article), article.body)))
+        return GitHubArticle(
+            data=article.data,
+            body=to_normalize_body(markdown_replace_text(
+                lambda text: to_image_link(to_md_link(text), article), article.body)),
+            timestamp=article.timestamp,
+            filepath=filepath
+        )
 
-    def toGlobalImageLink(self, link: str, article: QiitaArticle) -> str:
+    def toQiitaImageLink(self, link: str, article: GitHubArticle) -> str:
         return Maybe(link).filterNot(
             os.path.isabs).filterNot(is_url).map(lambda x: add_path(self.getArticleDir(article), Path(x))).optionalMap(
                 lambda p: self.getGitHubUrl(p)).getOrElse(link)
 
-    def toGlobalMarkdownLink(self, link: str, article: QiitaArticle):
+    def toQiitaMarkdownLink(self, link: str, article: GitHubArticle):
         return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
             lambda x: add_path(self.getArticleDir(article), Path(x))).filter(lambda p: p.is_file()).map(
-                QiitaArticle.fromFile).optionalMap(lambda article: article.data.id).map(
+                GitHubArticle.fromFile).optionalMap(lambda article: article.data.id).map(
                     self.getQiitaUrl).getOrElse(link)
 
-    def toGlobalFormat(self, article: QiitaArticle) -> QiitaArticle:
+    def toQiitaArticle(self, article: GitHubArticle) -> QiitaArticle:
 
-        def convert_image_link(text: str) -> str:
-            return markdown_replace_image(lambda link: self.toGlobalImageLink(link, article), text)
+        def to_image_link(text: str) -> str:
+            return markdown_replace_image(lambda link: self.toQiitaImageLink(link, article), text)
 
-        def convert_link(text: str) -> str:
-            return markdown_replace_link(lambda link: self.toGlobalMarkdownLink(link, article), text)
+        def to_md_link(text: str) -> str:
+            return markdown_replace_link(lambda link: self.toQiitaMarkdownLink(link, article), text)
 
-        return article._replace(
-            body=to_normalize_body(
-                markdown_replace_text(lambda text: convert_image_link(convert_link(text)), article.body), '\n'))
+        return QiitaArticle(
+            data=article.data, body=to_normalize_body(markdown_replace_text(
+                lambda text: to_image_link(to_md_link(text)), article.body), '\n'),
+            timestamp=article.timestamp
+        )
 
-    def download(self, article: QiitaArticle):
-        if article.data.id is not None:
-            Maybe(qiita_get_item(self.caller, article.data.id)).map(
-                QiitaArticle.fromApi).map(lambda x: x._replace(filepath=article.filepath)).map(self.save)
+    def download(self, g_atcl: GitHubArticle):
+        if g_atcl.data.id is not None:
+            Maybe(qiita_get_item(self.caller, g_atcl.data.id)).map(QiitaArticle.fromApi).map(
+                lambda q_atcl: self.toGitHubArticle(q_atcl, g_atcl.filepath)).map(qsync_save_github_article)
         else:
             pass
 
-    def upload(self, article: QiitaArticle):
+    def upload(self, article: GitHubArticle):
         if article.data.id is not None:
-            qiita_patch_item(self.caller, article.data.id, self.toGlobalFormat(article).toApi())
+            qiita_patch_item(self.caller, article.data.id, self.toQiitaArticle(article).toApi())
         else:
-            Maybe(qiita_post_item(
-                self.caller,
-                self.toGlobalFormat(article).toApi())).map(QiitaArticle.fromApi).map(
-                    lambda x: article._replace(data=x.data, timestamp=x.timestamp)).map(lambda x: self.save(x))
+            Maybe(qiita_post_item(self.caller,
+                self.toQiitaArticle(article).toApi())).map(QiitaArticle.fromApi).map(
+                    lambda q_atcl: article._replace(
+                        data=q_atcl.data, timestamp=q_atcl.timestamp)).map(qsync_save_github_article)
 
-    def save(self, article: QiitaArticle):
-        filepath = article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")
-
-        with filepath.open("w") as fp:
-            fp.write(self.toLocalFormat(article._replace(filepath=filepath)).toText())
-
-    def delete(self, article: QiitaArticle):
+    def delete(self, article: GitHubArticle):
         if article.data.id is not None:
             qiita_delete_item(self.caller, article.data.id)
         else:
@@ -863,40 +866,49 @@ class QiitaSync(NamedTuple):
 
 
 class SyncStatus(Enum):
-    LOCAL_ONLY = 1
-    GLOBAL_ONLY = 2
-    LOCAL_NEW = 3
-    GLOBAL_NEW = 4
-    GLOBAL_DELETED = 5
+    GITHUB_ONLY = 1
+    QIITA_ONLY = 2
+    GITHUB_NEW = 3
+    QIITA_NEW = 4
+    QIITA_DELETED = 5
     SYNC = 6
     CONFLICT = 7
 
 
-def qsync_check_status_local_article(
-        qsync: QiitaSync, local_article: QiitaArticle,
-        get_global_article: Callable[[str], Optional[QiitaArticle]]) -> Tuple[SyncStatus, Optional[QiitaArticle]]:
-    if local_article.data.id is None:
-        return (SyncStatus.LOCAL_ONLY, None)
+def qsync_save_github_article(g_atcl: GitHubArticle):
+    with g_atcl.filepath.open("w") as fp:
+        fp.write(g_atcl.toText())
+
+
+def qsync_to_github_article(qsync: QiitaSync, q_atcl: QiitaArticle) -> GitHubArticle:
+    return qsync.toGitHubArticle(q_atcl, Path(qsync.git_dir).joinpath(f"{q_atcl.data.id or 'unknown'}.md"))
+
+
+def qsync_get_sync_status(
+    qsync: QiitaSync, g_atcl: GitHubArticle,
+    get_qiita_article: Callable[[str], Optional[QiitaArticle]]
+) -> Tuple[SyncStatus, Optional[GitHubArticle]]:
+    if g_atcl.data.id is None:
+        return (SyncStatus.GITHUB_ONLY, None)
     else:
-        global_article = Maybe(get_global_article(
-            local_article.data.id)).map(lambda article: article._replace(filepath=local_article.filepath)).map(
-                qsync.toLocalFormat).get()
-        if global_article is None:
-            return (SyncStatus.GLOBAL_DELETED, None)
-        elif qsync.toLocalFormat(local_article) == global_article:
-            return (SyncStatus.SYNC, global_article)
-        elif local_article.timestamp > global_article.timestamp:
-            return (SyncStatus.LOCAL_NEW, global_article)
-        elif local_article.timestamp < global_article.timestamp:
-            return (SyncStatus.GLOBAL_NEW, global_article)
+        lq_atcl = Maybe(get_qiita_article(g_atcl.data.id)).map(
+            lambda q_atcl: qsync.toGitHubArticle(q_atcl, g_atcl.filepath)).get()
+        if lq_atcl is None:
+            return (SyncStatus.QIITA_DELETED, None)
+        elif g_atcl == lq_atcl:
+            return (SyncStatus.SYNC, lq_atcl)
+        elif g_atcl.timestamp > lq_atcl.timestamp:
+            return (SyncStatus.GITHUB_NEW, lq_atcl)
+        elif g_atcl.timestamp < lq_atcl.timestamp:
+            return (SyncStatus.QIITA_NEW, lq_atcl)
         else:
-            return (SyncStatus.CONFLICT, global_article)
+            return (SyncStatus.CONFLICT, lq_atcl)
 
 
 def qsync_subcommand_download(qsync: QiitaSync, target: Path):
     logger.debug(f"{target} download")
-    for global_article in qsync.getArticleByPath(target).values():
-        qsync.download(global_article)
+    for g_atcl in qsync.getArticleByPath(target).values():
+        qsync.download(g_atcl)
 
 
 def qsync_subcommand_upload(qsync: QiitaSync, target: Path):
@@ -917,145 +929,141 @@ def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
             print(err)
 
 
-def qsync_str_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle) -> List[str]:
-    return list(
-        difflib.unified_diff(
-            qsync.toLocalFormat(local_article).body.splitlines(),
-            qsync.toLocalFormat(global_article._replace(filepath=local_article.filepath)).body.splitlines()))
+def qsync_str_diff(qsync: QiitaSync, g_atcl: GitHubArticle, lq_atcl: GitHubArticle) -> List[str]:
+    return list(difflib.unified_diff(g_atcl.body.splitlines(), lq_atcl.body.splitlines()))
 
 
-def qsync_str_timestamp(article: QiitaArticle) -> str:
+def qsync_str_timestamp(article: GitHubArticle) -> str:
     return article.timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
 
 
-def qsync_str_local_only(article: QiitaArticle) -> str:
+def qsync_str_local_only(article: GitHubArticle) -> str:
     return f'{article.data.title}({article.filepath.name}) :: Local Only'
 
 
-def qsync_str_global_only(article: QiitaArticle) -> str:
+def qsync_str_global_only(article: GitHubArticle) -> str:
     return f'{article.data.title}({article.data.id}) :: Qiita Only'
 
 
-def qsync_str_local_new(article: QiitaArticle) -> str:
+def qsync_str_local_new(article: GitHubArticle) -> str:
     return f'{article.data.title} => Local is new ({qsync_str_timestamp(article)})'
 
 
-def qsync_str_global_new(article: QiitaArticle) -> str:
+def qsync_str_global_new(article: GitHubArticle) -> str:
     return f'{article.data.title} => Qiita is new ({qsync_str_timestamp(article)})'
 
 
-def qsync_str_global_deleted(article: QiitaArticle) -> str:
+def qsync_str_global_deleted(article: GitHubArticle) -> str:
     return f'{article.data.title}({article.data.id}) => Not found in Qiita'
 
 
-def qsync_str_conflict(article: QiitaArticle) -> str:
+def qsync_str_conflict(article: GitHubArticle) -> str:
     return f'{article.data.title} => Conflict'
 
 
-def qsync_do_check(qsync: QiitaSync, status: SyncStatus, local_article: QiitaArticle,
-                   global_article: Optional[QiitaArticle]):
-    if status == SyncStatus.LOCAL_ONLY:
-        print(qsync_str_local_only(local_article))
-    elif status == SyncStatus.GLOBAL_ONLY and global_article is not None:
-        print(qsync_str_global_only(global_article))
-    elif status == SyncStatus.LOCAL_NEW and global_article is not None:
-        print(qsync_str_local_new(local_article))
-        print(os.linesep.join(qsync_str_diff(qsync, local_article, global_article)))
-    elif status == SyncStatus.GLOBAL_NEW and global_article is not None:
-        print(qsync_str_global_new(global_article))
-        print(os.linesep.join(qsync_str_diff(qsync, local_article, global_article)))
-    elif status == SyncStatus.GLOBAL_DELETED:
-        print(qsync_str_global_deleted(local_article))
+def qsync_do_check(qsync: QiitaSync, status: SyncStatus, g_atcl: GitHubArticle, lq_atcl: Optional[GitHubArticle]):
+    if status == SyncStatus.GITHUB_ONLY:
+        print(qsync_str_local_only(g_atcl))
+    elif status == SyncStatus.QIITA_ONLY and lq_atcl is not None:
+        print(qsync_str_global_only(lq_atcl))
+    elif status == SyncStatus.GITHUB_NEW and lq_atcl is not None:
+        print(qsync_str_local_new(g_atcl))
+        print(os.linesep.join(qsync_str_diff(qsync, g_atcl, lq_atcl)))
+    elif status == SyncStatus.QIITA_NEW and lq_atcl is not None:
+        print(qsync_str_global_new(lq_atcl))
+        print(os.linesep.join(qsync_str_diff(qsync, g_atcl, lq_atcl)))
+    elif status == SyncStatus.QIITA_DELETED:
+        print(qsync_str_global_deleted(g_atcl))
     elif status == SyncStatus.SYNC:
         pass
     elif status == SyncStatus.CONFLICT:
-        print(qsync_str_conflict(local_article))
+        print(qsync_str_conflict(g_atcl))
     else:
-        raise ApplicationError(f"{local_article.filepath}: Unknown status")
+        raise ApplicationError(f"{g_atcl.filepath}: Unknown status")
 
 
-def qsync_do_sync(qsync: QiitaSync, status: SyncStatus, local_article: QiitaArticle,
-                  global_article: Optional[QiitaArticle]):
-    if status == SyncStatus.LOCAL_ONLY:
-        qsync.upload(local_article)
-    elif status == SyncStatus.GLOBAL_ONLY and global_article is not None:
-        qsync.save(global_article)
-    elif status == SyncStatus.LOCAL_NEW:
-        qsync.upload(local_article)
-    elif status == SyncStatus.GLOBAL_NEW and global_article is not None:
-        qsync.save(global_article._replace(filepath=local_article.filepath))
-    elif status == SyncStatus.GLOBAL_DELETED:
-        print(qsync_str_global_deleted(local_article))
+def qsync_do_sync(qsync: QiitaSync, status: SyncStatus, g_atcl: GitHubArticle, lq_atcl: Optional[GitHubArticle]):
+    if status == SyncStatus.GITHUB_ONLY:
+        qsync.upload(g_atcl)
+    elif status == SyncStatus.QIITA_ONLY and lq_atcl is not None:
+        qsync_save_github_article(lq_atcl)
+    elif status == SyncStatus.GITHUB_NEW:
+        qsync.upload(g_atcl)
+    elif status == SyncStatus.QIITA_NEW and lq_atcl is not None:
+        qsync_save_github_article(lq_atcl)
+    elif status == SyncStatus.QIITA_DELETED:
+        print(qsync_str_global_deleted(g_atcl))
     elif status == SyncStatus.SYNC:
         pass
     elif status == SyncStatus.CONFLICT:
-        print(qsync_str_conflict(local_article))
+        print(qsync_str_conflict(g_atcl))
     else:
-        raise ApplicationError(f"{local_article.filepath}: Unknown status")
+        raise ApplicationError(f"{g_atcl.filepath}: Unknown status")
 
 
-def qsync_do_purge(qsync: QiitaSync, status: SyncStatus, local_article: QiitaArticle,
-                   global_article: Optional[QiitaArticle]):
-    if local_article.data.private:
-        qsync.delete(local_article)
-        if local_article.filepath is not None:
-            os.remove(local_article.filepath)
-    elif status == SyncStatus.LOCAL_ONLY and local_article.filepath is not None:
-        os.remove(local_article.filepath)
-    elif status == SyncStatus.GLOBAL_ONLY and global_article is not None and global_article.data.id is not None:
-        qiita_delete_item(qsync.caller, global_article.data.id)
-    elif status == SyncStatus.LOCAL_NEW:
-        qsync.upload(local_article)
-    elif status == SyncStatus.GLOBAL_NEW and global_article is not None:
-        qsync.save(global_article._replace(filepath=local_article.filepath))
-    elif status == SyncStatus.GLOBAL_DELETED and local_article.filepath is not None:
-        os.remove(local_article.filepath)
+def qsync_do_purge(qsync: QiitaSync, status: SyncStatus, g_atcl: GitHubArticle, lq_atcl: Optional[GitHubArticle]):
+    if g_atcl.data.private:
+        qsync.delete(g_atcl)
+        if g_atcl.filepath is not None:
+            os.remove(g_atcl.filepath)
+    elif status == SyncStatus.GITHUB_ONLY and g_atcl.filepath is not None:
+        os.remove(g_atcl.filepath)
+    elif status == SyncStatus.QIITA_ONLY and lq_atcl is not None and lq_atcl.data.id is not None:
+        qiita_delete_item(qsync.caller, lq_atcl.data.id)
+    elif status == SyncStatus.GITHUB_NEW:
+        qsync.upload(g_atcl)
+    elif status == SyncStatus.QIITA_NEW and lq_atcl is not None:
+        qsync_save_github_article(lq_atcl)
+    elif status == SyncStatus.QIITA_DELETED and g_atcl.filepath is not None:
+        os.remove(g_atcl.filepath)
     elif status == SyncStatus.SYNC:
         pass
     elif status == SyncStatus.CONFLICT:
-        qsync.upload(local_article)
+        qsync.upload(g_atcl)
     else:
-        raise ApplicationError(f"{local_article.filepath}: Unknown status")
+        raise ApplicationError(f"{g_atcl.filepath}: Unknown status")
 
 
-def qsync_foreach(qsync: QiitaSync, target: Path,
-                  handler: Callable[[QiitaSync, SyncStatus, QiitaArticle, Optional[QiitaArticle]], Any]):
+def qsync_traverse(
+    qsync: QiitaSync,
+    target: Path,
+    handler: Callable[[QiitaSync, SyncStatus, GitHubArticle, Optional[GitHubArticle]], Any]
+):
     if target == Path(qsync.git_dir):
-        global_article_dict = dict([
+        q_atcl_dict = dict([
             (article.data.id, article)
             for article in [QiitaArticle.fromApi(elem) for elem in (qiita_get_item_list(qsync.caller) or [])]
             if article.data.id is not None
         ])
-        for local_article in qsync.atcl_path_map.values():
-            resp = qsync_check_status_local_article(qsync, local_article, lambda id: global_article_dict.get(id))
-            handler(qsync, resp[0], local_article, resp[1])
-        for id, global_article in global_article_dict.items():
+        for g_atcl in qsync.atcl_path_map.values():
+            resp = qsync_get_sync_status(qsync, g_atcl, lambda id: q_atcl_dict.get(id))
+            handler(qsync, resp[0], g_atcl, resp[1])
+        for id, q_atcl in q_atcl_dict.items():
+            lq_atcl = qsync_to_github_article(qsync, q_atcl)
             if qsync.getArticleById(id) is None:
-                handler(qsync, SyncStatus.GLOBAL_ONLY, global_article, global_article)
+                handler(qsync, SyncStatus.QIITA_ONLY, lq_atcl, lq_atcl)
     else:
-        for local_article in [
-                article for article in qsync.atcl_path_map.values()
-                if article.filepath is not None and is_sub_prefix(article.filepath, target)
-        ]:
+        for g_atcl in [article for article in qsync.atcl_path_map.values()
+                if article.filepath is not None and is_sub_prefix(article.filepath, target)]:
             try:
-                resp = qsync_check_status_local_article(
-                    qsync, local_article,
+                resp = qsync_get_sync_status(
+                    qsync, g_atcl,
                     lambda id: Maybe(qiita_get_item(qsync.caller, id)).map(QiitaArticle.fromApi).get())
-                handler(qsync, resp[0], local_article, resp[1])
+                handler(qsync, resp[0], g_atcl, resp[1])
             except ApplicationFileError:
-                handler(qsync, SyncStatus.GLOBAL_DELETED, local_article, None)
+                handler(qsync, SyncStatus.QIITA_DELETED, g_atcl, None)
 
 
 def qsync_subcommand_check(qsync: QiitaSync, target: Path):
-    qsync_foreach(qsync, target, qsync_do_check)
+    qsync_traverse(qsync, target, qsync_do_check)
 
 
 def qsync_subcommand_sync(qsync: QiitaSync, target: Path):
-    qsync_foreach(qsync, target, qsync_do_sync)
+    qsync_traverse(qsync, target, qsync_do_sync)
 
 
 def qsync_subcommand_purge(qsync: QiitaSync, target: Path):
-    qsync_foreach(qsync, target, qsync_do_purge)
+    qsync_traverse(qsync, target, qsync_do_purge)
 
 
 def qsync_argparse() -> ArgumentParser:
@@ -1084,9 +1092,9 @@ def qsync_argparse() -> ArgumentParser:
 
 def qsync_init(args) -> QiitaSync:
     access_token = qsync_get_access_token(args.token)
-    local_article = qsync_get_local_article(args.include, args.exclude)
+    g_atcl_list = qsync_get_github_article(args.include, args.exclude)
 
-    return QiitaSync.getInstance(access_token, local_article)
+    return QiitaSync.getInstance(access_token, g_atcl_list)
 
 
 def qsync_main():
