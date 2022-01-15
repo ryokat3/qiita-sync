@@ -85,7 +85,6 @@ from typing import (
     TypeVar,
     NamedTuple,
     Tuple,
-    Union,
     Dict,
     Any,
     List,
@@ -787,7 +786,7 @@ class QiitaSync(NamedTuple):
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
             lambda filepath: Maybe(diff_url(link, self.github_url)).filter(lambda x: x != link).map(lambda diff: str(
                 rel_path(Path(self.git_dir).joinpath(diff), filepath.parent)))).getOrElse(link)
-                
+
     def toLocaMarkdownlLink(self, link: str, article: QiitaArticle) -> str:
         return Maybe(article.filepath).map(lambda fp: fp.resolve()).flatMap(
             lambda filepath: Maybe(diff_url(link, f"{QIITA_URL_PREFIX}{self.qiita_id}/items/")).filter(
@@ -796,7 +795,7 @@ class QiitaSync(NamedTuple):
 
     def toLocalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
-        def convert_image_link(text: str, article: QiitaArticle) -> str:            
+        def convert_image_link(text: str, article: QiitaArticle) -> str:
             return markdown_replace_image(lambda link: self.toLocalImageLink(link, article), text)
 
         def convert_link(text: str) -> str:
@@ -879,8 +878,9 @@ def qsync_check_status_local_article(
     if local_article.data.id is None:
         return (SyncStatus.LOCAL_ONLY, None)
     else:
-        global_article = Maybe(get_global_article(local_article.data.id)).map(
-            lambda article: article._replace(filepath=local_article.filepath)).map(qsync.toLocalFormat).get()
+        global_article = Maybe(get_global_article(
+            local_article.data.id)).map(lambda article: article._replace(filepath=local_article.filepath)).map(
+                qsync.toLocalFormat).get()
         if global_article is None:
             return (SyncStatus.GLOBAL_DELETED, None)
         elif qsync.toLocalFormat(local_article) == global_article:
@@ -917,7 +917,7 @@ def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
             print(err)
 
 
-def qsync_str_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle) -> List[str]:    
+def qsync_str_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle) -> List[str]:
     return list(
         difflib.unified_diff(
             qsync.toLocalFormat(local_article).body.splitlines(),
