@@ -66,7 +66,8 @@ import logging
 import sys
 import difflib
 from argparse import ArgumentParser
-from itertools import dropwhile
+from itertools import dropwhile, count, takewhile
+from functools import reduce
 from pathlib import Path
 from datetime import datetime, timezone
 from urllib import request
@@ -75,6 +76,7 @@ from urllib.error import HTTPError
 from http.client import HTTPResponse
 from urllib.request import OpenerDirector
 from http import cookiejar
+from enum import Enum
 
 from typing import (
     Callable,
@@ -83,6 +85,7 @@ from typing import (
     TypeVar,
     NamedTuple,
     Tuple,
+    Union,
     Dict,
     Any,
     List,
@@ -136,6 +139,10 @@ class ApplicationError(Exception):
     pass
 
 
+class ApplicationFileError(Exception):
+    pass
+
+
 ########################################################################
 # Util
 ########################################################################
@@ -178,6 +185,10 @@ def add_path(path: Path, sub: Path) -> Path:
     return path.joinpath(sub).resolve()
 
 
+def is_sub_prefix(target: Path, parent: Path) -> bool:
+    return os.path.commonprefix([target, parent]) == str(parent)
+
+
 def url_add_path(url: str, sub: Path) -> str:
     parts = urlparse(url)
     return urlunparse(parts._replace(path=str(add_path(Path(parts.path), sub))))
@@ -199,6 +210,10 @@ def str2bool(value: Any) -> bool:
     if not value:
         return False
     return str(value).lower() in ("y", "yes", "t", "true", "on", "1")
+
+
+def add_indent(value: str, num: int) -> str:
+    return num * ' ' + value
 
 
 ########################################################################
@@ -369,20 +384,14 @@ def qiita_build_caller(
     content_decoder=lambda x: x,
 ) -> RESTAPI_CALLER_TYPE:
     def _(url: str, method: str, content: Optional[T] = None) -> RestApiResponse:
-        try:
-            return restapi_call(
-                opener,
-                url,
-                method,
-                headers,
-                content_type,
-                content_decoder(content) if content is not None else None,
-            )
-        except HTTPError as http_error:
-            if http_error.code == 429:  # Too much Request
-                return _(url, method, content)
-            else:
-                raise http_error
+        return restapi_call(
+            opener,
+            url,
+            method,
+            headers,
+            content_type,
+            content_decoder(content) if content is not None else None,
+        )
 
     return _
 
@@ -399,12 +408,23 @@ def qiita_create_caller(auth_token: str):
     )
 
 
-def qiita_get_item_list(caller: RESTAPI_CALLER_TYPE):
-    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/authenticated_user/items", "GET", None))
+def qiita_get_item_page(caller: RESTAPI_CALLER_TYPE, page: int, per_page: int):
+    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/authenticated_user/items?page={page}&per_page={per_page}", "GET", None))
+
+
+def qiita_get_item_list(caller: RESTAPI_CALLER_TYPE, per_page: int = 10):
+    return reduce(lambda a, b: a + b, filter(None, takewhile(lambda resp: resp is not None and len(resp) != 0,
+        map(lambda page: qiita_get_item_page(caller, page, per_page), count(1)))), [])    
 
 
 def qiita_get_item(caller: RESTAPI_CALLER_TYPE, id: str):
-    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "GET", None))
+    try:
+        return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "GET", None))
+    except HTTPError as http_error:
+        if http_error.code == 404:  # No id in Qiita site
+            raise ApplicationFileError(f"{id} not found in Qiita")
+        else:
+            raise http_error
 
 
 def qiita_get_authenticated_user(caller: RESTAPI_CALLER_TYPE):
@@ -425,11 +445,23 @@ def qiita_post_item(caller: RESTAPI_CALLER_TYPE, data):
 
 
 def qiita_patch_item(caller: RESTAPI_CALLER_TYPE, id: str, data):
-    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "PATCH", data))
+    try:
+        return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "PATCH", data))
+    except HTTPError as http_error:
+        if http_error.code == 404:  # No id in Qiita site
+            raise ApplicationFileError(f"{id} not found in Qiita")
+        else:
+            raise http_error
 
 
 def qiita_delete_item(caller: RESTAPI_CALLER_TYPE, id: str):
-    return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "DELETE", None))
+    try:
+        return restapi_json_response(caller(f"{QIITA_API_ENDPOINT}/items/{id}", "DELETE", None))
+    except HTTPError as http_error:
+        if http_error.code == 404:  # No id in Qiita site
+            raise ApplicationFileError(f"{id} not found in Qiita")
+        else:
+            raise http_error
 
 
 ########################################################################
@@ -567,10 +599,9 @@ class QiitaArticle(NamedTuple):
         }
 
     @classmethod
-    def fromFile(cls, filepath: Path, git_timestamp: bool) -> QiitaArticle:
+    def fromFile(cls, filepath: Path) -> QiitaArticle:
         text = filepath.read_text()
-        timestamp = git_get_committer_datetime(str(filepath)) if git_timestamp else datetime.fromtimestamp(
-            filepath.stat().st_mtime, timezone.utc)
+        timestamp = qsync_get_timestamp(filepath)
         m = HEADER_REGEX.match(text)
         logger.debug(f'{filepath} :: {m.group(1) if m is not None else "None"}')
         body = Maybe(m).map(lambda m: m.group(2)).getOrElse(text)
@@ -652,6 +683,16 @@ def match_github_https_url(text: str) -> Optional[Tuple[str, str]]:
 QIITA_URL_PREFIX = 'https://qiita.com/'
 
 
+@functools.lru_cache(maxsize=1)
+def qsync_on_github_actions() -> bool:
+    return os.environ.get(GITHUB_REF) is not None
+
+
+def qsync_get_timestamp(filepath: Path) -> datetime:
+    return git_get_committer_datetime(str(filepath)).astimezone(timezone.utc) if qsync_on_github_actions() \
+        else datetime.fromtimestamp(filepath.stat().st_mtime, timezone.utc)
+
+
 def qsync_get_access_token(token_file: str) -> str:
     filepath = Path(git_get_topdir()).joinpath(token_file)
     if filepath.exists() and filepath.is_file():
@@ -690,22 +731,20 @@ class QiitaSync(NamedTuple):
     qiita_id: str
     atcl_path_map: Dict[Path, QiitaArticle]
     atcl_id_map: Dict[str, QiitaArticle]
-    git_timestamp: bool
 
     @classmethod
-    def getInstance(cls, qiita_token: str, file_list: List[Path], git_timestamp: bool) -> QiitaSync:
+    def getInstance(cls, qiita_token: str, file_list: List[Path]) -> QiitaSync:
         url = git_get_remote_url()
         user_repo = match_github_https_url(url) or match_github_ssh_url(url) if url is not None else None
         if user_repo is None:
             raise ApplicationError(f"{url} is not GitHub")
-
-        atcl_list = [QiitaArticle.fromFile(fp, git_timestamp) for fp in file_list if fp.is_file()]
+        atcl_list = [QiitaArticle.fromFile(fp) for fp in file_list if fp.is_file()]
         caller = qiita_create_caller(qiita_token)
 
         return cls(caller, user_repo[0], user_repo[1], git_get_default_branch(), git_get_topdir(),
                    qiita_get_authenticated_user_id(caller),
                    dict([(atcl.filepath, atcl) for atcl in atcl_list if atcl.filepath is not None]),
-                   dict([(atcl.data.id, atcl) for atcl in atcl_list if atcl.data.id is not None]), git_timestamp)
+                   dict([(atcl.data.id, atcl) for atcl in atcl_list if atcl.data.id is not None]))
 
     @property
     def github_url(self):
@@ -768,10 +807,10 @@ class QiitaSync(NamedTuple):
                 lambda p: self.getGitHubUrl(p)).getOrElse(link)
 
     def toGlobalMarkdownLink(self, link: str, article: QiitaArticle):
-        return Maybe(link).filterNot(
-            os.path.isabs).filterNot(is_url).map(lambda x: add_path(self.getArticleDir(article), Path(x))).filter(
-                lambda p: p.is_file()).map(lambda f: QiitaArticle.fromFile(f, self.git_timestamp)).optionalMap(
-                    lambda article: article.data.id).map(self.getQiitaUrl).getOrElse(link)
+        return Maybe(link).filterNot(os.path.isabs).filterNot(is_url).map(
+            lambda x: add_path(self.getArticleDir(article), Path(x))).filter(lambda p: p.is_file()).map(
+                QiitaArticle.fromFile).optionalMap(lambda article: article.data.id).map(
+                    self.getQiitaUrl).getOrElse(link)
 
     def toGlobalFormat(self, article: QiitaArticle) -> QiitaArticle:
 
@@ -803,12 +842,15 @@ class QiitaSync(NamedTuple):
 
     def save(self, article: QiitaArticle):
         filepath = article.filepath or Path(self.git_dir).joinpath(f"{article.data.id or 'unknown'}.md")
+
         with filepath.open("w") as fp:
             fp.write(self.toLocalFormat(article._replace(filepath=filepath)).toText())
 
     def delete(self, article: QiitaArticle):
         if article.data.id is not None:
             qiita_delete_item(self.caller, article.data.id)
+        else:
+            raise ApplicationFileError(f"{article.filepath} has no id")
 
 
 ########################################################################
@@ -816,70 +858,33 @@ class QiitaSync(NamedTuple):
 ########################################################################
 
 
-def qsync_check_all(qsync: QiitaSync, on_diff: Callable[[QiitaArticle, QiitaArticle], None],
-                    on_global_only: Callable[[QiitaArticle], None], on_local_only: Callable[[QiitaArticle], None]):
-    item_list = qiita_get_item_list(qsync.caller)
-    if item_list is not None:
-        global_article_list = [QiitaArticle.fromApi(elem) for elem in item_list]
-        for global_article in global_article_list:
-            if global_article.data.id is None:
-                logger.critical('No ID is defined in Qiita items API')
-                continue
-            local_article = qsync.getArticleById(global_article.data.id)
-            if local_article is not None:
-                if qsync.toLocalFormat(local_article) != qsync.toLocalFormat(
-                        global_article._replace(filepath=local_article.filepath)):
-                    on_diff(local_article, global_article)
-            else:
-                on_global_only(global_article)
-
-        global_article_id_list = [
-            global_article.data.id for global_article in global_article_list if global_article.data.id is not None
-        ]
-        for local_article in qsync.atcl_path_map.values():
-            if local_article.data.id is None or local_article.data.id not in global_article_id_list:
-                on_local_only(local_article)
+class SyncStatus(Enum):
+    LOCAL_ONLY = 1
+    GLOBAL_ONLY = 2
+    LOCAL_NEW = 3
+    GLOBAL_NEW = 4
+    GLOBAL_DELETED = 5
+    SYNC = 6
+    CONFLICT = 7
 
 
-def qsync_sync(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle):
-    if local_article.timestamp > global_article.timestamp:
-        print("local is new")
-        qsync.upload(local_article)
+def qsync_check_status_local_article(
+        qsync: QiitaSync, local_article: QiitaArticle,
+        get_global_article: Callable[[str], Optional[QiitaArticle]]) -> Tuple[SyncStatus, Optional[QiitaArticle]]:
+    if local_article.data.id is None:
+        return (SyncStatus.LOCAL_ONLY, None)
     else:
-        print("global is new")
-        qsync.save(global_article._replace(filepath=local_article.filepath))
-
-
-def qsync_show_on_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle):
-    la = qsync.toLocalFormat(local_article)
-    ga = qsync.toLocalFormat(global_article)
-    if la.body != ga.body:
-        for diff in difflib.unified_diff(la.body.splitlines(), ga.body.splitlines()):
-            print(diff)
-
-    print(f'Local Timestamp: {local_article.timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f%z")}')
-    print(f'Qiita Timestamp: {global_article.timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f%z")}')
-
-    if local_article.timestamp > global_article.timestamp:
-        if local_article.filepath is None:
-            raise ApplicationError('No filepath defined')
-        print(f"{local_article.filepath} is newer")
-    else:
-        if global_article.data.id is None:
-            raise ApplicationError('No id defined')
-        print(f"{qsync.getQiitaUrl(global_article.data.id)} is new")
-
-
-def qsync_show_on_local_only(local_article: QiitaArticle):
-    if local_article.filepath is None:
-        raise ApplicationError('No filepath defined')
-    print(f"{local_article.filepath} is new article")
-
-
-def qsync_show_on_global_only(qsync: QiitaSync, global_article: QiitaArticle):
-    if global_article.data.id is None:
-        raise ApplicationError('No id defined')
-    print(f"{qsync.getQiitaUrl(global_article.data.id)} is new article")
+        global_article = get_global_article(local_article.data.id)
+        if global_article is None:
+            return (SyncStatus.GLOBAL_DELETED, None)
+        elif qsync.toLocalFormat(local_article) == qsync.toLocalFormat(global_article):
+            return (SyncStatus.SYNC, global_article)
+        elif local_article.timestamp > global_article.timestamp:
+            return (SyncStatus.LOCAL_NEW, global_article)
+        elif local_article.timestamp < global_article.timestamp:
+            return (SyncStatus.GLOBAL_NEW, global_article)
+        else:
+            return (SyncStatus.CONFLICT, global_article)
 
 
 def qsync_subcommand_download(qsync: QiitaSync, target: Path):
@@ -891,35 +896,171 @@ def qsync_subcommand_download(qsync: QiitaSync, target: Path):
 def qsync_subcommand_upload(qsync: QiitaSync, target: Path):
     logger.debug(f"{target} upload")
     for article in qsync.getArticleByPath(target).values():
-        qsync.upload(article)
+        try:
+            qsync.upload(article)
+        except ApplicationError as err:
+            print(err)
 
 
 def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
     logger.debug(f"{target} delete")
     for article in qsync.getArticleByPath(target).values():
-        qsync.delete(article)
+        try:
+            qsync.delete(article)
+        except ApplicationError as err:
+            print(err)
+
+
+def qsync_str_diff(qsync: QiitaSync, local_article: QiitaArticle, global_article: QiitaArticle) -> List[str]:
+    return list(
+        difflib.unified_diff(
+            qsync.toLocalFormat(local_article).body.splitlines(),
+            qsync.toLocalFormat(global_article).body.splitlines()))
+
+
+def qsync_str_timestamp(article: QiitaArticle) -> str:
+    return article.timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+
+
+def qsync_str_local_only(article: QiitaArticle) -> str:
+    return f'{article.data.title}({article.filepath.name}) :: Local Only'
+
+
+def qsync_str_global_only(article: QiitaArticle) -> str:
+    return f'{article.data.title}({article.data.id}) :: Qiita Only'
+
+
+def qsync_str_local_new(article: QiitaArticle) -> str:
+    return f'{article.data.title} => Local is new ({qsync_str_timestamp(article)})'
+
+
+def qsync_str_global_new(article: QiitaArticle) -> str:
+    return f'{article.data.title} => Qiita is new ({qsync_str_timestamp(article)})'
+
+
+def qsync_str_global_deleted(article: QiitaArticle) -> str:
+    return f'{article.data.title}({article.data.id}) => Not found in Qiita'
+
+
+def qsync_str_conflict(article: QiitaArticle) -> str:
+    return f'{article.data.title} => Conflict'
+
+
+def qsync_do_check(qsync: QiitaSync, status: SyncStatus, local_article: QiitaArticle,
+                   global_article: Optional[QiitaArticle]):
+    if status == SyncStatus.LOCAL_ONLY:
+        print(qsync_str_local_only(local_article))
+    elif status == SyncStatus.GLOBAL_ONLY and global_article is not None:
+        print(qsync_str_global_only(global_article))
+    elif status == SyncStatus.LOCAL_NEW and global_article is not None:
+        print(qsync_str_local_new(local_article))
+        print(os.linesep.join(qsync_str_diff(qsync, local_article, global_article)))
+    elif status == SyncStatus.GLOBAL_NEW and global_article is not None:
+        print(qsync_str_global_new(global_article))
+        print(os.linesep.join(qsync_str_diff(qsync, local_article, global_article)))
+    elif status == SyncStatus.GLOBAL_DELETED:
+        print(qsync_str_global_deleted(local_article))
+    elif status == SyncStatus.SYNC:
+        pass
+    elif status == SyncStatus.CONFLICT:
+        print(qsync_str_conflict(local_article))
+    else:
+        raise ApplicationError(f"{local_article.filepath}: Unknown status")
+
+
+def qsync_do_sync(qsync: QiitaSync, status: SyncStatus, local_article: QiitaArticle,
+                  global_article: Optional[QiitaArticle]):
+    if status == SyncStatus.LOCAL_ONLY:
+        qsync.upload(local_article)
+    elif status == SyncStatus.GLOBAL_ONLY and global_article is not None:
+        qsync.save(global_article)
+    elif status == SyncStatus.LOCAL_NEW:
+        qsync.upload(local_article)
+    elif status == SyncStatus.GLOBAL_NEW and global_article is not None:
+        qsync.save(global_article._replace(filepath=local_article.filepath))
+    elif status == SyncStatus.GLOBAL_DELETED:
+        print(qsync_str_global_deleted(local_article))
+    elif status == SyncStatus.SYNC:
+        pass
+    elif status == SyncStatus.CONFLICT:
+        print(qsync_str_conflict(local_article))
+    else:
+        raise ApplicationError(f"{local_article.filepath}: Unknown status")
+
+
+def qsync_do_purge(qsync: QiitaSync, status: SyncStatus, local_article: QiitaArticle,
+                  global_article: Optional[QiitaArticle]):
+    if local_article.data.private:
+        qsync.delete(local_article)
+        if local_article.filepath is not None:
+            os.remove(local_article.filepath)
+    elif status == SyncStatus.LOCAL_ONLY and local_article.filepath is not None:
+        os.remove(local_article.filepath)
+    elif status == SyncStatus.GLOBAL_ONLY and global_article is not None and global_article.data.id is not None:
+        qiita_delete_item(qsync.caller, global_article.data.id)
+    elif status == SyncStatus.LOCAL_NEW:
+        qsync.upload(local_article)
+    elif status == SyncStatus.GLOBAL_NEW and global_article is not None:
+        qsync.save(global_article._replace(filepath=local_article.filepath))
+    elif status == SyncStatus.GLOBAL_DELETED and local_article.filepath is not None:
+        os.remove(local_article.filepath)
+    elif status == SyncStatus.SYNC:
+        pass
+    elif status == SyncStatus.CONFLICT:
+        qsync.upload(local_article)
+    else:
+        raise ApplicationError(f"{local_article.filepath}: Unknown status")
+
+
+def qsync_foreach(qsync: QiitaSync, target: Path,
+                  handler: Callable[[QiitaSync, SyncStatus, QiitaArticle, Optional[QiitaArticle]], Any]):
+    if target == Path(qsync.git_dir):
+        global_article_dict = dict([
+            (article.data.id, article)
+            for article in [QiitaArticle.fromApi(elem) for elem in (qiita_get_item_list(qsync.caller) or [])]
+            if article.data.id is not None
+        ])
+
+        for local_article in qsync.atcl_path_map.values():
+            resp = qsync_check_status_local_article(qsync, local_article, lambda id: global_article_dict.get(id))
+            handler(qsync, resp[0], local_article, resp[1])
+        for id, global_article in global_article_dict.items():
+            if qsync.getArticleById(id) is None:
+                handler(qsync, SyncStatus.GLOBAL_ONLY, global_article, global_article)
+    else:
+        for local_article in [
+                article for article in qsync.atcl_path_map.values()
+                if article.filepath is not None and is_sub_prefix(article.filepath, target)
+        ]:
+            try:
+                resp = qsync_check_status_local_article(
+                    qsync, local_article,
+                    lambda id: Maybe(qiita_get_item(qsync.caller, id)).map(QiitaArticle.fromApi).get())
+                handler(qsync, resp[0], local_article, resp[1])
+            except ApplicationFileError:
+                handler(qsync, SyncStatus.GLOBAL_DELETED, local_article, None)
 
 
 def qsync_subcommand_check(qsync: QiitaSync, target: Path):
-    logger.debug(f"{target} check")
-    qsync_check_all(qsync, lambda l, g: qsync_show_on_diff(qsync, l, g),
-                    lambda atcl: qsync_show_on_global_only(qsync, atcl), qsync_show_on_local_only)
+    qsync_foreach(qsync, target, qsync_do_check)
 
 
 def qsync_subcommand_sync(qsync: QiitaSync, target: Path):
-    logger.debug(f"{target} sync")
-    qsync_check_all(qsync, lambda l, g: qsync_sync(qsync, l, g), qsync.save, qsync.upload)
+    qsync_foreach(qsync, target, qsync_do_sync)
+
+
+def qsync_subcommand_purge(qsync: QiitaSync, target: Path):
+    qsync_foreach(qsync, target, qsync_do_purge)
 
 
 def qsync_argparse() -> ArgumentParser:
 
     def common_arg(parser: ArgumentParser) -> ArgumentParser:
-        parser.add_argument("target", default='.', help="target Qiita article (file or directory)")
         parser.add_argument("-t", "--token", default=DEFAULT_ACCESS_TOKEN_FILE, help="authentication token")
         parser.add_argument("-i", "--include", nargs='*', default=DEFAULT_INCLUDE_GLOB, help="include glob")
         parser.add_argument("-e", "--exclude", nargs='*', default=DEFAULT_EXCLUDE_GLOB, help="exclude glob")
         parser.add_argument("-v", "--verbose", action='store_true', help="debug logging")
-        parser.add_argument("--file-timestamp", action='store_true', help="Use mtime instead of git time")
+        parser.add_argument("target", default='.', help="target Qiita article (file or directory)")
 
         return parser
 
@@ -929,8 +1070,9 @@ def qsync_argparse() -> ArgumentParser:
     common_arg(subparsers.add_parser("download", help="download help")).set_defaults(func=qsync_subcommand_download)
     common_arg(subparsers.add_parser("upload", help="upload help")).set_defaults(func=qsync_subcommand_upload)
     common_arg(subparsers.add_parser("check", help="check help")).set_defaults(func=qsync_subcommand_check)
-    common_arg(subparsers.add_parser("delete", help="delete help")).set_defaults(func=qsync_subcommand_delete)
+    common_arg(subparsers.add_parser("delete", help="delete help")).set_defaults(func=qsync_subcommand_delete)    
     common_arg(subparsers.add_parser("sync", help="sync help")).set_defaults(func=qsync_subcommand_sync)
+    common_arg(subparsers.add_parser("purge", help="purge help")).set_defaults(func=qsync_subcommand_purge)
 
     return parser
 
@@ -939,7 +1081,7 @@ def qsync_init(args) -> QiitaSync:
     access_token = qsync_get_access_token(args.token)
     local_article = qsync_get_local_article(args.include, args.exclude)
 
-    return QiitaSync.getInstance(access_token, local_article, not args.file_timestamp)
+    return QiitaSync.getInstance(access_token, local_article)
 
 
 def qsync_main():
@@ -953,6 +1095,8 @@ def qsync_main():
     except CommandError as err:
         print(err)
     except ApplicationError as err:
+        print(err)
+    except ApplicationFileError as err:
         print(err)
     except HTTPError as http_error:
         print(http_error)
