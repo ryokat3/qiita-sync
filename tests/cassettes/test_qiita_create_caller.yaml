@@ -1,0 +1,65 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Authorization:
+      - Bearer fcb2e4a0658f103e4921e684c27d2822e12eebdb
+      Cache-Control:
+      - no-cache, no-store
+      Connection:
+      - close
+      Host:
+      - qiita.com
+      User-Agent:
+      - Python-urllib/3.10
+    method: GET
+    uri: https://qiita.com/api/v2/authenticated_user
+  response:
+    body:
+      string: '{"description":"Programmer","facebook_id":"","followees_count":2,"followers_count":1,"github_login_name":"ryokat3","id":"ryokat3","items_count":9,"linkedin_id":"","location":"Japan","name":"Ryoji
+        Kato","organization":"","permanent_id":115148,"profile_image_url":"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983","team_only":false,"twitter_screen_name":null,"website_url":"","image_monthly_upload_limit":104857600,"image_monthly_upload_remaining":104857600}'
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 16 Jan 2022 14:29:36 GMT
+      ETag:
+      - W/"2aaf04820679c58d926153e93c3c317f"
+      Rate-Limit:
+      - '1000'
+      Rate-Remaining:
+      - '915'
+      Rate-Reset:
+      - '1642344297'
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=2592000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Request-Id:
+      - 4d77dcb7-9de1-4b95-b732-8ebb8bfd4a87
+      X-Runtime:
+      - '0.093739'
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+version: 1
