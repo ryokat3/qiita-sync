@@ -1,0 +1,128 @@
+interactions:
+- request:
+    body: '{"body": "![img1](https://raw.githubusercontent.com/github-id/github-repo/master/img1.png)",
+      "tags": [{"name": "test", "versions": []}], "title": "md3", "private": true}'
+    headers:
+      Authorization:
+      - Bearer fcb2e4a0658f103e4921e684c27d2822e12eebdb
+      Cache-Control:
+      - no-cache, no-store
+      Connection:
+      - close
+      Content-Length:
+      - '169'
+      Content-Type:
+      - application/json
+      Host:
+      - qiita.com
+      User-Agent:
+      - Python-urllib/3.10
+    method: POST
+    uri: https://qiita.com/api/v2/items
+  response:
+    body:
+      string: '{"rendered_body":"\u003cp\u003e\u003ca href=\"https://camo.qiitausercontent.com/d42dfcd6e60ca82bd25818138a4adf6a51e83e2f/68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6769746875622d69642f6769746875622d7265706f2f6d61737465722f696d67312e706e67\"
+        target=\"_blank\" rel=\"nofollow noopener\"\u003e\u003cimg src=\"https://camo.qiitausercontent.com/d42dfcd6e60ca82bd25818138a4adf6a51e83e2f/68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6769746875622d69642f6769746875622d7265706f2f6d61737465722f696d67312e706e67\"
+        alt=\"img1\" data-canonical-src=\"https://raw.githubusercontent.com/github-id/github-repo/master/img1.png\"\u003e\u003c/a\u003e\u003c/p\u003e\n","body":"![img1](https://raw.githubusercontent.com/github-id/github-repo/master/img1.png)\n","coediting":false,"comments_count":0,"created_at":"2022-01-16T23:33:40+09:00","group":null,"id":"74f0120f486b3ad86390","likes_count":0,"private":true,"reactions_count":0,"tags":[{"name":"test","versions":[]}],"title":"md3","updated_at":"2022-01-16T23:33:40+09:00","url":"https://qiita.com/ryokat3/private/74f0120f486b3ad86390","user":{"description":"Programmer","facebook_id":"","followees_count":2,"followers_count":1,"github_login_name":"ryokat3","id":"ryokat3","items_count":9,"linkedin_id":"","location":"Japan","name":"Ryoji
+        Kato","organization":"","permanent_id":115148,"profile_image_url":"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983","team_only":false,"twitter_screen_name":null,"website_url":""},"page_views_count":null,"team_membership":null}'
+    headers:
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 16 Jan 2022 14:33:40 GMT
+      ETag:
+      - W/"587fd07f34a3268eff76294b588093ea"
+      Rate-Limit:
+      - '1000'
+      Rate-Remaining:
+      - '907'
+      Rate-Reset:
+      - '1642344296'
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=2592000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Request-Id:
+      - 325b6c22-1d2e-4e5d-9dc5-e6638dc0a20a
+      X-Runtime:
+      - '0.261906'
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Authorization:
+      - Bearer fcb2e4a0658f103e4921e684c27d2822e12eebdb
+      Cache-Control:
+      - no-cache, no-store
+      Connection:
+      - close
+      Host:
+      - qiita.com
+      User-Agent:
+      - Python-urllib/3.10
+    method: DELETE
+    uri: https://qiita.com/api/v2/items/74f0120f486b3ad86390
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - no-cache
+      Connection:
+      - close
+      Date:
+      - Sun, 16 Jan 2022 14:33:40 GMT
+      Rate-Limit:
+      - '1000'
+      Rate-Remaining:
+      - '906'
+      Rate-Reset:
+      - '1642344296'
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=2592000
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Request-Id:
+      - 20b9cfd8-611d-42fe-81e1-fee5223dc470
+      X-Runtime:
+      - '0.214891'
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 204
+      message: No Content
+version: 1

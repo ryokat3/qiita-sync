@@ -7,10 +7,10 @@ from pathlib import Path
 from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
 
-from qiita_sync.qiita_sync import ApplicationError, CommandError, GitHubArticle, QiitaArticle, QiitaSync, git_get_HEAD
+from qiita_sync.qiita_sync import QIITA_API_ENDPOINT, ApplicationError, CommandError, GitHubArticle, QiitaArticle, QiitaSync, git_get_HEAD
 from qiita_sync.qiita_sync import exec_command, qsync_get_access_token
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
-from qiita_sync.qiita_sync import GITHUB_REF, GITHUB_CONTENT_URL
+from qiita_sync.qiita_sync import GITHUB_REF, GITHUB_CONTENT_URL, ACCESS_TOKEN_ENV
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
 from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch
@@ -209,13 +209,14 @@ def update_test_file(fp: Path):
 # CLI Test
 ########################################################################
 
-
+@pytest.mark.vcr()
 def test_subcommand_download(topdir_fx: Path, mocker: MockerFixture):
     get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     mocker.patch('sys.argv', ['qiita_sync.py', 'download', '.'])
     qsync_main()
 
 
+@pytest.mark.vcr()
 def test_subcommand_check(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     article2 = GitHubArticle.fromFile(topdir_fx.joinpath("md2.md"))
@@ -229,6 +230,7 @@ def test_subcommand_check(topdir_fx: Path, mocker: MockerFixture, capsys: Captur
     assert qsync_str_local_only(article3) in captured.out
 
 
+@pytest.mark.vcr()
 def test_subcommand_show_diff(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     mocker.patch('sys.argv', ['qiita_sync.py', 'sync', str(topdir_fx)])
     qsync_main()
@@ -246,6 +248,7 @@ def test_subcommand_show_diff(topdir_fx: Path, mocker: MockerFixture, capsys: Ca
     assert 'Local is new' in captured.out
 
 
+@pytest.mark.vcr()
 def test_subcommand_upload(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     get_qsync([MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     target = topdir_fx.joinpath("md3.md")
@@ -263,6 +266,7 @@ def test_subcommand_upload(topdir_fx: Path, mocker: MockerFixture, capsys: Captu
     qsync_main()
 
 
+@pytest.mark.vcr()
 def test_subcommand_sync(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     mocker.patch('sys.argv', ['qiita_sync.py', 'sync', str(topdir_fx)])
     qsync_main()
@@ -274,6 +278,7 @@ def test_subcommand_sync(topdir_fx: Path, mocker: MockerFixture, capsys: Capture
     assert "" == captured.out
 
 
+@pytest.mark.vcr()
 def test_subcommand_purge(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     target = topdir_fx.joinpath("md2.md")
@@ -443,11 +448,21 @@ def test_git_get_HEAD():
 ########################################################################
 
 
-def test_qsync():
-    # Get token from environment variable
-    access_token = qsync_get_access_token('foobar')
-    caller = qiita_create_caller(access_token)
-    print(qiita_get_authenticated_user_id(caller))
+def test_qsync_get_access_token(topdir_fx: Path):
+    token_file = 'access_token.txt'
+    access_token = os.environ.get(ACCESS_TOKEN_ENV)
+    if access_token is not None:
+        with topdir_fx.joinpath(token_file).open('w') as fp:
+            fp.write(access_token)
+    assert access_token == qsync_get_access_token(token_file)
+    assert access_token == qsync_get_access_token("hehe.txt")
+
+
+@pytest.mark.vcr()
+def test_qiita_create_caller(topdir_fx: Path):
+    caller = qiita_create_caller(qsync_get_access_token("hehe.txt"))
+    id = qiita_get_authenticated_user_id(caller)
+    assert id == "ryokat3"
 
 
 ########################################################################

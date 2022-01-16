@@ -1,0 +1,48 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Authorization:
+      - Bearer fcb2e4a0658f103e4921e684c27d2822e12eebdb
+      Cache-Control:
+      - no-cache, no-store
+      Connection:
+      - close
+      Host:
+      - qiita.com
+      User-Agent:
+      - Python-urllib/3.10
+    method: GET
+    uri: https://qiita.com/api/v2/items/1234567890ABCDEFG
+  response:
+    body:
+      string: '{"message":"Not found","type":"not_found"}'
+    headers:
+      Connection:
+      - close
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 16 Jan 2022 14:33:42 GMT
+      Rate-Limit:
+      - '1000'
+      Rate-Remaining:
+      - '901'
+      Rate-Reset:
+      - '1642344296'
+      Server:
+      - nginx
+      Strict-Transport-Security:
+      - max-age=2592000
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      X-Request-Id:
+      - 929cfe73-9358-49e5-bd0c-770dbcd1ef21
+      X-Runtime:
+      - '0.221728'
+    status:
+      code: 404
+      message: Not Found
+version: 1
