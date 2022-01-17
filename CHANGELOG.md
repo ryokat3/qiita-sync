@@ -33,9 +33,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 1.3.3 - 2022-01-16
 
-### Changed
+### Fixed
 
-- README
+- Fixed release version 
 
 ## 1.3.2 - 2022-01-16
 
