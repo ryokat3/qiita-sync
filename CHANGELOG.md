@@ -31,6 +31,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.3 - 2022-01-16
+
+### Changed
+
+- README
+
+## 1.3.2 - 2022-01-16
+
+### Added
+
+- Added command line tests
+- Added PyPI badge
+- Added multiple pages to download (for many articles)
+- Added handling for http status 404 when aritcle is not found
+- Added logic to find if running on github actions or local (replaced timestamp arguments)
+- Added SyncStatus class
+- Added sub functions used when checking the diff
+- Added qsync_foreach, qsync_do_sync, qsync_do_check, qsync_do_purge
+- Added purge sub command (for test purpose)
+- Added test cases
+
+### Changed
+
+- Changed the logic to get timestamp (git on github actions, file mtime on local)
+- Removed handling for http status 429 (Too much request)
+- Removed old comand handler functions
+
+### Fixed
+
+- Fixed CHANGELOG.md
+
 ## 1.2.0 - 2022-01-11
 
 ### Added
