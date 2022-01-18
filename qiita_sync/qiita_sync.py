@@ -905,13 +905,13 @@ def qsync_get_sync_status(
             return (SyncStatus.CONFLICT, lq_atcl)
 
 
-def qsync_subcommand_download(qsync: QiitaSync, target: Path):
+def qsync_subcommand_download(qsync: QiitaSync, target: Path, _: Any):
     logger.debug(f"{target} download")
     for g_atcl in qsync.getArticleByPath(target).values():
         qsync.download(g_atcl)
 
 
-def qsync_subcommand_upload(qsync: QiitaSync, target: Path):
+def qsync_subcommand_upload(qsync: QiitaSync, target: Path, _: Any):
     logger.debug(f"{target} upload")
     for article in qsync.getArticleByPath(target).values():
         try:
@@ -920,7 +920,7 @@ def qsync_subcommand_upload(qsync: QiitaSync, target: Path):
             print(err)
 
 
-def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
+def qsync_subcommand_delete(qsync: QiitaSync, target: Path, _: Any):
     logger.debug(f"{target} delete")
     for article in qsync.getArticleByPath(target).values():
         try:
@@ -929,7 +929,7 @@ def qsync_subcommand_delete(qsync: QiitaSync, target: Path):
             print(err)
 
 
-def qsync_str_diff(qsync: QiitaSync, g_atcl: GitHubArticle, lq_atcl: GitHubArticle) -> List[str]:
+def qsync_str_diff(g_atcl: GitHubArticle, lq_atcl: GitHubArticle) -> List[str]:
     return list(difflib.unified_diff(g_atcl.body.splitlines(), lq_atcl.body.splitlines()))
 
 
@@ -957,25 +957,34 @@ def qsync_str_global_deleted(article: GitHubArticle) -> str:
     return f'{article.data.title}({article.data.id}) => Not found in Qiita'
 
 
+def qsync_str_sync(article: GitHubArticle) -> str:
+    return f'{article.data.title} => Sync'
+
+
 def qsync_str_conflict(article: GitHubArticle) -> str:
     return f'{article.data.title} => Conflict'
 
 
-def qsync_do_check(qsync: QiitaSync, status: SyncStatus, g_atcl: GitHubArticle, lq_atcl: Optional[GitHubArticle]):
+def qsync_do_check(qsync: QiitaSync, status: SyncStatus, g_atcl: GitHubArticle, lq_atcl: Optional[GitHubArticle], verbose: bool = False):
+    if verbose:
+        print("======================================================================================")
     if status == SyncStatus.GITHUB_ONLY:
         print(qsync_str_local_only(g_atcl))
     elif status == SyncStatus.QIITA_ONLY and lq_atcl is not None:
         print(qsync_str_global_only(lq_atcl))
-    elif status == SyncStatus.GITHUB_NEW and lq_atcl is not None:
-        print(qsync_str_local_new(g_atcl))
-        print(os.linesep.join(qsync_str_diff(qsync, g_atcl, lq_atcl)))
-    elif status == SyncStatus.QIITA_NEW and lq_atcl is not None:
+    elif status == SyncStatus.GITHUB_NEW and lq_atcl is not None:        
+        print(qsync_str_local_new(g_atcl))        
+        print(os.linesep.join(qsync_str_diff(g_atcl, lq_atcl)))
+    elif status == SyncStatus.QIITA_NEW and lq_atcl is not None:    
         print(qsync_str_global_new(lq_atcl))
-        print(os.linesep.join(qsync_str_diff(qsync, g_atcl, lq_atcl)))
-    elif status == SyncStatus.QIITA_DELETED:
+        print(os.linesep.join(qsync_str_diff(g_atcl, lq_atcl)))
+    elif status == SyncStatus.QIITA_DELETED:        
         print(qsync_str_global_deleted(g_atcl))
     elif status == SyncStatus.SYNC:
-        pass
+        if verbose and lq_atcl is not None:            
+            print(qsync_str_sync(g_atcl))
+            print(f"GitHub timestamp: {qsync_str_timestamp(g_atcl)}")
+            print(f"Qiita timestamp:  {qsync_str_timestamp(lq_atcl)}")
     elif status == SyncStatus.CONFLICT:
         print(qsync_str_conflict(g_atcl))
     else:
@@ -1054,15 +1063,15 @@ def qsync_traverse(
                 handler(qsync, SyncStatus.QIITA_DELETED, g_atcl, None)
 
 
-def qsync_subcommand_check(qsync: QiitaSync, target: Path):
-    qsync_traverse(qsync, target, qsync_do_check)
+def qsync_subcommand_check(qsync: QiitaSync, target: Path, args: Any):
+    qsync_traverse(qsync, target, lambda a, b, c, d: qsync_do_check(a, b, c, d, args.verbose))
 
 
-def qsync_subcommand_sync(qsync: QiitaSync, target: Path):
+def qsync_subcommand_sync(qsync: QiitaSync, target: Path, _: Any):
     qsync_traverse(qsync, target, qsync_do_sync)
 
 
-def qsync_subcommand_purge(qsync: QiitaSync, target: Path):
+def qsync_subcommand_purge(qsync: QiitaSync, target: Path, _: Any):
     qsync_traverse(qsync, target, qsync_do_purge)
 
 
@@ -1104,7 +1113,7 @@ def qsync_main():
         logger.setLevel(logging.DEBUG if args.verbose else logging.ERROR)
         target = Path(args.target).resolve()
         qsync_chdir_git(target if target.is_dir() else target.parent)
-        args.func(qsync_init(args), target)
+        args.func(qsync_init(args), target, args)
     except CommandError as err:
         print(err)
     except ApplicationError as err:
