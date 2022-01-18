@@ -347,7 +347,9 @@ def test_url_add_path(url, subpath, expected):
     assert url_add_path(url, Path(subpath)) == expected
 
 
-def test_get_utc():
+def test_get_utc():    
+    assert get_utc('2021-12-27T00:40:01+09:00') == get_utc('2021-12-26T15:40:01+00:00')
+    assert get_utc('2022-01-18T02:35:19+00:00') > get_utc('2022-01-18T10:01:07+09:00')
     assert str(get_utc('2021-12-27T00:40:01+09:00')).endswith("+00:00")
 
 
