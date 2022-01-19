@@ -1010,7 +1010,7 @@ def qsync_do_sync(qsync: QiitaSync, status: SyncStatus, g_atcl: GitHubArticle, l
         raise ApplicationError(f"{g_atcl.filepath}: Unknown status")
 
 
-def qsync_do_purge(qsync: QiitaSync, status: SyncStatus, g_atcl: GitHubArticle, lq_atcl: Optional[GitHubArticle]):
+def qsync_do_prune(qsync: QiitaSync, status: SyncStatus, g_atcl: GitHubArticle, lq_atcl: Optional[GitHubArticle]):
     if g_atcl.data.private:
         qsync.delete(g_atcl)
         if g_atcl.filepath is not None:
@@ -1071,8 +1071,8 @@ def qsync_subcommand_sync(qsync: QiitaSync, target: Path, _: Any):
     qsync_traverse(qsync, target, qsync_do_sync)
 
 
-def qsync_subcommand_purge(qsync: QiitaSync, target: Path, _: Any):
-    qsync_traverse(qsync, target, qsync_do_purge)
+def qsync_subcommand_prune(qsync: QiitaSync, target: Path, _: Any):
+    qsync_traverse(qsync, target, qsync_do_prune)
 
 
 def qsync_argparse() -> ArgumentParser:
@@ -1094,7 +1094,7 @@ def qsync_argparse() -> ArgumentParser:
     common_arg(subparsers.add_parser("check", help="check help")).set_defaults(func=qsync_subcommand_check)
     common_arg(subparsers.add_parser("delete", help="delete help")).set_defaults(func=qsync_subcommand_delete)
     common_arg(subparsers.add_parser("sync", help="sync help")).set_defaults(func=qsync_subcommand_sync)
-    common_arg(subparsers.add_parser("purge", help="purge help")).set_defaults(func=qsync_subcommand_purge)
+    common_arg(subparsers.add_parser("prune", help="prune help")).set_defaults(func=qsync_subcommand_prune)
 
     return parser
 

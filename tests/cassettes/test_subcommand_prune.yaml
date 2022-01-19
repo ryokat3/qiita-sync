@@ -23,13 +23,13 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 16 Jan 2022 14:33:42 GMT
+      - Wed, 19 Jan 2022 01:45:27 GMT
       Rate-Limit:
       - '1000'
       Rate-Remaining:
-      - '901'
+      - '973'
       Rate-Reset:
-      - '1642344296'
+      - '1642559772'
       Server:
       - nginx
       Strict-Transport-Security:
@@ -39,9 +39,9 @@ interactions:
       Vary:
       - Origin
       X-Request-Id:
-      - 929cfe73-9358-49e5-bd0c-770dbcd1ef21
+      - 79b37e5e-e2ac-4310-9fec-7ed3edc120c8
       X-Runtime:
-      - '0.221728'
+      - '0.231783'
     status:
       code: 404
       message: Not Found

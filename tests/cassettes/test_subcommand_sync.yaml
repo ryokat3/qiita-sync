@@ -307,7 +307,7 @@ interactions:
         id=\\\"\u8A18\u4E8B\u306E\u57F7\u7B46\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#%E8%A8%98%E4%BA%8B%E3%81%AE%E5%9F%B7%E7%AD%86\\\"\\u003e\\u003ci
         class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u8A18\u4E8B\u306E\u57F7\u7B46\\u003c/h1\\u003e\\n\\n\\u003cp\\u003e\u304A\u6C17\u306B\u5165\u308A\u306E\u30A8\u30C7\u30A3\u30BF\u3067
-        markdown \u3092\u7DE8\u96C6\u3059\u308B\u306E\u3067\u3059\u304C\u3001\u8A18\u4E8B\u306E\u57F7\u7B46\u6642\u306B\u5E7E\u3064\u304B\u306E\u7559\u610F\u70B9\u304C\u3042\u308A\u307E\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        markdown \u3092\u7DE8\u96C6\u3059\u308B\u306E\u3067\u3059\u304C\u3001\u8A18\u4E8B\u306E\u57F7\u7B46\u6642\u306B\u5E7E\u3064\u304B\u306E\u6CE8\u610F\u70B9\u304C\u3042\u308A\u307E\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
         id=\\\"\u8A18\u4E8B\u306E\u30D8\u30C3\u30C0\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#%E8%A8%98%E4%BA%8B%E3%81%AE%E3%83%98%E3%83%83%E3%83%80\\\"\\u003e\\u003ci
         class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u8A18\u4E8B\u306E\u30D8\u30C3\u30C0\\u003c/h2\\u003e\\n\\n\\u003cp\\u003eQiita
@@ -494,7 +494,7 @@ interactions:
         \u3092\u958B\u304F\\n3. \\\"Run workflow\\\" \u3092\u30AF\u30EA\u30C3\u30AF\u3059\u308B\uFF08\u4E0B\u56F3\uFF09\\n\\n![Qiita
         Sync manual execution](https://raw.githubusercontent.com/ryokat3/qiita-articles/main/img/qiita_sync_manual_execution.png)\\n\\n#
         \u8A18\u4E8B\u306E\u57F7\u7B46\\n\\n\u304A\u6C17\u306B\u5165\u308A\u306E\u30A8\u30C7\u30A3\u30BF\u3067
-        markdown \u3092\u7DE8\u96C6\u3059\u308B\u306E\u3067\u3059\u304C\u3001\u8A18\u4E8B\u306E\u57F7\u7B46\u6642\u306B\u5E7E\u3064\u304B\u306E\u7559\u610F\u70B9\u304C\u3042\u308A\u307E\u3059\u3002\\n\\n##
+        markdown \u3092\u7DE8\u96C6\u3059\u308B\u306E\u3067\u3059\u304C\u3001\u8A18\u4E8B\u306E\u57F7\u7B46\u6642\u306B\u5E7E\u3064\u304B\u306E\u6CE8\u610F\u70B9\u304C\u3042\u308A\u307E\u3059\u3002\\n\\n##
         \u8A18\u4E8B\u306E\u30D8\u30C3\u30C0\\n\\nQiita \u304B\u3089\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u3057\u305F\u8A18\u4E8B\u306B\u306F\u4EE5\u4E0B\u306E\u3088\u3046\u306A\u30D8\u30C3\u30C0\u304C\u30D5\u30A1\u30A4\u30EB\u306E\u5148\u982D\u306B\u81EA\u52D5\u7684\u306B\u4ED8\u52A0\u3055\u308C\u307E\u3059\u3002\\n\\n`title`
         \u3084 `tags` \u306F\u81EA\u7531\u306B\u5909\u66F4\u3067\u304D\u307E\u3059\u304C\u3001`id`
         \u3092\u5909\u66F4\u3057\u305F\u308A\u3001\u6D88\u53BB\u3057\u305F\u308A\u3059\u308B\u3053\u3068\u306F\u3067\u304D\u307E\u305B\u3093\u3002\u4E00\u65B9
@@ -524,7 +524,7 @@ interactions:
         An example of link to image file 'earth.png' when published to Qiita site
         --\\u003e\\n![My Image](https://raw.githubusercontent.com/ryokat3/qiita-articles/main/image/earth.png)\\n```\\n\\n\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u6642\u306B\u306F\u518D\u3073\u76F8\u5BFE\u30D1\u30B9\u306E\u30EA\u30F3\u30AF\u306B\u5909\u63DB\u3055\u308C\u307E\u3059\u3002\\n\\n\\n[^1]:
         [\u56F3\u3067\u4F7F\u7528\u3057\u305F\u753B\u50CF\u7D20\u6750](https://www.pinterest.com/pin/create/button/?url=https%3A%2F%2Fpngtree.com%2Ffreepng%2Fman-working-on-computer-at-home-isometric-vector_4000330.html?share=3\\u0026media=https://png.pngtree.com/png-vector/20190219/ourlarge/pngtree-man-working-on-computer-at-home-isometric-vector-png-image_321818.jpg\\u0026description=Man+working+on+computer+at+home+isometric+vector)
-        \u306F [Man png from pngtree.com/](https://pngtree.com/so/Man) \u306E\u3082\u306E\u3092\u4F7F\u7528\u3057\u3066\u3044\u307E\u3059\u3002\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2022-01-09T18:31:33+09:00\",\"group\":null,\"id\":\"d054b95f68810f70b136\",\"likes_count\":85,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"Qiita\",\"versions\":[]},{\"name\":\"Python\",\"versions\":[]},{\"name\":\"GitHub\",\"versions\":[]},{\"name\":\"\u500B\u4EBA\u958B\u767A\",\"versions\":[]},{\"name\":\"GitHubActions\",\"versions\":[]}],\"title\":\"GitHub\u9023\u643A\u3067Qiita\u8A18\u4E8B\u3092\u7D20\u6575\u306A\u57F7\u7B46\u74B0\u5883\u3067\uFF01\",\"updated_at\":\"2022-01-16T02:37:26+09:00\",\"url\":\"https://qiita.com/ryokat3/items/d054b95f68810f70b136\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
+        \u306F [Man png from pngtree.com/](https://pngtree.com/so/Man) \u306E\u3082\u306E\u3092\u4F7F\u7528\u3057\u3066\u3044\u307E\u3059\u3002\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2022-01-09T18:31:33+09:00\",\"group\":null,\"id\":\"d054b95f68810f70b136\",\"likes_count\":94,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"Qiita\",\"versions\":[]},{\"name\":\"Python\",\"versions\":[]},{\"name\":\"GitHub\",\"versions\":[]},{\"name\":\"\u500B\u4EBA\u958B\u767A\",\"versions\":[]},{\"name\":\"GitHubActions\",\"versions\":[]}],\"title\":\"GitHub\u9023\u643A\u3067Qiita\u8A18\u4E8B\u3092\u7D20\u6575\u306A\u57F7\u7B46\u74B0\u5883\u3067\uFF01\",\"updated_at\":\"2022-01-18T10:01:06+09:00\",\"url\":\"https://qiita.com/ryokat3/items/d054b95f68810f70b136\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
         Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\u003cp\\u003epython\u306E\u4EEE\u60F3\u74B0\u5883\u3067\u958B\u767A\u3092\u884C\u3046\u305F\u3081\u306B\u5FC5\u8981\u306A\u30C4\u30FC\u30EB\u306E\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u624B\u9806\u306E\u7D39\u4ECB\u3067\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
         id=\\\"python\u958B\u767A\u30C4\u30FC\u30EB\u6982\u8981\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#python%E9%96%8B%E7%99%BA%E3%83%84%E3%83%BC%E3%83%AB%E6%A6%82%E8%A6%81\\\"\\u003e\\u003ci
@@ -722,24 +722,21 @@ interactions:
         + \u5358\u4F4D\u5143\\u003c/td\\u003e\\n\\u003ctd\\u003eSemigroup\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#group\\\"\\u003eGroup\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u7FA4\u3001\u4E8C\u9805\u6F14\u7B97
         + \u5358\u4F4D\u5143 + \u9006\u5143\\u003c/td\\u003e\\n\\u003ctd\\u003eMonoid\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#semiroupid\\\"\\u003eSemiroupid\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u534A\u570F\u3001\u6052\u7B49\u5C04\u306E\u306A\u3044\u570F
-        \u3000\u3000\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#category\\\"\\u003eCategory\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u570F
-        \           \u3000\u3000\u3000\u3000 \u3000\\u003c/td\\u003e\\n\\u003ctd\\u003eSemigroupid\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#semiroupid\\\"\\u003eSemiroupid\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u534A\u570F\u3001\u6052\u7B49\u5C04\u306E\u306A\u3044\u570F\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#category\\\"\\u003eCategory\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u570F\\u003c/td\\u003e\\n\\u003ctd\\u003eSemigroupid\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#functor\\\"\\u003eFunctor\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#bifunctor\\\"\\u003eBifunctor\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u53CC\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#contravariant\\\"\\u003eContravariant\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u53CD\u5909\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#profunctor\\\"\\u003eProfunctor\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5BFE\u89D2\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#apply\\\"\\u003eApply\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u8A55\u4FA1\u5C04\u3001\u7A4D\u3068\u51AA\u304B\u3089\u306A\u308B\u968F\u4F34\u306E\u4F59\u5358\u4F4D\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor
-        \         \u3000\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#apply\\\"\\u003eApply\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u8A55\u4FA1\u5C04\u3001\u7A4D\u3068\u51AA\u304B\u3089\u306A\u308B\u968F\u4F34\u306E\u4F59\u5358\u4F4D\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#applicative\\\"\\u003eApplicative\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5F37Lax\u30E2\u30CE\u30A4\u30C0\u30EB\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003eApply\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#chain\\\"\\u003eChain\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247\\u003c/td\\u003e\\n\\u003ctd\\u003eApply\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#monad\\\"\\u003eMonad\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30E2\u30CA\u30C9\\u003c/td\\u003e\\n\\u003ctd\\u003eChain,
         Applicative\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#extend\\\"\\u003eExtend\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30B3\u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#comonad\\\"\\u003eComonad\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30B3\u30E2\u30CA\u30C9\\u003c/td\\u003e\\n\\u003ctd\\u003eExtend\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#alt\\\"\\u003eAlt\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\u306E\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#plus\\\"\\u003ePlus\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\u306E\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\u3068\u5358\u4F4D\u5143\\u003c/td\\u003e\\n\\u003ctd\\u003eAlt\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#alt\\\"\\u003eAlt\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\u306E\uFF08\u570F\u8AD6\u7684\u306A\u610F\u5473\u3067\u306A\u3044\uFF09\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#plus\\\"\\u003ePlus\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\u306E\uFF08\u570F\u8AD6\u7684\u306A\u610F\u5473\u3067\u306A\u3044\uFF09\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\u3068\u5358\u4F4D\u5143\\u003c/td\\u003e\\n\\u003ctd\\u003eAlt\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#alternative\\\"\\u003eAlternative\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003ePlus,
         Applicative\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#filterable\\\"\\u003eFilterable\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D5\u30A3\u30EB\u30BF\u30EA\u30F3\u30B0\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
@@ -1088,7 +1085,10 @@ interactions:
         \\u003ccode\\u003eC.extend(C.extract, w) \u2261 w\\u003c/code\\u003e\\n\\u003c/li\\u003e\\n\\u003cli\\u003e\u53F3\u5358\u4F4D\u5143:
         \\u003ccode\\u003eC.extract(C.extend(f, w)) \u2261 f(w)\\u003c/code\\u003e\\n\\u003c/li\\u003e\\n\\u003c/ol\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
         id=\\\"alt\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#alt\\\"\\u003e\\u003ci
-        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eAlt\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u95A2\u624B\u306E\u4E26\u5217\u7684\u306A\u5408\u6210\u3002\u3042\u307E\u308A\u6570\u5B66\u7684\u306A\u611F\u3058\u304C\u3057\u306A\u3044\u3002\\u003cbr\\u003e\\n\\u003ccode\\u003eAlt\\u003c/code\\u003e\u3068\u3044\u3046\u540D\u306E\u3054\u3068\u304F\u3001\u540C\u6642\u306B\u5B9F\u884C\u3057\u3066\u3001\u305D\u306E\u7D50\u679C\u304B\u3089\u3069\u3061\u3089\u304B\u3092\\u003cbr\\u003e\\n\u300C\u9078\u629E\u300D\u3059\u308B\u3001\u3082\u3057\u304F\u306F\u5358\u7D14\u306A\u300C\u548C\u300D\u3092\u3068\u308B\u3088\u3046\u306A\u3053\u3068\u3092\u671F\u5F85\u3057\u3066\u3044\u308B\u3088\u3046\u306B\u898B\u3048\u308B\u3002\\u003c/p\\u003e\\n\\n\\u003cdiv
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eAlt\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u95A2\u624B\u306E\u4E26\u5217\u7684\u306A\u5408\u6210\u3002\u5408\u6210\u3068\u306F\u8A00\u3048\u3001\u570F\u8AD6\u7684\u306A\u610F\u5473\u5408\u3044\u3067\u306F\u306A\u304F\u3001\\u003cbr\\u003e\\n\\u003ccode\\u003eAlt\\u003c/code\\u003e\u3068\u3044\u3046\u540D\u306E\u3054\u3068\u304F\u3001\u540C\u6642\u306B\u5B9F\u884C\u3057\u3066\u3001\u305D\u306E\u7D50\u679C\u304B\u3089\u3069\u3061\u3089\u304B\u3092\\u003cbr\\u003e\\n\u300C\u9078\u629E\u300D\u3059\u308B\u3001\u3082\u3057\u304F\u306F\u5358\u7D14\u306A\u300C\u548C\u300D\u3092\u3068\u308B\u3088\u3046\u306A\u3053\u3068\u3059\u308B\u5834\u5408\u306B\u4F7F\u3046\u3002\\u003c/p\\u003e\\n\\n\\u003cp\\u003e\u3042\u308B\u6587\u5B57\u5217\u3092
+        parse \u3059\u308B\u306E\u306B\u3001\u305D\u308C\u304C\u6570\u5B57\u306A\u306E\u304B\u30AD\u30FC\u30EF\u30FC\u30C9\u306A\u306E\u304B\u6642\u9593\u306A\u306E\u304B\u3001\\u003cbr\\u003e\\n\u305D\u308C\u305E\u308C\u306E
+        parser \u3092 \\u003ccode\\u003eAlt\\u003c/code\\u003e \u3067\u307E\u3068\u3081\u3066\u6700\u521D\u306B\u3046\u307E\u304F\u884C\u3063\u305F
+        parser \u306E\u7D50\u679C\u306B\\u003cbr\\u003e\\n\u3088\u308A\u9078\u629E\u3059\u308B\u3001\u3068\u304B\u3001\u4EE3\u6570\u7684\u3068\u3044\u3046\u3088\u308A\u306F\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u7684\u306A\u610F\u5473\u5408\u3044\u3002\\u003c/p\\u003e\\n\\n\\u003cdiv
         class=\\\"code-frame\\\" data-lang=\\\"js\\\"\\u003e\\u003cdiv class=\\\"highlight\\\"\\u003e\\u003cpre\\u003e\\u003ccode\\u003e\\u003cspan
         class=\\\"nx\\\"\\u003eAlt\\u003c/span\\u003e\\u003cspan class=\\\"o\\\"\\u003e\\u0026lt;\\u003c/span\\u003e\\u003cspan
         class=\\\"nx\\\"\\u003eT\\u003c/span\\u003e\\u003cspan class=\\\"o\\\"\\u003e\\u0026gt;\\u003c/span\\u003e
@@ -1391,42 +1391,46 @@ interactions:
         = (f, u) =\\u0026gt; {\\u003cbr\\u003e\\n  const of = (x) =\\u0026gt; x\\u003cbr\\u003e\\n
         \ const map = (f, a) =\\u0026gt; f(a)\\u003cbr\\u003e\\n  const ap = (f, a)
         =\\u0026gt; f(a)\\u003cbr\\u003e\\n  return F.traverse({of, map, ap}, f, u)\\u003cbr\\u003e\\n}\\u003c/p\\u003e\\n\",\"body\":\"fp-ts\u306F[static-land](https://github.com/fantasyland/static-land)\u3067\u5B9A\u7FA9\u3055\u308C\u305FTypeScript\u306E\u4EE3\u6570\u578B\u3092\u53C2\u7167\u3057\u3066\u5B9F\u88C5\u3055\u308C\u3066\u3044\u308B\u3002\\n\u99B4\u67D3\u307F\u306E\u306A\u3044\u7528\u8A9E\u3060\u3089\u3051\u306A\u306E\u3067\u3001\u6574\u7406\u304C\u3066\u3089\u306B[\u4ED5\u69D8](https://github.com/fantasyland/static-land/blob/master/docs/spec.md)\u306E\u307E\u3068\u3081\u3002\\n\\n![\u7D99\u627F\u95A2\u4FC2](https://github.com/fantasyland/fantasy-land/blob/master/figures/dependencies.png?raw=true)\\n\\n|
-        \u4EE3\u6570\u578B                            | \u8981\u7D04                                 |
-        \u7D99\u627F               |\\n|-----------------------------------|--------------------------------------|--------------------|\\n|
-        [Setoid](#setoid)                 | \u7B49\u5024\u95A2\u4FC2                             |
+        \u4EE3\u6570\u578B                            | \u8981\u7D04                                                      |
+        \u7D99\u627F               |\\n|-----------------------------------|-----------------------------------------------------------|--------------------|\\n|
+        [Setoid](#setoid)                 | \u7B49\u5024\u95A2\u4FC2                                                  |
         \                   |\\n| [Ord](#ord)                       | \u5927\u5C0F\u95A2\u4FC2
-        \                            | Setoid             |\\n| [Semigroup](#semigroup)
-        \          | \u534A\u7FA4\u3001\u4E8C\u9805\u6F14\u7B97                       |
-        \                   |\\n| [Monoid](#monoid)                 | \u30E2\u30CE\u30A4\u30C9\u3001\u4E8C\u9805\u6F14\u7B97
-        + \u5358\u4F4D\u5143          | Semigroup          |\\n| [Group](#group)                   |
-        \u7FA4\u3001\u4E8C\u9805\u6F14\u7B97 + \u5358\u4F4D\u5143 + \u9006\u5143         |
-        Monoid             |\\n| [Semiroupid](#semiroupid)         | \u534A\u570F\u3001\u6052\u7B49\u5C04\u306E\u306A\u3044\u570F
-        \u3000\u3000            |                    |\\n| [Category](#category)             |
-        \u570F            \u3000\u3000\u3000\u3000 \u3000            | Semigroupid
-        \       |\\n| [Functor](#functor)               | \u95A2\u624B                                 |
-        \                   |\\n| [Bifunctor](#bifunctor)           | \u53CC\u95A2\u624B
-        \                              | Functor            |\\n| [Contravariant](#contravariant)
-        \  | \u53CD\u5909\u95A2\u624B                             |                    |\\n|
-        [Profunctor](#profunctor)         | \u5BFE\u89D2\u95A2\u624B                             |
+        \                                                 | Setoid             |\\n|
+        [Semigroup](#semigroup)           | \u534A\u7FA4\u3001\u4E8C\u9805\u6F14\u7B97
+        \                                           |                    |\\n| [Monoid](#monoid)
+        \                | \u30E2\u30CE\u30A4\u30C9\u3001\u4E8C\u9805\u6F14\u7B97
+        + \u5358\u4F4D\u5143                               | Semigroup          |\\n|
+        [Group](#group)                   | \u7FA4\u3001\u4E8C\u9805\u6F14\u7B97 +
+        \u5358\u4F4D\u5143 + \u9006\u5143                              | Monoid             |\\n|
+        [Semiroupid](#semiroupid)         | \u534A\u570F\u3001\u6052\u7B49\u5C04\u306E\u306A\u3044\u570F
+        \                                     |                    |\\n| [Category](#category)
+        \            | \u570F                                                        |
+        Semigroupid        |\\n| [Functor](#functor)               | \u95A2\u624B
+        \                                                     |                    |\\n|
+        [Bifunctor](#bifunctor)           | \u53CC\u95A2\u624B                                                    |
+        Functor            |\\n| [Contravariant](#contravariant)   | \u53CD\u5909\u95A2\u624B
+        \                                                 |                    |\\n|
+        [Profunctor](#profunctor)         | \u5BFE\u89D2\u95A2\u624B                                                  |
         Functor            |\\n| [Apply](#apply)                   | \u8A55\u4FA1\u5C04\u3001\u7A4D\u3068\u51AA\u304B\u3089\u306A\u308B\u968F\u4F34\u306E\u4F59\u5358\u4F4D
-        \  | Functor          \u3000|\\n| [Applicative](#applicative)       | \u5F37Lax\u30E2\u30CE\u30A4\u30C0\u30EB\u95A2\u624B
-        \                 | Apply              | \\n| [Chain](#chain)                   |
-        \u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247                     | Apply
-        \             |\\n| [Monad](#monad)                   | \u30E2\u30CA\u30C9
-        \                              | Chain, Applicative |\\n| [Extend](#extend)
-        \                | \u30B3\u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247
-        \                  | Functor            |\\n| [Comonad](#comonad)               |
-        \u30B3\u30E2\u30CA\u30C9                             | Extend             |\\n|
-        [Alt](#alt)                       | \u95A2\u624B\u306E\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247
-        \            | Functor            |\\n| [Plus](#plus)                     |
-        \u95A2\u624B\u306E\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\u3068\u5358\u4F4D\u5143
-        \    | Alt                |\\n| [Alternative](#alternative)       |                                      |
+        \                       | Functor            |\\n| [Applicative](#applicative)
+        \      | \u5F37Lax\u30E2\u30CE\u30A4\u30C0\u30EB\u95A2\u624B                                       |
+        Apply              | \\n| [Chain](#chain)                   | \u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247
+        \                                         | Apply              |\\n| [Monad](#monad)
+        \                  | \u30E2\u30CA\u30C9                                                    |
+        Chain, Applicative |\\n| [Extend](#extend)                 | \u30B3\u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247
+        \                                       | Functor            |\\n| [Comonad](#comonad)
+        \              | \u30B3\u30E2\u30CA\u30C9                                                  |
+        Extend             |\\n| [Alt](#alt)                       | \u95A2\u624B\u306E\uFF08\u570F\u8AD6\u7684\u306A\u610F\u5473\u3067\u306A\u3044\uFF09\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247
+        \           | Functor            |\\n| [Plus](#plus)                     |
+        \u95A2\u624B\u306E\uFF08\u570F\u8AD6\u7684\u306A\u610F\u5473\u3067\u306A\u3044\uFF09\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\u3068\u5358\u4F4D\u5143
+        \   | Alt                |\\n| [Alternative](#alternative)       |                                                           |
         Plus, Applicative  |\\n| [Filterable](#filterable)         | \u30D5\u30A3\u30EB\u30BF\u30EA\u30F3\u30B0
-        \                      |                    | \\n| [ChainRec](#chainrec)             |
-        \u672B\u5C3E\u518D\u5E30\u306EChain                      | Chain              |\\n|
-        [Foldable](#foldable)             | catamorphism                         |
-        \                   |\\n| [Traversable](#traversable)       | \u8A08\u7B97\u52B9\u679C\u306E\u7C21\u7D04\u5316
-        \                    | Functor, Foldable  |\\n\\n\u300C\u578B\u30AF\u30E9\u30B9\u300D\u3068\u306F\u8A00\u3048\u3001Haskell\u3068\u304BScala\u3068\u306F\u9055\u3044\u3001\u8A00\u8A9E\u7684\u30B5\u30DD\u30FC\u30C8\u304C\u306A\u3044TypeScript\u3067\u306F\u3001\u5358\u306A\u308B\u30A4\u30F3\u30BF\u30D5\u30A7\u30FC\u30B9\u3068\u3057\u3066\u5B9A\u7FA9\u3055\u308C\u3066\u308B\u3002\\n\u4FBF\u5229\u3067\u3082\u306A\u3044\u3057\u3001\u6271\u3044\u3084\u3059\u304F\u3082\u306A\u3044\u3002fp-ts\u3067\u306FTypeScript\u306E\u308F\u308A\u3068\u7279\u6B8A\u306A\uFF08\u3060\u3051\u3069\u3082\u7D20\u6674\u3089\u3057\u3044\u8A2D\u8A08\u306E\uFF09\u578B\u30B7\u30B9\u30C6\u30E0\u3092\\n\u6700\u5927\u9650\u5229\u7528\u3057\u3066\u9AD8\u968E\u30AB\u30A4\u30F3\u30C9\uFF08\u3089\u3057\u304D\u3082\u306E\uFF09\u3092\u3072\u306D\u308A\u51FA\u3057\u3066\u3044\u308B\u306E\u3067\u3001\u3059\u3053\u3057\u306F\u6271\u3044\u3084\u3059\u304F\u306A\u3063\u3066\u3044\u308B\u3002\\n\\n##
+        \                                           |                    | \\n| [ChainRec](#chainrec)
+        \            | \u672B\u5C3E\u518D\u5E30\u306EChain                                           |
+        Chain              |\\n| [Foldable](#foldable)             | catamorphism
+        \                                             |                    |\\n| [Traversable](#traversable)
+        \      | \u8A08\u7B97\u52B9\u679C\u306E\u7C21\u7D04\u5316                                          |
+        Functor, Foldable  |\\n\\n\u300C\u578B\u30AF\u30E9\u30B9\u300D\u3068\u306F\u8A00\u3048\u3001Haskell\u3068\u304BScala\u3068\u306F\u9055\u3044\u3001\u8A00\u8A9E\u7684\u30B5\u30DD\u30FC\u30C8\u304C\u306A\u3044TypeScript\u3067\u306F\u3001\u5358\u306A\u308B\u30A4\u30F3\u30BF\u30D5\u30A7\u30FC\u30B9\u3068\u3057\u3066\u5B9A\u7FA9\u3055\u308C\u3066\u308B\u3002\\n\u4FBF\u5229\u3067\u3082\u306A\u3044\u3057\u3001\u6271\u3044\u3084\u3059\u304F\u3082\u306A\u3044\u3002fp-ts\u3067\u306FTypeScript\u306E\u308F\u308A\u3068\u7279\u6B8A\u306A\uFF08\u3060\u3051\u3069\u3082\u7D20\u6674\u3089\u3057\u3044\u8A2D\u8A08\u306E\uFF09\u578B\u30B7\u30B9\u30C6\u30E0\u3092\\n\u6700\u5927\u9650\u5229\u7528\u3057\u3066\u9AD8\u968E\u30AB\u30A4\u30F3\u30C9\uFF08\u3089\u3057\u304D\u3082\u306E\uFF09\u3092\u3072\u306D\u308A\u51FA\u3057\u3066\u3044\u308B\u306E\u3067\u3001\u3059\u3053\u3057\u306F\u6271\u3044\u3084\u3059\u304F\u306A\u3063\u3066\u3044\u308B\u3002\\n\\n##
         Setoid\\n\\n\u7B49\u5024\u95A2\u4FC2\u304C\u5B9A\u7FA9\u3055\u308C\u305F\u96C6\u5408\u3002\\n\\n```typescript\\nSetoid\\u003cT\\u003e
         {\\n  equals: (T, T) =\\u003e boolean\\n}\\n```\\n\\n**\u6CD5\u5247**\\n\\n
         \ 1. Reflexivity: `S.equals(a, a) === true`\\n  1. Symmetry: `S.equals(a,
@@ -1504,7 +1508,10 @@ interactions:
         w)`\\n\\n\\n## Comonad\\n\\n\u30B3\u30E2\u30CA\u30C9\u3002\\n\\n```js\\nComonad\\u003cT\\u003e
         {\\n  extract: \\u003ca\\u003e(T\\u003ca\\u003e) =\\u003e a\\n}\\n```\\n\\n**\u6CD5\u5247**\\n\\n
         \ 1. \u5DE6\u5358\u4F4D\u5143: `C.extend(C.extract, w) \u2261 w`\\n  1. \u53F3\u5358\u4F4D\u5143:
-        `C.extract(C.extend(f, w)) \u2261 f(w)`\\n\\n\\n## Alt\\n\\n\u95A2\u624B\u306E\u4E26\u5217\u7684\u306A\u5408\u6210\u3002\u3042\u307E\u308A\u6570\u5B66\u7684\u306A\u611F\u3058\u304C\u3057\u306A\u3044\u3002\\n`Alt`\u3068\u3044\u3046\u540D\u306E\u3054\u3068\u304F\u3001\u540C\u6642\u306B\u5B9F\u884C\u3057\u3066\u3001\u305D\u306E\u7D50\u679C\u304B\u3089\u3069\u3061\u3089\u304B\u3092\\n\u300C\u9078\u629E\u300D\u3059\u308B\u3001\u3082\u3057\u304F\u306F\u5358\u7D14\u306A\u300C\u548C\u300D\u3092\u3068\u308B\u3088\u3046\u306A\u3053\u3068\u3092\u671F\u5F85\u3057\u3066\u3044\u308B\u3088\u3046\u306B\u898B\u3048\u308B\u3002\\n\\n```js\\nAlt\\u003cT\\u003e
+        `C.extract(C.extend(f, w)) \u2261 f(w)`\\n\\n\\n## Alt\\n\\n\u95A2\u624B\u306E\u4E26\u5217\u7684\u306A\u5408\u6210\u3002\u5408\u6210\u3068\u306F\u8A00\u3048\u3001\u570F\u8AD6\u7684\u306A\u610F\u5473\u5408\u3044\u3067\u306F\u306A\u304F\u3001\\n`Alt`\u3068\u3044\u3046\u540D\u306E\u3054\u3068\u304F\u3001\u540C\u6642\u306B\u5B9F\u884C\u3057\u3066\u3001\u305D\u306E\u7D50\u679C\u304B\u3089\u3069\u3061\u3089\u304B\u3092\\n\u300C\u9078\u629E\u300D\u3059\u308B\u3001\u3082\u3057\u304F\u306F\u5358\u7D14\u306A\u300C\u548C\u300D\u3092\u3068\u308B\u3088\u3046\u306A\u3053\u3068\u3059\u308B\u5834\u5408\u306B\u4F7F\u3046\u3002\\n\\n\u3042\u308B\u6587\u5B57\u5217\u3092
+        parse \u3059\u308B\u306E\u306B\u3001\u305D\u308C\u304C\u6570\u5B57\u306A\u306E\u304B\u30AD\u30FC\u30EF\u30FC\u30C9\u306A\u306E\u304B\u6642\u9593\u306A\u306E\u304B\u3001\\n\u305D\u308C\u305E\u308C\u306E
+        parser \u3092 `Alt` \u3067\u307E\u3068\u3081\u3066\u6700\u521D\u306B\u3046\u307E\u304F\u884C\u3063\u305F
+        parser \u306E\u7D50\u679C\u306B\\n\u3088\u308A\u9078\u629E\u3059\u308B\u3001\u3068\u304B\u3001\u4EE3\u6570\u7684\u3068\u3044\u3046\u3088\u308A\u306F\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u7684\u306A\u610F\u5473\u5408\u3044\u3002\\n\\n```js\\nAlt\\u003cT\\u003e
         {\\n  alt: \\u003ca\\u003e(T\\u003ca\\u003e, T\\u003ca\\u003e) =\\u003e T\\u003ca\\u003e\\n}\\n```\\n\\n**\u6CD5\u5247**\\n\\n
         \ 1. \u7D50\u5408\u5247: `A.alt(A.alt(a, b), c) \u2261 A.alt(a, A.alt(b, c))`\\n
         \ 2. \u5206\u914D\u5247: `A.map(f, A.alt(a, b)) \u2261 A.alt(A.map(f, a),
@@ -1563,7 +1570,7 @@ interactions:
         x, u)\\n}\\n```\\n\\n**map\u306E\u5C0E\u51FA**\\n\\n`js\\nF.map = (f, u) =\\u003e
         {\\n  const of = (x) =\\u003e x\\n  const map = (f, a) =\\u003e f(a)\\n  const
         ap = (f, a) =\\u003e f(a)\\n  return F.traverse({of, map, ap}, f, u)\\n}\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2021-07-20T08:35:14+09:00\",\"group\":null,\"id\":\"5f67dda315ef485a4fae\",\"likes_count\":5,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"\u570F\u8AD6\",\"versions\":[]},{\"name\":\"TypeScript\",\"versions\":[]},{\"name\":\"fp-ts\",\"versions\":[]}],\"title\":\"fp-ts
-        \u4EE3\u6570\u578B\u306E\u578B\u30AF\u30E9\u30B9\",\"updated_at\":\"2022-01-11T07:45:28+09:00\",\"url\":\"https://qiita.com/ryokat3/items/5f67dda315ef485a4fae\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
+        \u4EE3\u6570\u578B\u306E\u578B\u30AF\u30E9\u30B9\",\"updated_at\":\"2022-01-18T10:01:07+09:00\",\"url\":\"https://qiita.com/ryokat3/items/5f67dda315ef485a4fae\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
         Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\u003cp\\u003efp-ts\u3067\u306F\\u003ccode\\u003epipe\\u003c/code\\u003e\u3068\u3044\u3046\u95A2\u6570\u3067\u95A2\u6570\u3092\u7E4B\u3052\u3066\u3044\u304D\u307E\u3059\u3002Haskell\u306E\\u003ccode\\u003edo\\u003c/code\\u003e\u3084Scala\u306E\\u003ccode\\u003efor\\u003c/code\\u003e\u306B\u76F8\u5F53\u3059\u308B\u3082\u306E\u3067\u3059\u304C\u3001\\u003cbr\\u003e\\n\u8868\u73FE\u529B\u306F\u306A\u304B\u308A\u898B\u52A3\u308A\u3057\u307E\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
         id=\\\"monad\u30AF\u30E9\u30B9\u3092\u4F7F\u7528\u3057\u305F\u5834\u5408\u306E\u95A2\u6570\u306E\uFF12\u5F62\u614B\\\"
         class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#monad%E3%82%AF%E3%83%A9%E3%82%B9%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E5%A0%B4%E5%90%88%E3%81%AE%E9%96%A2%E6%95%B0%E3%81%AE%EF%BC%92%E5%BD%A2%E6%85%8B\\\"\\u003e\\u003ci
@@ -1785,10 +1792,8 @@ interactions:
         id=\\\"\u8AAD\u307F\u65B9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#%E8%AA%AD%E3%81%BF%E6%96%B9\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u8AAD\u307F\u65B9\\u003c/h3\\u003e\\n\\n\\u003ctable\\u003e\\n\\u003cthead\\u003e\\n\\u003ctr\\u003e\\n\\u003cth\\u003e\u5927\u6587\u5B57\\u003c/th\\u003e\\n\\u003cth\\u003e\u5C0F\u6587\u5B57\\u003c/th\\u003e\\n\\u003cth\\u003e\u82F1\u8868\u8A18\\u003c/th\\u003e\\n\\u003cth\\u003e\u8AAD\u307F\u30FB\u30AB\u30CA\u8868\u8A18\\u003c/th\\u003e\\n\\u003c/tr\\u003e\\n\\u003c/thead\\u003e\\n\\u003ctbody\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0391\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B1\\u003c/td\\u003e\\n\\u003ctd\\u003ealpha\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A2\u30EB\u30D5\u30A1\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0392\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B2\\u003c/td\\u003e\\n\\u003ctd\\u003ebeta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D9\u30FC\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0393\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B3\\u003c/td\\u003e\\n\\u003ctd\\u003egamma\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AC\u30F3\u30DE\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0394\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B4\\u003c/td\\u003e\\n\\u003ctd\\u003edelta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30C7\u30EB\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0395\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B5\\u003c/td\\u003e\\n\\u003ctd\\u003eepsilon\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A8\u30D7\u30B7\u30ED\u30F3/\u30A4\u30D7\u30B7\u30ED\u30F3\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0396\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B6\\u003c/td\\u003e\\n\\u003ctd\\u003ezeta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30BC\u30FC\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0397\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B7\\u003c/td\\u003e\\n\\u003ctd\\u003eeta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A8\u30FC\u30BF/\u30A4\u30FC\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0398\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B8\\u003c/td\\u003e\\n\\u003ctd\\u003etheta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30C6\u30FC\u30BF/\u30B7\u30FC\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0399\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B9\\u003c/td\\u003e\\n\\u003ctd\\u003eiota\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A4\u30AA\u30FC\u30BF/\u30A4\u30AA\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039A\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BA\\u003c/td\\u003e\\n\\u003ctd\\u003ekappa\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AB\u30C3\u30D1\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039B\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BB\\u003c/td\\u003e\\n\\u003ctd\\u003elambda\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30E9\u30E0\u30C0\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039C\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BC\\u003c/td\\u003e\\n\\u003ctd\\u003emu\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30DF\u30E5\u30FC\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039D\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BD\\u003c/td\\u003e\\n\\u003ctd\\u003enu\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30CB\u30E5\u30FC\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039E\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BE\\u003c/td\\u003e\\n\\u003ctd\\u003exi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AF\u30B9\u30A3\u30FC/\u30AF\u30B5\u30A4/\u30B0\u30B6\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039F\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BF\\u003c/td\\u003e\\n\\u003ctd\\u003eomicron\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AA\u30DF\u30AF\u30ED\u30F3\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A0\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C0\\u003c/td\\u003e\\n\\u003ctd\\u003epi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D4\u30FC/\u30D1\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A1\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C1\\u003c/td\\u003e\\n\\u003ctd\\u003erho\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30ED\u30FC\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A3\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C3\\u003c/td\\u003e\\n\\u003ctd\\u003esigma\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30B7\u30B0\u30DE\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A4\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C4\\u003c/td\\u003e\\n\\u003ctd\\u003etau\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30BF\u30A6\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A5\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C5\\u003c/td\\u003e\\n\\u003ctd\\u003eupsilon\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A6\u30D7\u30B7\u30ED\u30F3/\u30E6\u30D7\u30B7\u30ED\u30F3\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A6\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C6\\u003c/td\\u003e\\n\\u003ctd\\u003ephi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D5\u30A3\u30FC/\u30D5\u30A1\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A7\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C7\\u003c/td\\u003e\\n\\u003ctd\\u003echi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AD\u30FC/\u30AB\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A8\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C8\\u003c/td\\u003e\\n\\u003ctd\\u003epsi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D7\u30B9\u30A3\u30FC/\u30D7\u30B5\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A9\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C9\\u003c/td\\u003e\\n\\u003ctd\\u003eomega\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AA\u30E1\u30AC\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003c/tbody\\u003e\\n\\u003c/table\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
         id=\\\"\u66F8\u304D\u65B9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
-        href=\\\"#%E6%9B%B8%E3%81%8D%E6%96%B9\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u66F8\u304D\u65B9\\u003c/h3\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\u003ca
-        href=\\\"https://www.youtube.com/watch?v=JgRYrzc8cFg\\\" rel=\\\"nofollow
-        noopener\\\" target=\\\"_blank\\\"\\u003e\u30AE\u30EA\u30B7\u30E3\u6587\u5B57
-        \u624B\u66F8\u304D\u52D5\u753B\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\",\"body\":\"###
+        href=\\\"#%E6%9B%B8%E3%81%8D%E6%96%B9\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u66F8\u304D\u65B9\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://www.youtube.com/watch?v=JgRYrzc8cFg\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\",\"body\":\"###
         \u8AAD\u307F\u65B9\\n\\n| \u5927\u6587\u5B57 | \u5C0F\u6587\u5B57 | \u82F1\u8868\u8A18
         \  | \u8AAD\u307F\u30FB\u30AB\u30CA\u8868\u8A18         |\\n|--------|--------|----------|------------------------|\\n|
         \u0391      | \u03B1      | alpha    | \u30A2\u30EB\u30D5\u30A1               |\\n|
@@ -1815,18 +1820,80 @@ interactions:
         \         |\\n| \u03A7      | \u03C7      | chi      | \u30AD\u30FC/\u30AB\u30A4
         \             |\\n| \u03A8      | \u03C8      | psi      | \u30D7\u30B9\u30A3\u30FC/\u30D7\u30B5\u30A4
         \       |\\n| \u03A9      | \u03C9      | omega    | \u30AA\u30E1\u30AC                 |\\n\\n\\n\\n###
-        \u66F8\u304D\u65B9\\n\\n- [\u30AE\u30EA\u30B7\u30E3\u6587\u5B57 \u624B\u66F8\u304D\u52D5\u753B](https://www.youtube.com/watch?v=JgRYrzc8cFg)\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2020-05-26T14:19:17+09:00\",\"group\":null,\"id\":\"8fe145567d1951284c57\",\"likes_count\":0,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"Mathematics\",\"versions\":[]}],\"title\":\"\u30AE\u30EA\u30B7\u30E3\u6587\u5B57\",\"updated_at\":\"2020-05-26T14:19:17+09:00\",\"url\":\"https://qiita.com/ryokat3/items/8fe145567d1951284c57\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
-        Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\n\\u003ch2\\u003e\\n\\u003cspan
+        \u66F8\u304D\u65B9\\n\\nhttps://www.youtube.com/watch?v=JgRYrzc8cFg\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2020-05-26T14:19:17+09:00\",\"group\":null,\"id\":\"8fe145567d1951284c57\",\"likes_count\":0,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"Mathematics\",\"versions\":[]}],\"title\":\"\u30AE\u30EA\u30B7\u30E3\u6587\u5B57\",\"updated_at\":\"2022-01-18T13:47:16+09:00\",\"url\":\"https://qiita.com/ryokat3/items/8fe145567d1951284c57\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
+        Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\n\\u003ch1\\u003e\\n\\u003cspan
         id=\\\"youtube\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
-        href=\\\"#youtube\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eYouTube\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u90FD\u5EA6\u90FD\u5EA6\u3067\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u3068\u304B\u3089\u3081\u3066\u8B1B\u7FA9\u3092\u9032\u3081\u3066\u304F\u308C\u308B\u306E\u3067\u3001\u306F\u305F\u3068\u819D\u3092\u6253\u3061\u306A\u304C\u3089\u7406\u89E3\u3067\u304D\u308B\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\u003ca
-        href=\\\"https://www.youtube.com/watch?v=I8LbkfSSR58\\u0026amp;list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_\\\"
-        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\u570F\u8AD61\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003cli\\u003e\\u003ca
-        href=\\\"https://www.youtube.com/watch?v=3XTQSx1A3x8\\u0026amp;list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm\\\"
-        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\u570F\u8AD62\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003cli\\u003e\\u003ca
-        href=\\\"https://www.youtube.com/watch?v=F5uEpKwHqdk\\u0026amp;list=PLbgaMIhjbmEn64WVX4B08B4h2rOtueWIL\\\"
-        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\u570F\u8AD63\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        href=\\\"#youtube\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eYouTube\\u003c/h1\\u003e\\n\\n\\u003cp\\u003e\u90FD\u5EA6\u90FD\u5EA6\u3067\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u3068\u304B\u3089\u3081\u3066\u8B1B\u7FA9\u3092\u9032\u3081\u3066\u304F\u308C\u308B\u306E\u3067\u3001\u306F\u305F\u3068\u819D\u3092\u6253\u3061\u306A\u304C\u3089\u7406\u89E3\u3067\u304D\u308B\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        id=\\\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6-1\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9E%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%9C%8F%E8%AB%96-1\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6
+        1\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://www.youtube.com/watch?v=I8LbkfSSR58\\u0026amp;list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        id=\\\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6-2\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9E%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%9C%8F%E8%AB%96-2\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6
+        2\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://www.youtube.com/watch?v=3XTQSx1A3x8\\u0026amp;list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        id=\\\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6-3\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9E%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%9C%8F%E8%AB%96-3\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6
+        3\\u003c/h2\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan id=\\\"\u6982\u8981-part-1\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E6%A6%82%E8%A6%81-part-1\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u6982\u8981
+        Part 1\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/F5uEpKwHqdk\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u6982\u8981-part-2\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E6%A6%82%E8%A6%81-part-2\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u6982\u8981
+        Part 2\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/CfoaY2Ybf8M\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"string-diagram-part-1\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#string-diagram-part-1\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eString
+        Diagram Part 1\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/eOdBTqY3-Og\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"string-diagram-part-2\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#string-diagram-part-2\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eString
+        Diagram Part 2\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/lqq9IFSPp7Q\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u968F\u4F34\u3068\u30E2\u30CA\u30C9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E9%9A%8F%E4%BC%B4%E3%81%A8%E3%83%A2%E3%83%8A%E3%83%89\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u968F\u4F34\u3068\u30E2\u30CA\u30C9\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/9p6_U5yV0ro\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30E2\u30CA\u30C9\u4EE3\u6570-part-1\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%83%A2%E3%83%8A%E3%83%89%E4%BB%A3%E6%95%B0-part-1\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30E2\u30CA\u30C9\u4EE3\u6570
+        Part 1\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/uXfBmsQJsN4\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30E2\u30CA\u30C9\u4EE3\u6570-part-2\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%83%A2%E3%83%8A%E3%83%89%E4%BB%A3%E6%95%B0-part-2\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30E2\u30CA\u30C9\u4EE3\u6570
+        Part 2\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/-wlT81LQ4Oc\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30E2\u30CA\u30C9\u4EE3\u6570-part-3\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%83%A2%E3%83%8A%E3%83%89%E4%BB%A3%E6%95%B0-part-3\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30E2\u30CA\u30C9\u4EE3\u6570
+        Part 3\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/9f8PumwS2gU\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"eilenberg-moore-\u3068-lawvere\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#eilenberg-moore-%E3%81%A8-lawvere\\\"\\u003e\\u003ci class=\\\"fa
+        fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eEilenberg Moore \u3068 Lawvere\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003ca
+        href=\\\"http://nlab-pages.s3.us-east-2.amazonaws.com/nlab/show/Eilenberg-Moore+category\\\"
+        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003eEilenberg-Moore
+        Category\\u003c/a\\u003e\\u003cbr\\u003e\\n\\u003ca href=\\\"https://en.wikipedia.org/wiki/Lawvere_theory\\\"
+        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003eLawvere Theory\\u003c/a\\u003e\\u003c/p\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/5PaxKu2TXno\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"lawvere-\u5B9A\u7406\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#lawvere-%E5%AE%9A%E7%90%86\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eLawvere
+        \u5B9A\u7406\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/zCTAn_nIrS0\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u5BFE\u89D2\u95A2\u624B\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E5%AF%BE%E8%A7%92%E9%96%A2%E6%89%8B\\\"\\u003e\\u003ci class=\\\"fa
+        fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u5BFE\u89D2\u95A2\u624B\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/XJgfrF3O6iE\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30A8\u30F3\u30C9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%82%A8%E3%83%B3%E3%83%89\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30A8\u30F3\u30C9\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/TAPxt26YyEI\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30A8\u30F3\u30C9\u3068\u3057\u3066\u306E\u81EA\u7136\u5909\u63DB\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E3%82%A8%E3%83%B3%E3%83%89%E3%81%A8%E3%81%97%E3%81%A6%E3%81%AE%E8%87%AA%E7%84%B6%E5%A4%89%E6%8F%9B\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30A8\u30F3\u30C9\u3068\u3057\u3066\u306E\u81EA\u7136\u5909\u63DB\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/DseY4qIGZV4\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30B3\u30A8\u30F3\u30C9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%82%B3%E3%82%A8%E3%83%B3%E3%83%89\\\"\\u003e\\u003ci class=\\\"fa
+        fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30B3\u30A8\u30F3\u30C9\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/jQUebw8uac0\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch1\\u003e\\n\\u003cspan
         id=\\\"\u6559\u79D1\u66F8\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
-        href=\\\"#%E6%95%99%E7%A7%91%E6%9B%B8\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u6559\u79D1\u66F8\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u4E0A\u8A18YouTube\u52D5\u753B\u3092\u57FA\u306B\u3057\u305F\u6559\u6750\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\u003ca
+        href=\\\"#%E6%95%99%E7%A7%91%E6%9B%B8\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u6559\u79D1\u66F8\\u003c/h1\\u003e\\n\\n\\u003cp\\u003e\u4E0A\u8A18YouTube\u52D5\u753B\u3092\u57FA\u306B\u3057\u305F\u6559\u6750\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\u003ca
         href=\\\"https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/\\\"
         rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\u30AA\u30F3\u30E9\u30A4\u30F3\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003cli\\u003e\\u003ca
         href=\\\"https://www.blurb.com/b/9621951-category-theory-for-programmers-new-edition-hardco\\\"
@@ -1841,19 +1908,29 @@ interactions:
         x D \u306F \\\"C cross D\\\" \u3068\u8AAD\u3080\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ecommute\\u003c/td\\u003e\\n\\u003ctd\\u003e\u53EF\u63DB\u56F3\u5F0F\u3067\u300C\u53EF\u63DB\u306B\u3059\u308B\u300D\u3068\u3044\u3046\u52D5\u8A5E\u3068\u3057\u3066\u4F7F\u308F\u308C\u308B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ecomponent\\u003c/td\\u003e\\n\\u003ctd\\u003e\u81EA\u7136\u5909\u63DB\u306E\u5BFE\u8C61\u306B\u304A\u3051\u308B\u300C\u6210\u5206\u300D\u306E\u3053\u3068\u3001\u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ediagonal
         functor\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5BFE\u89D2\u95A2\u624B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003edinatural
         transformation\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5BFE\u89D2\u81EA\u7136\u5909\u63DB\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eendofunctor\\u003c/td\\u003e\\n\\u003ctd\\u003e\u81EA\u5DF1\u95A2\u624B
-        (end of functor \u3068\u805E\u3053\u3048\u308B\u306E\u3067\u6CE8\u610F)\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eepimorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5168\u5C04\u3001\u30A8\u30D4\u5C04\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ehomomorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u6E96\u540C\u578B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eisomorphic\\u003c/td\\u003e\\n\\u003ctd\\u003e\u540C\u578B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003elemma\\u003c/td\\u003e\\n\\u003ctd\\u003e\u88DC\u984C\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003emonomorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5358\u5C04\u3001\u30E2\u30CE\u5C04\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003emorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5C04\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eprofunctor\\u003c/td\\u003e\\n\\u003ctd\\u003e-\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003esemigroup\\u003c/td\\u003e\\n\\u003ctd\\u003e\u534A\u7FA4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003c/tbody\\u003e\\n\\u003c/table\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        (end of functor \u3068\u805E\u3053\u3048\u308B\u306E\u3067\u6CE8\u610F)\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eepimorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5168\u5C04\u3001\u30A8\u30D4\u5C04\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ehomomorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u6E96\u540C\u578B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eisomorphic\\u003c/td\\u003e\\n\\u003ctd\\u003e\u540C\u578B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003elemma\\u003c/td\\u003e\\n\\u003ctd\\u003e\u88DC\u984C\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003emonomorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5358\u5C04\u3001\u30E2\u30CE\u5C04\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003emorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5C04\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eprofunctor\\u003c/td\\u003e\\n\\u003ctd\\u003e-\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003esemigroup\\u003c/td\\u003e\\n\\u003ctd\\u003e\u534A\u7FA4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003c/tbody\\u003e\\n\\u003c/table\\u003e\\n\\n\\u003ch1\\u003e\\n\\u003cspan
         id=\\\"\u65E5\u672C\u8A9E\u66F8\u7C4D\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#%E6%97%A5%E6%9C%AC%E8%AA%9E%E6%9B%B8%E7%B1%8D\\\"\\u003e\\u003ci
-        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u65E5\u672C\u8A9E\u66F8\u7C4D\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u65E5\u672C\u8A9E\u3067\u77E5\u8B58\u3092\u8CAF\u3081\u3066\u304A\u304F\u3002\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\n\\u003cp\\u003e\\u003ca
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u65E5\u672C\u8A9E\u66F8\u7C4D\\u003c/h1\\u003e\\n\\n\\u003cp\\u003e\u65E5\u672C\u8A9E\u3067\u77E5\u8B58\u3092\u8CAF\u3081\u3066\u304A\u304F\u3002\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\n\\u003cp\\u003e\\u003ca
         href=\\\"https://gihyo.jp/book/2019/978-4-297-10723-9\\\" rel=\\\"nofollow
         noopener\\\" target=\\\"_blank\\\"\\u003e\u570F\u8AD6\u306E\u9053\u6848\u5185\\u003c/a\\u003e\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\u591A\u5206\u30D7\u30ED\u30B0\u30E9\u30DE\u30FC\u3092\u610F\u8B58\u3057\u305F\u69CB\u6210\u3002\u6700\u7D42\u7AE0\u3067\u306FHaskell\u3092\u7D39\u4ECB\u3057\u3066\u3044\u308B\u3002\\u003c/li\\u003e\\n\\u003cli\\u003e\u5BFE\u8A71\u5F62\u5F0F\u3067\u66F8\u304B\u308C\u3066\u306F\u3044\u308B\u3051\u3069\u3001\u30CE\u30FC\u30C8\u306B\u53EF\u63DB\u56F3\u5F0F\u3092\u624B\u66F8\u304D\u3057\u306A\u3044\u3068\u7406\u89E3\u3067\u304D\u306A\u304B\u3063\u305F\\u003c/li\\u003e\\n\\u003cli\\u003e\u521D\u7248\u306F\u8AA4\u8A18\uFF08\u6B63\u8AA4\u8868\u3042\u308A\uFF09\u304C\u591A\u3059\u304E\u308B\u306E\u3067\u3001\u66F8\u5E97\u3067\u7D19\u306E\u672C\u3092\u8CB7\u3046\u3068\u304D\u306F\u6CE8\u610F\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\\u003c/li\\u003e\\n\\u003cli\\u003e\\n\\u003cp\\u003e\\u003ca
         href=\\\"https://www.maruzen-publishing.co.jp/smp/item/b295027.html\\\" rel=\\\"nofollow
-        noopener\\\" target=\\\"_blank\\\"\\u003e\u30D9\u30FC\u30B7\u30C3\u30AF\u570F\u8AD6\\u003c/a\\u003e\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\u591A\u5206\u8170\u3092\u636E\u3048\u3066\u6570\u5B66\u3092\u52C9\u5F37\u3059\u308B\u4EBA\u5411\u3051\\u003c/li\\u003e\\n\\u003cli\\u003e\u4ECA\u306E\u3068\u3053\u308D\u7528\u8A9E\u306E\u5B9A\u7FA9\u7B49\u3092\u78BA\u8A8D\u3059\u308B\u306E\u306B\u4F7F\u7528\u3059\u308B\u3050\u3089\u3044...\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\",\"body\":\"##
-        YouTube\\n\\n\u90FD\u5EA6\u90FD\u5EA6\u3067\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u3068\u304B\u3089\u3081\u3066\u8B1B\u7FA9\u3092\u9032\u3081\u3066\u304F\u308C\u308B\u306E\u3067\u3001\u306F\u305F\u3068\u819D\u3092\u6253\u3061\u306A\u304C\u3089\u7406\u89E3\u3067\u304D\u308B\\n\\n-
-        [\u570F\u8AD61](https://www.youtube.com/watch?v=I8LbkfSSR58\\u0026list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_)\\n-
-        [\u570F\u8AD62](https://www.youtube.com/watch?v=3XTQSx1A3x8\\u0026list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm)\\n-
-        [\u570F\u8AD63](https://www.youtube.com/watch?v=F5uEpKwHqdk\\u0026list=PLbgaMIhjbmEn64WVX4B08B4h2rOtueWIL)\\n\\n##
-        \u6559\u79D1\u66F8\\n\\n\u4E0A\u8A18YouTube\u52D5\u753B\u3092\u57FA\u306B\u3057\u305F\u6559\u6750\\n\\n-
+        noopener\\\" target=\\\"_blank\\\"\\u003e\u30D9\u30FC\u30B7\u30C3\u30AF\u570F\u8AD6\\u003c/a\\u003e\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\u591A\u5206\u8170\u3092\u636E\u3048\u3066\u6570\u5B66\u3092\u52C9\u5F37\u3059\u308B\u4EBA\u5411\u3051\\u003c/li\\u003e\\n\\u003cli\\u003e\u4ECA\u306E\u3068\u3053\u308D\u7528\u8A9E\u306E\u5B9A\u7FA9\u7B49\u3092\u78BA\u8A8D\u3059\u308B\u306E\u306B\u4F7F\u7528\u3059\u308B\u3050\u3089\u3044...\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\",\"body\":\"#
+        YouTube\\n\\n\u90FD\u5EA6\u90FD\u5EA6\u3067\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u3068\u304B\u3089\u3081\u3066\u8B1B\u7FA9\u3092\u9032\u3081\u3066\u304F\u308C\u308B\u306E\u3067\u3001\u306F\u305F\u3068\u819D\u3092\u6253\u3061\u306A\u304C\u3089\u7406\u89E3\u3067\u304D\u308B\\n\\n##
+        \u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6 1\\n\\nhttps://www.youtube.com/watch?v=I8LbkfSSR58\\u0026list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_\\n\\n##
+        \u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6 2\\n\\nhttps://www.youtube.com/watch?v=3XTQSx1A3x8\\u0026list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm\\n\\n##
+        \u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6 3\\n\\n###
+        \u6982\u8981 Part 1\\n\\nhttps://youtu.be/F5uEpKwHqdk\\n\\n### \u6982\u8981
+        Part 2\\n\\nhttps://youtu.be/CfoaY2Ybf8M\\n\\n### String Diagram Part 1\\n\\nhttps://youtu.be/eOdBTqY3-Og\\n\\n###
+        String Diagram Part 2\\n\\nhttps://youtu.be/lqq9IFSPp7Q\\n\\n### \u968F\u4F34\u3068\u30E2\u30CA\u30C9\\n\\nhttps://youtu.be/9p6_U5yV0ro\\n\\n###
+        \u30E2\u30CA\u30C9\u4EE3\u6570 Part 1\\n\\nhttps://youtu.be/uXfBmsQJsN4\\n\\n###
+        \u30E2\u30CA\u30C9\u4EE3\u6570 Part 2\\n\\nhttps://youtu.be/-wlT81LQ4Oc\\n\\n###
+        \u30E2\u30CA\u30C9\u4EE3\u6570 Part 3\\n\\nhttps://youtu.be/9f8PumwS2gU\\n\\n###
+        Eilenberg Moore \u3068 Lawvere\\n\\n[Eilenberg-Moore Category](http://nlab-pages.s3.us-east-2.amazonaws.com/nlab/show/Eilenberg-Moore+category)\\n[Lawvere
+        Theory](https://en.wikipedia.org/wiki/Lawvere_theory)\\n\\nhttps://youtu.be/5PaxKu2TXno\\n\\n###
+        Lawvere \u5B9A\u7406\\n\\nhttps://youtu.be/zCTAn_nIrS0\\n\\n### \u5BFE\u89D2\u95A2\u624B\\n\\nhttps://youtu.be/XJgfrF3O6iE\\n\\n###
+        \u30A8\u30F3\u30C9\\n\\nhttps://youtu.be/TAPxt26YyEI\\n\\n### \u30A8\u30F3\u30C9\u3068\u3057\u3066\u306E\u81EA\u7136\u5909\u63DB\\n\\nhttps://youtu.be/DseY4qIGZV4\\n\\n###
+        \u30B3\u30A8\u30F3\u30C9\\n\\nhttps://youtu.be/jQUebw8uac0\\n# \u6559\u79D1\u66F8\\n\\n\u4E0A\u8A18YouTube\u52D5\u753B\u3092\u57FA\u306B\u3057\u305F\u6559\u6750\\n\\n-
         [\u30AA\u30F3\u30E9\u30A4\u30F3](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)\\n-
         [\u30CF\u30FC\u30C9\u30AB\u30D0\u30FC](https://www.blurb.com/b/9621951-category-theory-for-programmers-new-edition-hardco)\\n-
         [\u30BD\u30D5\u30C8\u30AB\u30D0\u30FC](https://www.blurb.com/b/9603882-category-theory-for-programmers-scala-edition-pape)
@@ -1876,7 +1953,7 @@ interactions:
         monomorphism             | \u5358\u5C04\u3001\u30E2\u30CE\u5C04\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000
         \  |\\n| morphism                 | \u5C04                                                             |\\n|
         profunctor               | -                                                              |\\n|
-        semigroup                | \u534A\u7FA4                                                           |\\n\\n##
+        semigroup                | \u534A\u7FA4                                                           |\\n\\n#
         \u65E5\u672C\u8A9E\u66F8\u7C4D\\n\\n\u65E5\u672C\u8A9E\u3067\u77E5\u8B58\u3092\u8CAF\u3081\u3066\u304A\u304F\u3002\\n\\n-
         [\u570F\u8AD6\u306E\u9053\u6848\u5185](https://gihyo.jp/book/2019/978-4-297-10723-9)\\n
         \ - \u591A\u5206\u30D7\u30ED\u30B0\u30E9\u30DE\u30FC\u3092\u610F\u8B58\u3057\u305F\u69CB\u6210\u3002\u6700\u7D42\u7AE0\u3067\u306FHaskell\u3092\u7D39\u4ECB\u3057\u3066\u3044\u308B\u3002\\n
@@ -1884,7 +1961,7 @@ interactions:
         \ - \u521D\u7248\u306F\u8AA4\u8A18\uFF08\u6B63\u8AA4\u8868\u3042\u308A\uFF09\u304C\u591A\u3059\u304E\u308B\u306E\u3067\u3001\u66F8\u5E97\u3067\u7D19\u306E\u672C\u3092\u8CB7\u3046\u3068\u304D\u306F\u6CE8\u610F\\n\\n-
         [\u30D9\u30FC\u30B7\u30C3\u30AF\u570F\u8AD6](https://www.maruzen-publishing.co.jp/smp/item/b295027.html)\\n
         \ - \u591A\u5206\u8170\u3092\u636E\u3048\u3066\u6570\u5B66\u3092\u52C9\u5F37\u3059\u308B\u4EBA\u5411\u3051\\n
-        \ - \u4ECA\u306E\u3068\u3053\u308D\u7528\u8A9E\u306E\u5B9A\u7FA9\u7B49\u3092\u78BA\u8A8D\u3059\u308B\u306E\u306B\u4F7F\u7528\u3059\u308B\u3050\u3089\u3044...\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2020-05-09T23:38:03+09:00\",\"group\":null,\"id\":\"c2f9caff20031095751f\",\"likes_count\":3,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"\u570F\u8AD6\",\"versions\":[]},{\"name\":\"\u95A2\u6570\u578B\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\",\"versions\":[]}],\"title\":\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6\",\"updated_at\":\"2021-04-05T10:09:57+09:00\",\"url\":\"https://qiita.com/ryokat3/items/c2f9caff20031095751f\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
+        \ - \u4ECA\u306E\u3068\u3053\u308D\u7528\u8A9E\u306E\u5B9A\u7FA9\u7B49\u3092\u78BA\u8A8D\u3059\u308B\u306E\u306B\u4F7F\u7528\u3059\u308B\u3050\u3089\u3044...\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2020-05-09T23:38:03+09:00\",\"group\":null,\"id\":\"c2f9caff20031095751f\",\"likes_count\":3,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"\u570F\u8AD6\",\"versions\":[]},{\"name\":\"\u95A2\u6570\u578B\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\",\"versions\":[]}],\"title\":\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6\",\"updated_at\":\"2022-01-18T16:34:31+09:00\",\"url\":\"https://qiita.com/ryokat3/items/c2f9caff20031095751f\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
         Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\u003cp\\u003eTypeScript\u306Etuple\u578B\uFF08\u300C\u5024\u300D
         \\u003ccode\\u003e[4, \\\"hello\\\", true]\\u003c/code\\u003e\u3058\u3083\u306A\u304F\u3066\u300C\u578B\u300D\\u003ccode\\u003e[number,
         string, boolean]\\u003c/code\\u003e\uFF09\u3092\u64CD\u4F5C\u3059\u308B\u3002\\u003c/p\\u003e\\n\\n\\u003cp\\u003e\u3082\u3061\u308D\u3093\u578B\u3092\u8A08\u7B97\u3057\u3066\u3044\u308B\u3060\u3051\u306A\u306E\u3067\u3001runtime\u6642\u306E\u8CA0\u8377\u306F0\u3002\\u003cbr\\u003e\\nsnippet\u3092\u4E0A\u304B\u3089\u30B3\u30D4\u30FC\u3057\u3066VSCode\u306B\u8CBC\u308A\u4ED8\u3051\u3066\u3044\u3051\u3070OK\u3001\u578B\u8A08\u7B97\u3060\u3051\u306A\u306E\u3067\u30B3\u30F3\u30D1\u30A4\u30EB\u4E0D\u8981\u3067\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
@@ -2509,18 +2586,18 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 16 Jan 2022 14:33:41 GMT
+      - Wed, 19 Jan 2022 01:45:26 GMT
       ETag:
-      - W/"5ce1e0be026ca07ee1887f90cd0e0b98"
+      - W/"3f85ac87e8779181b4d7430fae966b75"
       Link:
       - <https://qiita.com/api/v2/authenticated_user/items?page=1&per_page=10>; rel="first",
         <https://qiita.com/api/v2/authenticated_user/items?page=1&per_page=10>; rel="last"
       Rate-Limit:
       - '1000'
       Rate-Remaining:
-      - '905'
+      - '977'
       Rate-Reset:
-      - '1642344297'
+      - '1642559772'
       Referrer-Policy:
       - strict-origin-when-cross-origin
       Server:
@@ -2542,9 +2619,9 @@ interactions:
       X-Permitted-Cross-Domain-Policies:
       - none
       X-Request-Id:
-      - 20c7209a-02ba-4c88-9903-8ac186d32f7b
+      - 1641d2b3-e6fc-4c22-a522-583ffce1faa3
       X-Runtime:
-      - '0.244572'
+      - '0.339374'
       X-XSS-Protection:
       - 1; mode=block
     status:
@@ -2576,7 +2653,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 16 Jan 2022 14:33:41 GMT
+      - Wed, 19 Jan 2022 01:45:26 GMT
       ETag:
       - W/"4f53cda18c2baa0c0354bb5f9a3ecbe5"
       Link:
@@ -2587,9 +2664,9 @@ interactions:
       Rate-Limit:
       - '1000'
       Rate-Remaining:
-      - '904'
+      - '976'
       Rate-Reset:
-      - '1642344296'
+      - '1642559772'
       Referrer-Policy:
       - strict-origin-when-cross-origin
       Server:
@@ -2611,9 +2688,9 @@ interactions:
       X-Permitted-Cross-Domain-Policies:
       - none
       X-Request-Id:
-      - e9761c49-efef-4dea-84ac-b18308f89bf9
+      - 8c1dd1b3-e947-447d-b453-7bc3b676193a
       X-Runtime:
-      - '0.182617'
+      - '0.105687'
       X-XSS-Protection:
       - 1; mode=block
     status:
@@ -2927,7 +3004,7 @@ interactions:
         id=\\\"\u8A18\u4E8B\u306E\u57F7\u7B46\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#%E8%A8%98%E4%BA%8B%E3%81%AE%E5%9F%B7%E7%AD%86\\\"\\u003e\\u003ci
         class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u8A18\u4E8B\u306E\u57F7\u7B46\\u003c/h1\\u003e\\n\\n\\u003cp\\u003e\u304A\u6C17\u306B\u5165\u308A\u306E\u30A8\u30C7\u30A3\u30BF\u3067
-        markdown \u3092\u7DE8\u96C6\u3059\u308B\u306E\u3067\u3059\u304C\u3001\u8A18\u4E8B\u306E\u57F7\u7B46\u6642\u306B\u5E7E\u3064\u304B\u306E\u7559\u610F\u70B9\u304C\u3042\u308A\u307E\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        markdown \u3092\u7DE8\u96C6\u3059\u308B\u306E\u3067\u3059\u304C\u3001\u8A18\u4E8B\u306E\u57F7\u7B46\u6642\u306B\u5E7E\u3064\u304B\u306E\u6CE8\u610F\u70B9\u304C\u3042\u308A\u307E\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
         id=\\\"\u8A18\u4E8B\u306E\u30D8\u30C3\u30C0\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#%E8%A8%98%E4%BA%8B%E3%81%AE%E3%83%98%E3%83%83%E3%83%80\\\"\\u003e\\u003ci
         class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u8A18\u4E8B\u306E\u30D8\u30C3\u30C0\\u003c/h2\\u003e\\n\\n\\u003cp\\u003eQiita
@@ -3114,7 +3191,7 @@ interactions:
         \u3092\u958B\u304F\\n3. \\\"Run workflow\\\" \u3092\u30AF\u30EA\u30C3\u30AF\u3059\u308B\uFF08\u4E0B\u56F3\uFF09\\n\\n![Qiita
         Sync manual execution](https://raw.githubusercontent.com/ryokat3/qiita-articles/main/img/qiita_sync_manual_execution.png)\\n\\n#
         \u8A18\u4E8B\u306E\u57F7\u7B46\\n\\n\u304A\u6C17\u306B\u5165\u308A\u306E\u30A8\u30C7\u30A3\u30BF\u3067
-        markdown \u3092\u7DE8\u96C6\u3059\u308B\u306E\u3067\u3059\u304C\u3001\u8A18\u4E8B\u306E\u57F7\u7B46\u6642\u306B\u5E7E\u3064\u304B\u306E\u7559\u610F\u70B9\u304C\u3042\u308A\u307E\u3059\u3002\\n\\n##
+        markdown \u3092\u7DE8\u96C6\u3059\u308B\u306E\u3067\u3059\u304C\u3001\u8A18\u4E8B\u306E\u57F7\u7B46\u6642\u306B\u5E7E\u3064\u304B\u306E\u6CE8\u610F\u70B9\u304C\u3042\u308A\u307E\u3059\u3002\\n\\n##
         \u8A18\u4E8B\u306E\u30D8\u30C3\u30C0\\n\\nQiita \u304B\u3089\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u3057\u305F\u8A18\u4E8B\u306B\u306F\u4EE5\u4E0B\u306E\u3088\u3046\u306A\u30D8\u30C3\u30C0\u304C\u30D5\u30A1\u30A4\u30EB\u306E\u5148\u982D\u306B\u81EA\u52D5\u7684\u306B\u4ED8\u52A0\u3055\u308C\u307E\u3059\u3002\\n\\n`title`
         \u3084 `tags` \u306F\u81EA\u7531\u306B\u5909\u66F4\u3067\u304D\u307E\u3059\u304C\u3001`id`
         \u3092\u5909\u66F4\u3057\u305F\u308A\u3001\u6D88\u53BB\u3057\u305F\u308A\u3059\u308B\u3053\u3068\u306F\u3067\u304D\u307E\u305B\u3093\u3002\u4E00\u65B9
@@ -3144,7 +3221,7 @@ interactions:
         An example of link to image file 'earth.png' when published to Qiita site
         --\\u003e\\n![My Image](https://raw.githubusercontent.com/ryokat3/qiita-articles/main/image/earth.png)\\n```\\n\\n\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u6642\u306B\u306F\u518D\u3073\u76F8\u5BFE\u30D1\u30B9\u306E\u30EA\u30F3\u30AF\u306B\u5909\u63DB\u3055\u308C\u307E\u3059\u3002\\n\\n\\n[^1]:
         [\u56F3\u3067\u4F7F\u7528\u3057\u305F\u753B\u50CF\u7D20\u6750](https://www.pinterest.com/pin/create/button/?url=https%3A%2F%2Fpngtree.com%2Ffreepng%2Fman-working-on-computer-at-home-isometric-vector_4000330.html?share=3\\u0026media=https://png.pngtree.com/png-vector/20190219/ourlarge/pngtree-man-working-on-computer-at-home-isometric-vector-png-image_321818.jpg\\u0026description=Man+working+on+computer+at+home+isometric+vector)
-        \u306F [Man png from pngtree.com/](https://pngtree.com/so/Man) \u306E\u3082\u306E\u3092\u4F7F\u7528\u3057\u3066\u3044\u307E\u3059\u3002\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2022-01-09T18:31:33+09:00\",\"group\":null,\"id\":\"d054b95f68810f70b136\",\"likes_count\":85,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"Qiita\",\"versions\":[]},{\"name\":\"Python\",\"versions\":[]},{\"name\":\"GitHub\",\"versions\":[]},{\"name\":\"\u500B\u4EBA\u958B\u767A\",\"versions\":[]},{\"name\":\"GitHubActions\",\"versions\":[]}],\"title\":\"GitHub\u9023\u643A\u3067Qiita\u8A18\u4E8B\u3092\u7D20\u6575\u306A\u57F7\u7B46\u74B0\u5883\u3067\uFF01\",\"updated_at\":\"2022-01-16T02:37:26+09:00\",\"url\":\"https://qiita.com/ryokat3/items/d054b95f68810f70b136\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
+        \u306F [Man png from pngtree.com/](https://pngtree.com/so/Man) \u306E\u3082\u306E\u3092\u4F7F\u7528\u3057\u3066\u3044\u307E\u3059\u3002\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2022-01-09T18:31:33+09:00\",\"group\":null,\"id\":\"d054b95f68810f70b136\",\"likes_count\":94,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"Qiita\",\"versions\":[]},{\"name\":\"Python\",\"versions\":[]},{\"name\":\"GitHub\",\"versions\":[]},{\"name\":\"\u500B\u4EBA\u958B\u767A\",\"versions\":[]},{\"name\":\"GitHubActions\",\"versions\":[]}],\"title\":\"GitHub\u9023\u643A\u3067Qiita\u8A18\u4E8B\u3092\u7D20\u6575\u306A\u57F7\u7B46\u74B0\u5883\u3067\uFF01\",\"updated_at\":\"2022-01-18T10:01:06+09:00\",\"url\":\"https://qiita.com/ryokat3/items/d054b95f68810f70b136\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
         Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\u003cp\\u003epython\u306E\u4EEE\u60F3\u74B0\u5883\u3067\u958B\u767A\u3092\u884C\u3046\u305F\u3081\u306B\u5FC5\u8981\u306A\u30C4\u30FC\u30EB\u306E\u30A4\u30F3\u30B9\u30C8\u30FC\u30EB\u624B\u9806\u306E\u7D39\u4ECB\u3067\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
         id=\\\"python\u958B\u767A\u30C4\u30FC\u30EB\u6982\u8981\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#python%E9%96%8B%E7%99%BA%E3%83%84%E3%83%BC%E3%83%AB%E6%A6%82%E8%A6%81\\\"\\u003e\\u003ci
@@ -3342,24 +3419,21 @@ interactions:
         + \u5358\u4F4D\u5143\\u003c/td\\u003e\\n\\u003ctd\\u003eSemigroup\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#group\\\"\\u003eGroup\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u7FA4\u3001\u4E8C\u9805\u6F14\u7B97
         + \u5358\u4F4D\u5143 + \u9006\u5143\\u003c/td\\u003e\\n\\u003ctd\\u003eMonoid\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#semiroupid\\\"\\u003eSemiroupid\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u534A\u570F\u3001\u6052\u7B49\u5C04\u306E\u306A\u3044\u570F
-        \u3000\u3000\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#category\\\"\\u003eCategory\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u570F
-        \           \u3000\u3000\u3000\u3000 \u3000\\u003c/td\\u003e\\n\\u003ctd\\u003eSemigroupid\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#semiroupid\\\"\\u003eSemiroupid\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u534A\u570F\u3001\u6052\u7B49\u5C04\u306E\u306A\u3044\u570F\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#category\\\"\\u003eCategory\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u570F\\u003c/td\\u003e\\n\\u003ctd\\u003eSemigroupid\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#functor\\\"\\u003eFunctor\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#bifunctor\\\"\\u003eBifunctor\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u53CC\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#contravariant\\\"\\u003eContravariant\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u53CD\u5909\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#profunctor\\\"\\u003eProfunctor\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5BFE\u89D2\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#apply\\\"\\u003eApply\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u8A55\u4FA1\u5C04\u3001\u7A4D\u3068\u51AA\u304B\u3089\u306A\u308B\u968F\u4F34\u306E\u4F59\u5358\u4F4D\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor
-        \         \u3000\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#apply\\\"\\u003eApply\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u8A55\u4FA1\u5C04\u3001\u7A4D\u3068\u51AA\u304B\u3089\u306A\u308B\u968F\u4F34\u306E\u4F59\u5358\u4F4D\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#applicative\\\"\\u003eApplicative\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5F37Lax\u30E2\u30CE\u30A4\u30C0\u30EB\u95A2\u624B\\u003c/td\\u003e\\n\\u003ctd\\u003eApply\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#chain\\\"\\u003eChain\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247\\u003c/td\\u003e\\n\\u003ctd\\u003eApply\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#monad\\\"\\u003eMonad\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30E2\u30CA\u30C9\\u003c/td\\u003e\\n\\u003ctd\\u003eChain,
         Applicative\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#extend\\\"\\u003eExtend\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30B3\u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#comonad\\\"\\u003eComonad\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30B3\u30E2\u30CA\u30C9\\u003c/td\\u003e\\n\\u003ctd\\u003eExtend\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#alt\\\"\\u003eAlt\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\u306E\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
-        href=\\\"#plus\\\"\\u003ePlus\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\u306E\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\u3068\u5358\u4F4D\u5143\\u003c/td\\u003e\\n\\u003ctd\\u003eAlt\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#alt\\\"\\u003eAlt\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\u306E\uFF08\u570F\u8AD6\u7684\u306A\u610F\u5473\u3067\u306A\u3044\uFF09\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\\u003c/td\\u003e\\n\\u003ctd\\u003eFunctor\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
+        href=\\\"#plus\\\"\\u003ePlus\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u95A2\u624B\u306E\uFF08\u570F\u8AD6\u7684\u306A\u610F\u5473\u3067\u306A\u3044\uFF09\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\u3068\u5358\u4F4D\u5143\\u003c/td\\u003e\\n\\u003ctd\\u003eAlt\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#alternative\\\"\\u003eAlternative\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003ePlus,
         Applicative\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
         href=\\\"#filterable\\\"\\u003eFilterable\\u003c/a\\u003e\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D5\u30A3\u30EB\u30BF\u30EA\u30F3\u30B0\\u003c/td\\u003e\\n\\u003ctd\\u003e\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\\u003ca
@@ -3708,7 +3782,10 @@ interactions:
         \\u003ccode\\u003eC.extend(C.extract, w) \u2261 w\\u003c/code\\u003e\\n\\u003c/li\\u003e\\n\\u003cli\\u003e\u53F3\u5358\u4F4D\u5143:
         \\u003ccode\\u003eC.extract(C.extend(f, w)) \u2261 f(w)\\u003c/code\\u003e\\n\\u003c/li\\u003e\\n\\u003c/ol\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
         id=\\\"alt\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#alt\\\"\\u003e\\u003ci
-        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eAlt\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u95A2\u624B\u306E\u4E26\u5217\u7684\u306A\u5408\u6210\u3002\u3042\u307E\u308A\u6570\u5B66\u7684\u306A\u611F\u3058\u304C\u3057\u306A\u3044\u3002\\u003cbr\\u003e\\n\\u003ccode\\u003eAlt\\u003c/code\\u003e\u3068\u3044\u3046\u540D\u306E\u3054\u3068\u304F\u3001\u540C\u6642\u306B\u5B9F\u884C\u3057\u3066\u3001\u305D\u306E\u7D50\u679C\u304B\u3089\u3069\u3061\u3089\u304B\u3092\\u003cbr\\u003e\\n\u300C\u9078\u629E\u300D\u3059\u308B\u3001\u3082\u3057\u304F\u306F\u5358\u7D14\u306A\u300C\u548C\u300D\u3092\u3068\u308B\u3088\u3046\u306A\u3053\u3068\u3092\u671F\u5F85\u3057\u3066\u3044\u308B\u3088\u3046\u306B\u898B\u3048\u308B\u3002\\u003c/p\\u003e\\n\\n\\u003cdiv
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eAlt\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u95A2\u624B\u306E\u4E26\u5217\u7684\u306A\u5408\u6210\u3002\u5408\u6210\u3068\u306F\u8A00\u3048\u3001\u570F\u8AD6\u7684\u306A\u610F\u5473\u5408\u3044\u3067\u306F\u306A\u304F\u3001\\u003cbr\\u003e\\n\\u003ccode\\u003eAlt\\u003c/code\\u003e\u3068\u3044\u3046\u540D\u306E\u3054\u3068\u304F\u3001\u540C\u6642\u306B\u5B9F\u884C\u3057\u3066\u3001\u305D\u306E\u7D50\u679C\u304B\u3089\u3069\u3061\u3089\u304B\u3092\\u003cbr\\u003e\\n\u300C\u9078\u629E\u300D\u3059\u308B\u3001\u3082\u3057\u304F\u306F\u5358\u7D14\u306A\u300C\u548C\u300D\u3092\u3068\u308B\u3088\u3046\u306A\u3053\u3068\u3059\u308B\u5834\u5408\u306B\u4F7F\u3046\u3002\\u003c/p\\u003e\\n\\n\\u003cp\\u003e\u3042\u308B\u6587\u5B57\u5217\u3092
+        parse \u3059\u308B\u306E\u306B\u3001\u305D\u308C\u304C\u6570\u5B57\u306A\u306E\u304B\u30AD\u30FC\u30EF\u30FC\u30C9\u306A\u306E\u304B\u6642\u9593\u306A\u306E\u304B\u3001\\u003cbr\\u003e\\n\u305D\u308C\u305E\u308C\u306E
+        parser \u3092 \\u003ccode\\u003eAlt\\u003c/code\\u003e \u3067\u307E\u3068\u3081\u3066\u6700\u521D\u306B\u3046\u307E\u304F\u884C\u3063\u305F
+        parser \u306E\u7D50\u679C\u306B\\u003cbr\\u003e\\n\u3088\u308A\u9078\u629E\u3059\u308B\u3001\u3068\u304B\u3001\u4EE3\u6570\u7684\u3068\u3044\u3046\u3088\u308A\u306F\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u7684\u306A\u610F\u5473\u5408\u3044\u3002\\u003c/p\\u003e\\n\\n\\u003cdiv
         class=\\\"code-frame\\\" data-lang=\\\"js\\\"\\u003e\\u003cdiv class=\\\"highlight\\\"\\u003e\\u003cpre\\u003e\\u003ccode\\u003e\\u003cspan
         class=\\\"nx\\\"\\u003eAlt\\u003c/span\\u003e\\u003cspan class=\\\"o\\\"\\u003e\\u0026lt;\\u003c/span\\u003e\\u003cspan
         class=\\\"nx\\\"\\u003eT\\u003c/span\\u003e\\u003cspan class=\\\"o\\\"\\u003e\\u0026gt;\\u003c/span\\u003e
@@ -4011,42 +4088,46 @@ interactions:
         = (f, u) =\\u0026gt; {\\u003cbr\\u003e\\n  const of = (x) =\\u0026gt; x\\u003cbr\\u003e\\n
         \ const map = (f, a) =\\u0026gt; f(a)\\u003cbr\\u003e\\n  const ap = (f, a)
         =\\u0026gt; f(a)\\u003cbr\\u003e\\n  return F.traverse({of, map, ap}, f, u)\\u003cbr\\u003e\\n}\\u003c/p\\u003e\\n\",\"body\":\"fp-ts\u306F[static-land](https://github.com/fantasyland/static-land)\u3067\u5B9A\u7FA9\u3055\u308C\u305FTypeScript\u306E\u4EE3\u6570\u578B\u3092\u53C2\u7167\u3057\u3066\u5B9F\u88C5\u3055\u308C\u3066\u3044\u308B\u3002\\n\u99B4\u67D3\u307F\u306E\u306A\u3044\u7528\u8A9E\u3060\u3089\u3051\u306A\u306E\u3067\u3001\u6574\u7406\u304C\u3066\u3089\u306B[\u4ED5\u69D8](https://github.com/fantasyland/static-land/blob/master/docs/spec.md)\u306E\u307E\u3068\u3081\u3002\\n\\n![\u7D99\u627F\u95A2\u4FC2](https://github.com/fantasyland/fantasy-land/blob/master/figures/dependencies.png?raw=true)\\n\\n|
-        \u4EE3\u6570\u578B                            | \u8981\u7D04                                 |
-        \u7D99\u627F               |\\n|-----------------------------------|--------------------------------------|--------------------|\\n|
-        [Setoid](#setoid)                 | \u7B49\u5024\u95A2\u4FC2                             |
+        \u4EE3\u6570\u578B                            | \u8981\u7D04                                                      |
+        \u7D99\u627F               |\\n|-----------------------------------|-----------------------------------------------------------|--------------------|\\n|
+        [Setoid](#setoid)                 | \u7B49\u5024\u95A2\u4FC2                                                  |
         \                   |\\n| [Ord](#ord)                       | \u5927\u5C0F\u95A2\u4FC2
-        \                            | Setoid             |\\n| [Semigroup](#semigroup)
-        \          | \u534A\u7FA4\u3001\u4E8C\u9805\u6F14\u7B97                       |
-        \                   |\\n| [Monoid](#monoid)                 | \u30E2\u30CE\u30A4\u30C9\u3001\u4E8C\u9805\u6F14\u7B97
-        + \u5358\u4F4D\u5143          | Semigroup          |\\n| [Group](#group)                   |
-        \u7FA4\u3001\u4E8C\u9805\u6F14\u7B97 + \u5358\u4F4D\u5143 + \u9006\u5143         |
-        Monoid             |\\n| [Semiroupid](#semiroupid)         | \u534A\u570F\u3001\u6052\u7B49\u5C04\u306E\u306A\u3044\u570F
-        \u3000\u3000            |                    |\\n| [Category](#category)             |
-        \u570F            \u3000\u3000\u3000\u3000 \u3000            | Semigroupid
-        \       |\\n| [Functor](#functor)               | \u95A2\u624B                                 |
-        \                   |\\n| [Bifunctor](#bifunctor)           | \u53CC\u95A2\u624B
-        \                              | Functor            |\\n| [Contravariant](#contravariant)
-        \  | \u53CD\u5909\u95A2\u624B                             |                    |\\n|
-        [Profunctor](#profunctor)         | \u5BFE\u89D2\u95A2\u624B                             |
+        \                                                 | Setoid             |\\n|
+        [Semigroup](#semigroup)           | \u534A\u7FA4\u3001\u4E8C\u9805\u6F14\u7B97
+        \                                           |                    |\\n| [Monoid](#monoid)
+        \                | \u30E2\u30CE\u30A4\u30C9\u3001\u4E8C\u9805\u6F14\u7B97
+        + \u5358\u4F4D\u5143                               | Semigroup          |\\n|
+        [Group](#group)                   | \u7FA4\u3001\u4E8C\u9805\u6F14\u7B97 +
+        \u5358\u4F4D\u5143 + \u9006\u5143                              | Monoid             |\\n|
+        [Semiroupid](#semiroupid)         | \u534A\u570F\u3001\u6052\u7B49\u5C04\u306E\u306A\u3044\u570F
+        \                                     |                    |\\n| [Category](#category)
+        \            | \u570F                                                        |
+        Semigroupid        |\\n| [Functor](#functor)               | \u95A2\u624B
+        \                                                     |                    |\\n|
+        [Bifunctor](#bifunctor)           | \u53CC\u95A2\u624B                                                    |
+        Functor            |\\n| [Contravariant](#contravariant)   | \u53CD\u5909\u95A2\u624B
+        \                                                 |                    |\\n|
+        [Profunctor](#profunctor)         | \u5BFE\u89D2\u95A2\u624B                                                  |
         Functor            |\\n| [Apply](#apply)                   | \u8A55\u4FA1\u5C04\u3001\u7A4D\u3068\u51AA\u304B\u3089\u306A\u308B\u968F\u4F34\u306E\u4F59\u5358\u4F4D
-        \  | Functor          \u3000|\\n| [Applicative](#applicative)       | \u5F37Lax\u30E2\u30CE\u30A4\u30C0\u30EB\u95A2\u624B
-        \                 | Apply              | \\n| [Chain](#chain)                   |
-        \u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247                     | Apply
-        \             |\\n| [Monad](#monad)                   | \u30E2\u30CA\u30C9
-        \                              | Chain, Applicative |\\n| [Extend](#extend)
-        \                | \u30B3\u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247
-        \                  | Functor            |\\n| [Comonad](#comonad)               |
-        \u30B3\u30E2\u30CA\u30C9                             | Extend             |\\n|
-        [Alt](#alt)                       | \u95A2\u624B\u306E\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247
-        \            | Functor            |\\n| [Plus](#plus)                     |
-        \u95A2\u624B\u306E\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\u3068\u5358\u4F4D\u5143
-        \    | Alt                |\\n| [Alternative](#alternative)       |                                      |
+        \                       | Functor            |\\n| [Applicative](#applicative)
+        \      | \u5F37Lax\u30E2\u30CE\u30A4\u30C0\u30EB\u95A2\u624B                                       |
+        Apply              | \\n| [Chain](#chain)                   | \u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247
+        \                                         | Apply              |\\n| [Monad](#monad)
+        \                  | \u30E2\u30CA\u30C9                                                    |
+        Chain, Applicative |\\n| [Extend](#extend)                 | \u30B3\u30E2\u30CA\u30C9\u306E\u7D50\u5408\u6CD5\u5247
+        \                                       | Functor            |\\n| [Comonad](#comonad)
+        \              | \u30B3\u30E2\u30CA\u30C9                                                  |
+        Extend             |\\n| [Alt](#alt)                       | \u95A2\u624B\u306E\uFF08\u570F\u8AD6\u7684\u306A\u610F\u5473\u3067\u306A\u3044\uFF09\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247
+        \           | Functor            |\\n| [Plus](#plus)                     |
+        \u95A2\u624B\u306E\uFF08\u570F\u8AD6\u7684\u306A\u610F\u5473\u3067\u306A\u3044\uFF09\u7D50\u5408\u6CD5\u5247\u3068\u5206\u914D\u6CD5\u5247\u3068\u5358\u4F4D\u5143
+        \   | Alt                |\\n| [Alternative](#alternative)       |                                                           |
         Plus, Applicative  |\\n| [Filterable](#filterable)         | \u30D5\u30A3\u30EB\u30BF\u30EA\u30F3\u30B0
-        \                      |                    | \\n| [ChainRec](#chainrec)             |
-        \u672B\u5C3E\u518D\u5E30\u306EChain                      | Chain              |\\n|
-        [Foldable](#foldable)             | catamorphism                         |
-        \                   |\\n| [Traversable](#traversable)       | \u8A08\u7B97\u52B9\u679C\u306E\u7C21\u7D04\u5316
-        \                    | Functor, Foldable  |\\n\\n\u300C\u578B\u30AF\u30E9\u30B9\u300D\u3068\u306F\u8A00\u3048\u3001Haskell\u3068\u304BScala\u3068\u306F\u9055\u3044\u3001\u8A00\u8A9E\u7684\u30B5\u30DD\u30FC\u30C8\u304C\u306A\u3044TypeScript\u3067\u306F\u3001\u5358\u306A\u308B\u30A4\u30F3\u30BF\u30D5\u30A7\u30FC\u30B9\u3068\u3057\u3066\u5B9A\u7FA9\u3055\u308C\u3066\u308B\u3002\\n\u4FBF\u5229\u3067\u3082\u306A\u3044\u3057\u3001\u6271\u3044\u3084\u3059\u304F\u3082\u306A\u3044\u3002fp-ts\u3067\u306FTypeScript\u306E\u308F\u308A\u3068\u7279\u6B8A\u306A\uFF08\u3060\u3051\u3069\u3082\u7D20\u6674\u3089\u3057\u3044\u8A2D\u8A08\u306E\uFF09\u578B\u30B7\u30B9\u30C6\u30E0\u3092\\n\u6700\u5927\u9650\u5229\u7528\u3057\u3066\u9AD8\u968E\u30AB\u30A4\u30F3\u30C9\uFF08\u3089\u3057\u304D\u3082\u306E\uFF09\u3092\u3072\u306D\u308A\u51FA\u3057\u3066\u3044\u308B\u306E\u3067\u3001\u3059\u3053\u3057\u306F\u6271\u3044\u3084\u3059\u304F\u306A\u3063\u3066\u3044\u308B\u3002\\n\\n##
+        \                                           |                    | \\n| [ChainRec](#chainrec)
+        \            | \u672B\u5C3E\u518D\u5E30\u306EChain                                           |
+        Chain              |\\n| [Foldable](#foldable)             | catamorphism
+        \                                             |                    |\\n| [Traversable](#traversable)
+        \      | \u8A08\u7B97\u52B9\u679C\u306E\u7C21\u7D04\u5316                                          |
+        Functor, Foldable  |\\n\\n\u300C\u578B\u30AF\u30E9\u30B9\u300D\u3068\u306F\u8A00\u3048\u3001Haskell\u3068\u304BScala\u3068\u306F\u9055\u3044\u3001\u8A00\u8A9E\u7684\u30B5\u30DD\u30FC\u30C8\u304C\u306A\u3044TypeScript\u3067\u306F\u3001\u5358\u306A\u308B\u30A4\u30F3\u30BF\u30D5\u30A7\u30FC\u30B9\u3068\u3057\u3066\u5B9A\u7FA9\u3055\u308C\u3066\u308B\u3002\\n\u4FBF\u5229\u3067\u3082\u306A\u3044\u3057\u3001\u6271\u3044\u3084\u3059\u304F\u3082\u306A\u3044\u3002fp-ts\u3067\u306FTypeScript\u306E\u308F\u308A\u3068\u7279\u6B8A\u306A\uFF08\u3060\u3051\u3069\u3082\u7D20\u6674\u3089\u3057\u3044\u8A2D\u8A08\u306E\uFF09\u578B\u30B7\u30B9\u30C6\u30E0\u3092\\n\u6700\u5927\u9650\u5229\u7528\u3057\u3066\u9AD8\u968E\u30AB\u30A4\u30F3\u30C9\uFF08\u3089\u3057\u304D\u3082\u306E\uFF09\u3092\u3072\u306D\u308A\u51FA\u3057\u3066\u3044\u308B\u306E\u3067\u3001\u3059\u3053\u3057\u306F\u6271\u3044\u3084\u3059\u304F\u306A\u3063\u3066\u3044\u308B\u3002\\n\\n##
         Setoid\\n\\n\u7B49\u5024\u95A2\u4FC2\u304C\u5B9A\u7FA9\u3055\u308C\u305F\u96C6\u5408\u3002\\n\\n```typescript\\nSetoid\\u003cT\\u003e
         {\\n  equals: (T, T) =\\u003e boolean\\n}\\n```\\n\\n**\u6CD5\u5247**\\n\\n
         \ 1. Reflexivity: `S.equals(a, a) === true`\\n  1. Symmetry: `S.equals(a,
@@ -4124,7 +4205,10 @@ interactions:
         w)`\\n\\n\\n## Comonad\\n\\n\u30B3\u30E2\u30CA\u30C9\u3002\\n\\n```js\\nComonad\\u003cT\\u003e
         {\\n  extract: \\u003ca\\u003e(T\\u003ca\\u003e) =\\u003e a\\n}\\n```\\n\\n**\u6CD5\u5247**\\n\\n
         \ 1. \u5DE6\u5358\u4F4D\u5143: `C.extend(C.extract, w) \u2261 w`\\n  1. \u53F3\u5358\u4F4D\u5143:
-        `C.extract(C.extend(f, w)) \u2261 f(w)`\\n\\n\\n## Alt\\n\\n\u95A2\u624B\u306E\u4E26\u5217\u7684\u306A\u5408\u6210\u3002\u3042\u307E\u308A\u6570\u5B66\u7684\u306A\u611F\u3058\u304C\u3057\u306A\u3044\u3002\\n`Alt`\u3068\u3044\u3046\u540D\u306E\u3054\u3068\u304F\u3001\u540C\u6642\u306B\u5B9F\u884C\u3057\u3066\u3001\u305D\u306E\u7D50\u679C\u304B\u3089\u3069\u3061\u3089\u304B\u3092\\n\u300C\u9078\u629E\u300D\u3059\u308B\u3001\u3082\u3057\u304F\u306F\u5358\u7D14\u306A\u300C\u548C\u300D\u3092\u3068\u308B\u3088\u3046\u306A\u3053\u3068\u3092\u671F\u5F85\u3057\u3066\u3044\u308B\u3088\u3046\u306B\u898B\u3048\u308B\u3002\\n\\n```js\\nAlt\\u003cT\\u003e
+        `C.extract(C.extend(f, w)) \u2261 f(w)`\\n\\n\\n## Alt\\n\\n\u95A2\u624B\u306E\u4E26\u5217\u7684\u306A\u5408\u6210\u3002\u5408\u6210\u3068\u306F\u8A00\u3048\u3001\u570F\u8AD6\u7684\u306A\u610F\u5473\u5408\u3044\u3067\u306F\u306A\u304F\u3001\\n`Alt`\u3068\u3044\u3046\u540D\u306E\u3054\u3068\u304F\u3001\u540C\u6642\u306B\u5B9F\u884C\u3057\u3066\u3001\u305D\u306E\u7D50\u679C\u304B\u3089\u3069\u3061\u3089\u304B\u3092\\n\u300C\u9078\u629E\u300D\u3059\u308B\u3001\u3082\u3057\u304F\u306F\u5358\u7D14\u306A\u300C\u548C\u300D\u3092\u3068\u308B\u3088\u3046\u306A\u3053\u3068\u3059\u308B\u5834\u5408\u306B\u4F7F\u3046\u3002\\n\\n\u3042\u308B\u6587\u5B57\u5217\u3092
+        parse \u3059\u308B\u306E\u306B\u3001\u305D\u308C\u304C\u6570\u5B57\u306A\u306E\u304B\u30AD\u30FC\u30EF\u30FC\u30C9\u306A\u306E\u304B\u6642\u9593\u306A\u306E\u304B\u3001\\n\u305D\u308C\u305E\u308C\u306E
+        parser \u3092 `Alt` \u3067\u307E\u3068\u3081\u3066\u6700\u521D\u306B\u3046\u307E\u304F\u884C\u3063\u305F
+        parser \u306E\u7D50\u679C\u306B\\n\u3088\u308A\u9078\u629E\u3059\u308B\u3001\u3068\u304B\u3001\u4EE3\u6570\u7684\u3068\u3044\u3046\u3088\u308A\u306F\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u7684\u306A\u610F\u5473\u5408\u3044\u3002\\n\\n```js\\nAlt\\u003cT\\u003e
         {\\n  alt: \\u003ca\\u003e(T\\u003ca\\u003e, T\\u003ca\\u003e) =\\u003e T\\u003ca\\u003e\\n}\\n```\\n\\n**\u6CD5\u5247**\\n\\n
         \ 1. \u7D50\u5408\u5247: `A.alt(A.alt(a, b), c) \u2261 A.alt(a, A.alt(b, c))`\\n
         \ 2. \u5206\u914D\u5247: `A.map(f, A.alt(a, b)) \u2261 A.alt(A.map(f, a),
@@ -4183,7 +4267,7 @@ interactions:
         x, u)\\n}\\n```\\n\\n**map\u306E\u5C0E\u51FA**\\n\\n`js\\nF.map = (f, u) =\\u003e
         {\\n  const of = (x) =\\u003e x\\n  const map = (f, a) =\\u003e f(a)\\n  const
         ap = (f, a) =\\u003e f(a)\\n  return F.traverse({of, map, ap}, f, u)\\n}\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2021-07-20T08:35:14+09:00\",\"group\":null,\"id\":\"5f67dda315ef485a4fae\",\"likes_count\":5,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"\u570F\u8AD6\",\"versions\":[]},{\"name\":\"TypeScript\",\"versions\":[]},{\"name\":\"fp-ts\",\"versions\":[]}],\"title\":\"fp-ts
-        \u4EE3\u6570\u578B\u306E\u578B\u30AF\u30E9\u30B9\",\"updated_at\":\"2022-01-11T07:45:28+09:00\",\"url\":\"https://qiita.com/ryokat3/items/5f67dda315ef485a4fae\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
+        \u4EE3\u6570\u578B\u306E\u578B\u30AF\u30E9\u30B9\",\"updated_at\":\"2022-01-18T10:01:07+09:00\",\"url\":\"https://qiita.com/ryokat3/items/5f67dda315ef485a4fae\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
         Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\u003cp\\u003efp-ts\u3067\u306F\\u003ccode\\u003epipe\\u003c/code\\u003e\u3068\u3044\u3046\u95A2\u6570\u3067\u95A2\u6570\u3092\u7E4B\u3052\u3066\u3044\u304D\u307E\u3059\u3002Haskell\u306E\\u003ccode\\u003edo\\u003c/code\\u003e\u3084Scala\u306E\\u003ccode\\u003efor\\u003c/code\\u003e\u306B\u76F8\u5F53\u3059\u308B\u3082\u306E\u3067\u3059\u304C\u3001\\u003cbr\\u003e\\n\u8868\u73FE\u529B\u306F\u306A\u304B\u308A\u898B\u52A3\u308A\u3057\u307E\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
         id=\\\"monad\u30AF\u30E9\u30B9\u3092\u4F7F\u7528\u3057\u305F\u5834\u5408\u306E\u95A2\u6570\u306E\uFF12\u5F62\u614B\\\"
         class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#monad%E3%82%AF%E3%83%A9%E3%82%B9%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E5%A0%B4%E5%90%88%E3%81%AE%E9%96%A2%E6%95%B0%E3%81%AE%EF%BC%92%E5%BD%A2%E6%85%8B\\\"\\u003e\\u003ci
@@ -4405,10 +4489,8 @@ interactions:
         id=\\\"\u8AAD\u307F\u65B9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#%E8%AA%AD%E3%81%BF%E6%96%B9\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u8AAD\u307F\u65B9\\u003c/h3\\u003e\\n\\n\\u003ctable\\u003e\\n\\u003cthead\\u003e\\n\\u003ctr\\u003e\\n\\u003cth\\u003e\u5927\u6587\u5B57\\u003c/th\\u003e\\n\\u003cth\\u003e\u5C0F\u6587\u5B57\\u003c/th\\u003e\\n\\u003cth\\u003e\u82F1\u8868\u8A18\\u003c/th\\u003e\\n\\u003cth\\u003e\u8AAD\u307F\u30FB\u30AB\u30CA\u8868\u8A18\\u003c/th\\u003e\\n\\u003c/tr\\u003e\\n\\u003c/thead\\u003e\\n\\u003ctbody\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0391\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B1\\u003c/td\\u003e\\n\\u003ctd\\u003ealpha\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A2\u30EB\u30D5\u30A1\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0392\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B2\\u003c/td\\u003e\\n\\u003ctd\\u003ebeta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D9\u30FC\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0393\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B3\\u003c/td\\u003e\\n\\u003ctd\\u003egamma\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AC\u30F3\u30DE\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0394\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B4\\u003c/td\\u003e\\n\\u003ctd\\u003edelta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30C7\u30EB\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0395\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B5\\u003c/td\\u003e\\n\\u003ctd\\u003eepsilon\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A8\u30D7\u30B7\u30ED\u30F3/\u30A4\u30D7\u30B7\u30ED\u30F3\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0396\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B6\\u003c/td\\u003e\\n\\u003ctd\\u003ezeta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30BC\u30FC\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0397\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B7\\u003c/td\\u003e\\n\\u003ctd\\u003eeta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A8\u30FC\u30BF/\u30A4\u30FC\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0398\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B8\\u003c/td\\u003e\\n\\u003ctd\\u003etheta\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30C6\u30FC\u30BF/\u30B7\u30FC\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u0399\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03B9\\u003c/td\\u003e\\n\\u003ctd\\u003eiota\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A4\u30AA\u30FC\u30BF/\u30A4\u30AA\u30BF\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039A\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BA\\u003c/td\\u003e\\n\\u003ctd\\u003ekappa\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AB\u30C3\u30D1\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039B\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BB\\u003c/td\\u003e\\n\\u003ctd\\u003elambda\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30E9\u30E0\u30C0\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039C\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BC\\u003c/td\\u003e\\n\\u003ctd\\u003emu\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30DF\u30E5\u30FC\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039D\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BD\\u003c/td\\u003e\\n\\u003ctd\\u003enu\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30CB\u30E5\u30FC\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039E\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BE\\u003c/td\\u003e\\n\\u003ctd\\u003exi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AF\u30B9\u30A3\u30FC/\u30AF\u30B5\u30A4/\u30B0\u30B6\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u039F\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03BF\\u003c/td\\u003e\\n\\u003ctd\\u003eomicron\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AA\u30DF\u30AF\u30ED\u30F3\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A0\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C0\\u003c/td\\u003e\\n\\u003ctd\\u003epi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D4\u30FC/\u30D1\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A1\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C1\\u003c/td\\u003e\\n\\u003ctd\\u003erho\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30ED\u30FC\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A3\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C3\\u003c/td\\u003e\\n\\u003ctd\\u003esigma\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30B7\u30B0\u30DE\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A4\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C4\\u003c/td\\u003e\\n\\u003ctd\\u003etau\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30BF\u30A6\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A5\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C5\\u003c/td\\u003e\\n\\u003ctd\\u003eupsilon\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30A6\u30D7\u30B7\u30ED\u30F3/\u30E6\u30D7\u30B7\u30ED\u30F3\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A6\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C6\\u003c/td\\u003e\\n\\u003ctd\\u003ephi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D5\u30A3\u30FC/\u30D5\u30A1\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A7\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C7\\u003c/td\\u003e\\n\\u003ctd\\u003echi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AD\u30FC/\u30AB\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A8\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C8\\u003c/td\\u003e\\n\\u003ctd\\u003epsi\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30D7\u30B9\u30A3\u30FC/\u30D7\u30B5\u30A4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003e\u03A9\\u003c/td\\u003e\\n\\u003ctd\\u003e\u03C9\\u003c/td\\u003e\\n\\u003ctd\\u003eomega\\u003c/td\\u003e\\n\\u003ctd\\u003e\u30AA\u30E1\u30AC\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003c/tbody\\u003e\\n\\u003c/table\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
         id=\\\"\u66F8\u304D\u65B9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
-        href=\\\"#%E6%9B%B8%E3%81%8D%E6%96%B9\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u66F8\u304D\u65B9\\u003c/h3\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\u003ca
-        href=\\\"https://www.youtube.com/watch?v=JgRYrzc8cFg\\\" rel=\\\"nofollow
-        noopener\\\" target=\\\"_blank\\\"\\u003e\u30AE\u30EA\u30B7\u30E3\u6587\u5B57
-        \u624B\u66F8\u304D\u52D5\u753B\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\",\"body\":\"###
+        href=\\\"#%E6%9B%B8%E3%81%8D%E6%96%B9\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u66F8\u304D\u65B9\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://www.youtube.com/watch?v=JgRYrzc8cFg\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\",\"body\":\"###
         \u8AAD\u307F\u65B9\\n\\n| \u5927\u6587\u5B57 | \u5C0F\u6587\u5B57 | \u82F1\u8868\u8A18
         \  | \u8AAD\u307F\u30FB\u30AB\u30CA\u8868\u8A18         |\\n|--------|--------|----------|------------------------|\\n|
         \u0391      | \u03B1      | alpha    | \u30A2\u30EB\u30D5\u30A1               |\\n|
@@ -4435,18 +4517,80 @@ interactions:
         \         |\\n| \u03A7      | \u03C7      | chi      | \u30AD\u30FC/\u30AB\u30A4
         \             |\\n| \u03A8      | \u03C8      | psi      | \u30D7\u30B9\u30A3\u30FC/\u30D7\u30B5\u30A4
         \       |\\n| \u03A9      | \u03C9      | omega    | \u30AA\u30E1\u30AC                 |\\n\\n\\n\\n###
-        \u66F8\u304D\u65B9\\n\\n- [\u30AE\u30EA\u30B7\u30E3\u6587\u5B57 \u624B\u66F8\u304D\u52D5\u753B](https://www.youtube.com/watch?v=JgRYrzc8cFg)\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2020-05-26T14:19:17+09:00\",\"group\":null,\"id\":\"8fe145567d1951284c57\",\"likes_count\":0,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"Mathematics\",\"versions\":[]}],\"title\":\"\u30AE\u30EA\u30B7\u30E3\u6587\u5B57\",\"updated_at\":\"2020-05-26T14:19:17+09:00\",\"url\":\"https://qiita.com/ryokat3/items/8fe145567d1951284c57\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
-        Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\n\\u003ch2\\u003e\\n\\u003cspan
+        \u66F8\u304D\u65B9\\n\\nhttps://www.youtube.com/watch?v=JgRYrzc8cFg\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2020-05-26T14:19:17+09:00\",\"group\":null,\"id\":\"8fe145567d1951284c57\",\"likes_count\":0,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"Mathematics\",\"versions\":[]}],\"title\":\"\u30AE\u30EA\u30B7\u30E3\u6587\u5B57\",\"updated_at\":\"2022-01-18T13:47:16+09:00\",\"url\":\"https://qiita.com/ryokat3/items/8fe145567d1951284c57\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
+        Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\n\\u003ch1\\u003e\\n\\u003cspan
         id=\\\"youtube\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
-        href=\\\"#youtube\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eYouTube\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u90FD\u5EA6\u90FD\u5EA6\u3067\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u3068\u304B\u3089\u3081\u3066\u8B1B\u7FA9\u3092\u9032\u3081\u3066\u304F\u308C\u308B\u306E\u3067\u3001\u306F\u305F\u3068\u819D\u3092\u6253\u3061\u306A\u304C\u3089\u7406\u89E3\u3067\u304D\u308B\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\u003ca
-        href=\\\"https://www.youtube.com/watch?v=I8LbkfSSR58\\u0026amp;list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_\\\"
-        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\u570F\u8AD61\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003cli\\u003e\\u003ca
-        href=\\\"https://www.youtube.com/watch?v=3XTQSx1A3x8\\u0026amp;list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm\\\"
-        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\u570F\u8AD62\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003cli\\u003e\\u003ca
-        href=\\\"https://www.youtube.com/watch?v=F5uEpKwHqdk\\u0026amp;list=PLbgaMIhjbmEn64WVX4B08B4h2rOtueWIL\\\"
-        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\u570F\u8AD63\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        href=\\\"#youtube\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eYouTube\\u003c/h1\\u003e\\n\\n\\u003cp\\u003e\u90FD\u5EA6\u90FD\u5EA6\u3067\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u3068\u304B\u3089\u3081\u3066\u8B1B\u7FA9\u3092\u9032\u3081\u3066\u304F\u308C\u308B\u306E\u3067\u3001\u306F\u305F\u3068\u819D\u3092\u6253\u3061\u306A\u304C\u3089\u7406\u89E3\u3067\u304D\u308B\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        id=\\\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6-1\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9E%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%9C%8F%E8%AB%96-1\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6
+        1\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://www.youtube.com/watch?v=I8LbkfSSR58\\u0026amp;list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        id=\\\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6-2\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9E%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%9C%8F%E8%AB%96-2\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6
+        2\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://www.youtube.com/watch?v=3XTQSx1A3x8\\u0026amp;list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        id=\\\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6-3\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9E%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%9C%8F%E8%AB%96-3\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6
+        3\\u003c/h2\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan id=\\\"\u6982\u8981-part-1\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E6%A6%82%E8%A6%81-part-1\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u6982\u8981
+        Part 1\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/F5uEpKwHqdk\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u6982\u8981-part-2\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E6%A6%82%E8%A6%81-part-2\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u6982\u8981
+        Part 2\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/CfoaY2Ybf8M\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"string-diagram-part-1\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#string-diagram-part-1\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eString
+        Diagram Part 1\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/eOdBTqY3-Og\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"string-diagram-part-2\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#string-diagram-part-2\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eString
+        Diagram Part 2\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/lqq9IFSPp7Q\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u968F\u4F34\u3068\u30E2\u30CA\u30C9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E9%9A%8F%E4%BC%B4%E3%81%A8%E3%83%A2%E3%83%8A%E3%83%89\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u968F\u4F34\u3068\u30E2\u30CA\u30C9\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/9p6_U5yV0ro\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30E2\u30CA\u30C9\u4EE3\u6570-part-1\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%83%A2%E3%83%8A%E3%83%89%E4%BB%A3%E6%95%B0-part-1\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30E2\u30CA\u30C9\u4EE3\u6570
+        Part 1\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/uXfBmsQJsN4\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30E2\u30CA\u30C9\u4EE3\u6570-part-2\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%83%A2%E3%83%8A%E3%83%89%E4%BB%A3%E6%95%B0-part-2\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30E2\u30CA\u30C9\u4EE3\u6570
+        Part 2\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/-wlT81LQ4Oc\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30E2\u30CA\u30C9\u4EE3\u6570-part-3\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%83%A2%E3%83%8A%E3%83%89%E4%BB%A3%E6%95%B0-part-3\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30E2\u30CA\u30C9\u4EE3\u6570
+        Part 3\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/9f8PumwS2gU\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"eilenberg-moore-\u3068-lawvere\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#eilenberg-moore-%E3%81%A8-lawvere\\\"\\u003e\\u003ci class=\\\"fa
+        fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eEilenberg Moore \u3068 Lawvere\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003ca
+        href=\\\"http://nlab-pages.s3.us-east-2.amazonaws.com/nlab/show/Eilenberg-Moore+category\\\"
+        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003eEilenberg-Moore
+        Category\\u003c/a\\u003e\\u003cbr\\u003e\\n\\u003ca href=\\\"https://en.wikipedia.org/wiki/Lawvere_theory\\\"
+        rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003eLawvere Theory\\u003c/a\\u003e\\u003c/p\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/5PaxKu2TXno\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"lawvere-\u5B9A\u7406\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#lawvere-%E5%AE%9A%E7%90%86\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003eLawvere
+        \u5B9A\u7406\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp src=\\\"https://youtu.be/zCTAn_nIrS0\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u5BFE\u89D2\u95A2\u624B\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E5%AF%BE%E8%A7%92%E9%96%A2%E6%89%8B\\\"\\u003e\\u003ci class=\\\"fa
+        fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u5BFE\u89D2\u95A2\u624B\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/XJgfrF3O6iE\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30A8\u30F3\u30C9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%82%A8%E3%83%B3%E3%83%89\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30A8\u30F3\u30C9\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/TAPxt26YyEI\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30A8\u30F3\u30C9\u3068\u3057\u3066\u306E\u81EA\u7136\u5909\u63DB\\\"
+        class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca href=\\\"#%E3%82%A8%E3%83%B3%E3%83%89%E3%81%A8%E3%81%97%E3%81%A6%E3%81%AE%E8%87%AA%E7%84%B6%E5%A4%89%E6%8F%9B\\\"\\u003e\\u003ci
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30A8\u30F3\u30C9\u3068\u3057\u3066\u306E\u81EA\u7136\u5909\u63DB\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/DseY4qIGZV4\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch3\\u003e\\n\\u003cspan
+        id=\\\"\u30B3\u30A8\u30F3\u30C9\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
+        href=\\\"#%E3%82%B3%E3%82%A8%E3%83%B3%E3%83%89\\\"\\u003e\\u003ci class=\\\"fa
+        fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u30B3\u30A8\u30F3\u30C9\\u003c/h3\\u003e\\n\\n\\u003cp\\u003e\\u003cqiita-embed-ogp
+        src=\\\"https://youtu.be/jQUebw8uac0\\\"\\u003e\\u003c/qiita-embed-ogp\\u003e\\u003c/p\\u003e\\n\\n\\u003ch1\\u003e\\n\\u003cspan
         id=\\\"\u6559\u79D1\u66F8\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
-        href=\\\"#%E6%95%99%E7%A7%91%E6%9B%B8\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u6559\u79D1\u66F8\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u4E0A\u8A18YouTube\u52D5\u753B\u3092\u57FA\u306B\u3057\u305F\u6559\u6750\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\u003ca
+        href=\\\"#%E6%95%99%E7%A7%91%E6%9B%B8\\\"\\u003e\\u003ci class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u6559\u79D1\u66F8\\u003c/h1\\u003e\\n\\n\\u003cp\\u003e\u4E0A\u8A18YouTube\u52D5\u753B\u3092\u57FA\u306B\u3057\u305F\u6559\u6750\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\u003ca
         href=\\\"https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/\\\"
         rel=\\\"nofollow noopener\\\" target=\\\"_blank\\\"\\u003e\u30AA\u30F3\u30E9\u30A4\u30F3\\u003c/a\\u003e\\u003c/li\\u003e\\n\\u003cli\\u003e\\u003ca
         href=\\\"https://www.blurb.com/b/9621951-category-theory-for-programmers-new-edition-hardco\\\"
@@ -4461,19 +4605,29 @@ interactions:
         x D \u306F \\\"C cross D\\\" \u3068\u8AAD\u3080\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ecommute\\u003c/td\\u003e\\n\\u003ctd\\u003e\u53EF\u63DB\u56F3\u5F0F\u3067\u300C\u53EF\u63DB\u306B\u3059\u308B\u300D\u3068\u3044\u3046\u52D5\u8A5E\u3068\u3057\u3066\u4F7F\u308F\u308C\u308B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ecomponent\\u003c/td\\u003e\\n\\u003ctd\\u003e\u81EA\u7136\u5909\u63DB\u306E\u5BFE\u8C61\u306B\u304A\u3051\u308B\u300C\u6210\u5206\u300D\u306E\u3053\u3068\u3001\u30B3\u30F3\u30DD\u30FC\u30CD\u30F3\u30C8\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ediagonal
         functor\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5BFE\u89D2\u95A2\u624B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003edinatural
         transformation\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5BFE\u89D2\u81EA\u7136\u5909\u63DB\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eendofunctor\\u003c/td\\u003e\\n\\u003ctd\\u003e\u81EA\u5DF1\u95A2\u624B
-        (end of functor \u3068\u805E\u3053\u3048\u308B\u306E\u3067\u6CE8\u610F)\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eepimorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5168\u5C04\u3001\u30A8\u30D4\u5C04\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ehomomorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u6E96\u540C\u578B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eisomorphic\\u003c/td\\u003e\\n\\u003ctd\\u003e\u540C\u578B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003elemma\\u003c/td\\u003e\\n\\u003ctd\\u003e\u88DC\u984C\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003emonomorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5358\u5C04\u3001\u30E2\u30CE\u5C04\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003emorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5C04\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eprofunctor\\u003c/td\\u003e\\n\\u003ctd\\u003e-\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003esemigroup\\u003c/td\\u003e\\n\\u003ctd\\u003e\u534A\u7FA4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003c/tbody\\u003e\\n\\u003c/table\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
+        (end of functor \u3068\u805E\u3053\u3048\u308B\u306E\u3067\u6CE8\u610F)\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eepimorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5168\u5C04\u3001\u30A8\u30D4\u5C04\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003ehomomorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u6E96\u540C\u578B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eisomorphic\\u003c/td\\u003e\\n\\u003ctd\\u003e\u540C\u578B\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003elemma\\u003c/td\\u003e\\n\\u003ctd\\u003e\u88DC\u984C\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003emonomorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5358\u5C04\u3001\u30E2\u30CE\u5C04\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003emorphism\\u003c/td\\u003e\\n\\u003ctd\\u003e\u5C04\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003eprofunctor\\u003c/td\\u003e\\n\\u003ctd\\u003e-\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003ctr\\u003e\\n\\u003ctd\\u003esemigroup\\u003c/td\\u003e\\n\\u003ctd\\u003e\u534A\u7FA4\\u003c/td\\u003e\\n\\u003c/tr\\u003e\\n\\u003c/tbody\\u003e\\n\\u003c/table\\u003e\\n\\n\\u003ch1\\u003e\\n\\u003cspan
         id=\\\"\u65E5\u672C\u8A9E\u66F8\u7C4D\\\" class=\\\"fragment\\\"\\u003e\\u003c/span\\u003e\\u003ca
         href=\\\"#%E6%97%A5%E6%9C%AC%E8%AA%9E%E6%9B%B8%E7%B1%8D\\\"\\u003e\\u003ci
-        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u65E5\u672C\u8A9E\u66F8\u7C4D\\u003c/h2\\u003e\\n\\n\\u003cp\\u003e\u65E5\u672C\u8A9E\u3067\u77E5\u8B58\u3092\u8CAF\u3081\u3066\u304A\u304F\u3002\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\n\\u003cp\\u003e\\u003ca
+        class=\\\"fa fa-link\\\"\\u003e\\u003c/i\\u003e\\u003c/a\\u003e\u65E5\u672C\u8A9E\u66F8\u7C4D\\u003c/h1\\u003e\\n\\n\\u003cp\\u003e\u65E5\u672C\u8A9E\u3067\u77E5\u8B58\u3092\u8CAF\u3081\u3066\u304A\u304F\u3002\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\\n\\u003cp\\u003e\\u003ca
         href=\\\"https://gihyo.jp/book/2019/978-4-297-10723-9\\\" rel=\\\"nofollow
         noopener\\\" target=\\\"_blank\\\"\\u003e\u570F\u8AD6\u306E\u9053\u6848\u5185\\u003c/a\\u003e\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\u591A\u5206\u30D7\u30ED\u30B0\u30E9\u30DE\u30FC\u3092\u610F\u8B58\u3057\u305F\u69CB\u6210\u3002\u6700\u7D42\u7AE0\u3067\u306FHaskell\u3092\u7D39\u4ECB\u3057\u3066\u3044\u308B\u3002\\u003c/li\\u003e\\n\\u003cli\\u003e\u5BFE\u8A71\u5F62\u5F0F\u3067\u66F8\u304B\u308C\u3066\u306F\u3044\u308B\u3051\u3069\u3001\u30CE\u30FC\u30C8\u306B\u53EF\u63DB\u56F3\u5F0F\u3092\u624B\u66F8\u304D\u3057\u306A\u3044\u3068\u7406\u89E3\u3067\u304D\u306A\u304B\u3063\u305F\\u003c/li\\u003e\\n\\u003cli\\u003e\u521D\u7248\u306F\u8AA4\u8A18\uFF08\u6B63\u8AA4\u8868\u3042\u308A\uFF09\u304C\u591A\u3059\u304E\u308B\u306E\u3067\u3001\u66F8\u5E97\u3067\u7D19\u306E\u672C\u3092\u8CB7\u3046\u3068\u304D\u306F\u6CE8\u610F\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\\u003c/li\\u003e\\n\\u003cli\\u003e\\n\\u003cp\\u003e\\u003ca
         href=\\\"https://www.maruzen-publishing.co.jp/smp/item/b295027.html\\\" rel=\\\"nofollow
-        noopener\\\" target=\\\"_blank\\\"\\u003e\u30D9\u30FC\u30B7\u30C3\u30AF\u570F\u8AD6\\u003c/a\\u003e\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\u591A\u5206\u8170\u3092\u636E\u3048\u3066\u6570\u5B66\u3092\u52C9\u5F37\u3059\u308B\u4EBA\u5411\u3051\\u003c/li\\u003e\\n\\u003cli\\u003e\u4ECA\u306E\u3068\u3053\u308D\u7528\u8A9E\u306E\u5B9A\u7FA9\u7B49\u3092\u78BA\u8A8D\u3059\u308B\u306E\u306B\u4F7F\u7528\u3059\u308B\u3050\u3089\u3044...\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\",\"body\":\"##
-        YouTube\\n\\n\u90FD\u5EA6\u90FD\u5EA6\u3067\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u3068\u304B\u3089\u3081\u3066\u8B1B\u7FA9\u3092\u9032\u3081\u3066\u304F\u308C\u308B\u306E\u3067\u3001\u306F\u305F\u3068\u819D\u3092\u6253\u3061\u306A\u304C\u3089\u7406\u89E3\u3067\u304D\u308B\\n\\n-
-        [\u570F\u8AD61](https://www.youtube.com/watch?v=I8LbkfSSR58\\u0026list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_)\\n-
-        [\u570F\u8AD62](https://www.youtube.com/watch?v=3XTQSx1A3x8\\u0026list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm)\\n-
-        [\u570F\u8AD63](https://www.youtube.com/watch?v=F5uEpKwHqdk\\u0026list=PLbgaMIhjbmEn64WVX4B08B4h2rOtueWIL)\\n\\n##
-        \u6559\u79D1\u66F8\\n\\n\u4E0A\u8A18YouTube\u52D5\u753B\u3092\u57FA\u306B\u3057\u305F\u6559\u6750\\n\\n-
+        noopener\\\" target=\\\"_blank\\\"\\u003e\u30D9\u30FC\u30B7\u30C3\u30AF\u570F\u8AD6\\u003c/a\\u003e\\u003c/p\\u003e\\n\\n\\u003cul\\u003e\\n\\u003cli\\u003e\u591A\u5206\u8170\u3092\u636E\u3048\u3066\u6570\u5B66\u3092\u52C9\u5F37\u3059\u308B\u4EBA\u5411\u3051\\u003c/li\\u003e\\n\\u003cli\\u003e\u4ECA\u306E\u3068\u3053\u308D\u7528\u8A9E\u306E\u5B9A\u7FA9\u7B49\u3092\u78BA\u8A8D\u3059\u308B\u306E\u306B\u4F7F\u7528\u3059\u308B\u3050\u3089\u3044...\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\\u003c/li\\u003e\\n\\u003c/ul\\u003e\\n\",\"body\":\"#
+        YouTube\\n\\n\u90FD\u5EA6\u90FD\u5EA6\u3067\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\u3068\u304B\u3089\u3081\u3066\u8B1B\u7FA9\u3092\u9032\u3081\u3066\u304F\u308C\u308B\u306E\u3067\u3001\u306F\u305F\u3068\u819D\u3092\u6253\u3061\u306A\u304C\u3089\u7406\u89E3\u3067\u304D\u308B\\n\\n##
+        \u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6 1\\n\\nhttps://www.youtube.com/watch?v=I8LbkfSSR58\\u0026list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_\\n\\n##
+        \u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6 2\\n\\nhttps://www.youtube.com/watch?v=3XTQSx1A3x8\\u0026list=PLbgaMIhjbmElia1eCEZNvsVscFef9m0dm\\n\\n##
+        \u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6 3\\n\\n###
+        \u6982\u8981 Part 1\\n\\nhttps://youtu.be/F5uEpKwHqdk\\n\\n### \u6982\u8981
+        Part 2\\n\\nhttps://youtu.be/CfoaY2Ybf8M\\n\\n### String Diagram Part 1\\n\\nhttps://youtu.be/eOdBTqY3-Og\\n\\n###
+        String Diagram Part 2\\n\\nhttps://youtu.be/lqq9IFSPp7Q\\n\\n### \u968F\u4F34\u3068\u30E2\u30CA\u30C9\\n\\nhttps://youtu.be/9p6_U5yV0ro\\n\\n###
+        \u30E2\u30CA\u30C9\u4EE3\u6570 Part 1\\n\\nhttps://youtu.be/uXfBmsQJsN4\\n\\n###
+        \u30E2\u30CA\u30C9\u4EE3\u6570 Part 2\\n\\nhttps://youtu.be/-wlT81LQ4Oc\\n\\n###
+        \u30E2\u30CA\u30C9\u4EE3\u6570 Part 3\\n\\nhttps://youtu.be/9f8PumwS2gU\\n\\n###
+        Eilenberg Moore \u3068 Lawvere\\n\\n[Eilenberg-Moore Category](http://nlab-pages.s3.us-east-2.amazonaws.com/nlab/show/Eilenberg-Moore+category)\\n[Lawvere
+        Theory](https://en.wikipedia.org/wiki/Lawvere_theory)\\n\\nhttps://youtu.be/5PaxKu2TXno\\n\\n###
+        Lawvere \u5B9A\u7406\\n\\nhttps://youtu.be/zCTAn_nIrS0\\n\\n### \u5BFE\u89D2\u95A2\u624B\\n\\nhttps://youtu.be/XJgfrF3O6iE\\n\\n###
+        \u30A8\u30F3\u30C9\\n\\nhttps://youtu.be/TAPxt26YyEI\\n\\n### \u30A8\u30F3\u30C9\u3068\u3057\u3066\u306E\u81EA\u7136\u5909\u63DB\\n\\nhttps://youtu.be/DseY4qIGZV4\\n\\n###
+        \u30B3\u30A8\u30F3\u30C9\\n\\nhttps://youtu.be/jQUebw8uac0\\n# \u6559\u79D1\u66F8\\n\\n\u4E0A\u8A18YouTube\u52D5\u753B\u3092\u57FA\u306B\u3057\u305F\u6559\u6750\\n\\n-
         [\u30AA\u30F3\u30E9\u30A4\u30F3](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)\\n-
         [\u30CF\u30FC\u30C9\u30AB\u30D0\u30FC](https://www.blurb.com/b/9621951-category-theory-for-programmers-new-edition-hardco)\\n-
         [\u30BD\u30D5\u30C8\u30AB\u30D0\u30FC](https://www.blurb.com/b/9603882-category-theory-for-programmers-scala-edition-pape)
@@ -4496,7 +4650,7 @@ interactions:
         monomorphism             | \u5358\u5C04\u3001\u30E2\u30CE\u5C04\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000
         \  |\\n| morphism                 | \u5C04                                                             |\\n|
         profunctor               | -                                                              |\\n|
-        semigroup                | \u534A\u7FA4                                                           |\\n\\n##
+        semigroup                | \u534A\u7FA4                                                           |\\n\\n#
         \u65E5\u672C\u8A9E\u66F8\u7C4D\\n\\n\u65E5\u672C\u8A9E\u3067\u77E5\u8B58\u3092\u8CAF\u3081\u3066\u304A\u304F\u3002\\n\\n-
         [\u570F\u8AD6\u306E\u9053\u6848\u5185](https://gihyo.jp/book/2019/978-4-297-10723-9)\\n
         \ - \u591A\u5206\u30D7\u30ED\u30B0\u30E9\u30DE\u30FC\u3092\u610F\u8B58\u3057\u305F\u69CB\u6210\u3002\u6700\u7D42\u7AE0\u3067\u306FHaskell\u3092\u7D39\u4ECB\u3057\u3066\u3044\u308B\u3002\\n
@@ -4504,7 +4658,7 @@ interactions:
         \ - \u521D\u7248\u306F\u8AA4\u8A18\uFF08\u6B63\u8AA4\u8868\u3042\u308A\uFF09\u304C\u591A\u3059\u304E\u308B\u306E\u3067\u3001\u66F8\u5E97\u3067\u7D19\u306E\u672C\u3092\u8CB7\u3046\u3068\u304D\u306F\u6CE8\u610F\\n\\n-
         [\u30D9\u30FC\u30B7\u30C3\u30AF\u570F\u8AD6](https://www.maruzen-publishing.co.jp/smp/item/b295027.html)\\n
         \ - \u591A\u5206\u8170\u3092\u636E\u3048\u3066\u6570\u5B66\u3092\u52C9\u5F37\u3059\u308B\u4EBA\u5411\u3051\\n
-        \ - \u4ECA\u306E\u3068\u3053\u308D\u7528\u8A9E\u306E\u5B9A\u7FA9\u7B49\u3092\u78BA\u8A8D\u3059\u308B\u306E\u306B\u4F7F\u7528\u3059\u308B\u3050\u3089\u3044...\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2020-05-09T23:38:03+09:00\",\"group\":null,\"id\":\"c2f9caff20031095751f\",\"likes_count\":3,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"\u570F\u8AD6\",\"versions\":[]},{\"name\":\"\u95A2\u6570\u578B\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\",\"versions\":[]}],\"title\":\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6\",\"updated_at\":\"2021-04-05T10:09:57+09:00\",\"url\":\"https://qiita.com/ryokat3/items/c2f9caff20031095751f\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
+        \ - \u4ECA\u306E\u3068\u3053\u308D\u7528\u8A9E\u306E\u5B9A\u7FA9\u7B49\u3092\u78BA\u8A8D\u3059\u308B\u306E\u306B\u4F7F\u7528\u3059\u308B\u3050\u3089\u3044...\\n\",\"coediting\":false,\"comments_count\":0,\"created_at\":\"2020-05-09T23:38:03+09:00\",\"group\":null,\"id\":\"c2f9caff20031095751f\",\"likes_count\":3,\"private\":false,\"reactions_count\":0,\"tags\":[{\"name\":\"\u570F\u8AD6\",\"versions\":[]},{\"name\":\"\u95A2\u6570\u578B\u30D7\u30ED\u30B0\u30E9\u30DF\u30F3\u30B0\",\"versions\":[]}],\"title\":\"\u30D7\u30ED\u30B0\u30E9\u30DE\u306E\u305F\u3081\u306E\u570F\u8AD6\",\"updated_at\":\"2022-01-18T16:34:31+09:00\",\"url\":\"https://qiita.com/ryokat3/items/c2f9caff20031095751f\",\"user\":{\"description\":\"Programmer\",\"facebook_id\":\"\",\"followees_count\":2,\"followers_count\":1,\"github_login_name\":\"ryokat3\",\"id\":\"ryokat3\",\"items_count\":9,\"linkedin_id\":\"\",\"location\":\"Japan\",\"name\":\"Ryoji
         Kato\",\"organization\":\"\",\"permanent_id\":115148,\"profile_image_url\":\"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983\",\"team_only\":false,\"twitter_screen_name\":null,\"website_url\":\"\"},\"page_views_count\":null,\"team_membership\":null},{\"rendered_body\":\"\\u003cp\\u003eTypeScript\u306Etuple\u578B\uFF08\u300C\u5024\u300D
         \\u003ccode\\u003e[4, \\\"hello\\\", true]\\u003c/code\\u003e\u3058\u3083\u306A\u304F\u3066\u300C\u578B\u300D\\u003ccode\\u003e[number,
         string, boolean]\\u003c/code\\u003e\uFF09\u3092\u64CD\u4F5C\u3059\u308B\u3002\\u003c/p\\u003e\\n\\n\\u003cp\\u003e\u3082\u3061\u308D\u3093\u578B\u3092\u8A08\u7B97\u3057\u3066\u3044\u308B\u3060\u3051\u306A\u306E\u3067\u3001runtime\u6642\u306E\u8CA0\u8377\u306F0\u3002\\u003cbr\\u003e\\nsnippet\u3092\u4E0A\u304B\u3089\u30B3\u30D4\u30FC\u3057\u3066VSCode\u306B\u8CBC\u308A\u4ED8\u3051\u3066\u3044\u3051\u3070OK\u3001\u578B\u8A08\u7B97\u3060\u3051\u306A\u306E\u3067\u30B3\u30F3\u30D1\u30A4\u30EB\u4E0D\u8981\u3067\u3059\u3002\\u003c/p\\u003e\\n\\n\\u003ch2\\u003e\\n\\u003cspan
@@ -5129,18 +5283,18 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 16 Jan 2022 14:33:41 GMT
+      - Wed, 19 Jan 2022 01:45:26 GMT
       ETag:
-      - W/"5ce1e0be026ca07ee1887f90cd0e0b98"
+      - W/"3f85ac87e8779181b4d7430fae966b75"
       Link:
       - <https://qiita.com/api/v2/authenticated_user/items?page=1&per_page=10>; rel="first",
         <https://qiita.com/api/v2/authenticated_user/items?page=1&per_page=10>; rel="last"
       Rate-Limit:
       - '1000'
       Rate-Remaining:
-      - '903'
+      - '975'
       Rate-Reset:
-      - '1642344296'
+      - '1642559772'
       Referrer-Policy:
       - strict-origin-when-cross-origin
       Server:
@@ -5162,9 +5316,9 @@ interactions:
       X-Permitted-Cross-Domain-Policies:
       - none
       X-Request-Id:
-      - 828c4d24-a2aa-4fff-aae1-a476f157f509
+      - 84924c20-dd93-4ab7-8ae4-815251e25332
       X-Runtime:
-      - '0.213277'
+      - '0.291214'
       X-XSS-Protection:
       - 1; mode=block
     status:
@@ -5196,7 +5350,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Sun, 16 Jan 2022 14:33:41 GMT
+      - Wed, 19 Jan 2022 01:45:27 GMT
       ETag:
       - W/"4f53cda18c2baa0c0354bb5f9a3ecbe5"
       Link:
@@ -5207,9 +5361,9 @@ interactions:
       Rate-Limit:
       - '1000'
       Rate-Remaining:
-      - '902'
+      - '974'
       Rate-Reset:
-      - '1642344296'
+      - '1642559772'
       Referrer-Policy:
       - strict-origin-when-cross-origin
       Server:
@@ -5231,9 +5385,9 @@ interactions:
       X-Permitted-Cross-Domain-Policies:
       - none
       X-Request-Id:
-      - 3e88f868-63dd-4268-b1c6-a231f216c5b2
+      - 282c0bb5-aa10-457d-89d0-62238086c3e7
       X-Runtime:
-      - '0.089952'
+      - '0.200001'
       X-XSS-Protection:
       - 1; mode=block
     status:

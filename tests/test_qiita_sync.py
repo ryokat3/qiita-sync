@@ -209,6 +209,7 @@ def update_test_file(fp: Path):
 # CLI Test
 ########################################################################
 
+
 @pytest.mark.vcr()
 def test_subcommand_download(topdir_fx: Path, mocker: MockerFixture):
     get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
@@ -279,13 +280,13 @@ def test_subcommand_sync(topdir_fx: Path, mocker: MockerFixture, capsys: Capture
 
 
 @pytest.mark.vcr()
-def test_subcommand_purge(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
+def test_subcommand_prune(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
     get_qsync([MarkdownAsset("md2.md", gen_md2), MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
     target = topdir_fx.joinpath("md2.md")
 
     assert target.is_file()
 
-    mocker.patch('sys.argv', ['qiita_sync.py', 'purge', str(target)])
+    mocker.patch('sys.argv', ['qiita_sync.py', 'prune', str(target)])
     qsync_main()
 
     assert not target.is_file()
@@ -347,7 +348,7 @@ def test_url_add_path(url, subpath, expected):
     assert url_add_path(url, Path(subpath)) == expected
 
 
-def test_get_utc():    
+def test_get_utc():
     assert get_utc('2021-12-27T00:40:01+09:00') == get_utc('2021-12-26T15:40:01+00:00')
     assert get_utc('2022-01-18T02:35:19+00:00') > get_utc('2022-01-18T10:01:07+09:00')
     assert str(get_utc('2021-12-27T00:40:01+09:00')).endswith("+00:00")
