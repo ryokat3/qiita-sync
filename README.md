@@ -83,8 +83,8 @@ Please note some features of Qiita-Sync when writing articles.
 
 ## File Name
 
-When downloading Qiita article files at first, their file names are like `a5b5328c93bad615c5b2.md` whose
-naming convention is "\<Qiita-Article-ID\>.md". For your convenience,
+When downloading Qiita article files at first, their file names are like `2020-07-08_TypeScript_d3c8f2234ea428e4563a.md` whose
+naming convention is "\<Created-Date\>\_\<Tag\>\_\<Qiita-Article-ID\>.md". For your convenience,
 you can rename those files as you like and can move them to any subdirectories within your git repository directory.
 
 ## Article Header
@@ -157,6 +157,7 @@ And it will be automatically changed to the relative file path when downloaded f
 
 | Version  | Date       | Summary                                                           |
 |----------|------------|-------------------------------------------------------------------|
+| v1.4.0   | 2021-01-21 | - Understandable file naming when initially downloaded            |
 | v1.3.4   | 2021-01-18 | - Internal data enhancement, verbose options                      |
 | v1.3.3   | 2021-01-16 | - Fixed version number                                            |
 | v1.3.2   | 2021-01-15 | - Fixed packaging failure                                         |
