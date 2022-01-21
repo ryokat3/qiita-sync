@@ -1,6 +1,7 @@
 import os
 import random
 import string
+import re
 import pytest
 import datetime
 from pathlib import Path
@@ -8,13 +9,14 @@ from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
 
 from qiita_sync.qiita_sync import QIITA_API_ENDPOINT, ApplicationError, CommandError, GitHubArticle, QiitaArticle, QiitaSync, git_get_HEAD
+from qiita_sync.qiita_sync import QiitaTags
 from qiita_sync.qiita_sync import exec_command, qsync_get_access_token
-from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB
+from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB, APPLICABLE_TAG_REGEX
 from qiita_sync.qiita_sync import GITHUB_REF, GITHUB_CONTENT_URL, ACCESS_TOKEN_ENV
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
 from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch
-from qiita_sync.qiita_sync import qsync_str_local_only, qsync_str_global_deleted
+from qiita_sync.qiita_sync import qsync_str_local_only, qsync_str_global_deleted, qsync_temporary_file_name
 from qiita_sync.qiita_sync import git_get_committer_datetime
 from qiita_sync.qiita_sync import qiita_create_caller, qiita_get_authenticated_user_id
 from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
@@ -193,16 +195,16 @@ def gen_md3(mdlink: Callable[[str], str], imglink: Callable[[str], str]):
     return f"""
 <!--
 title:    md3
-tags:     test
+tags:     DUMMY_TAG
 private:  true
 -->
 ![img1]({imglink("img1.png")})
 """
 
 
-def update_test_file(fp: Path):
+def update_test_file(fp: Path, msg: str = "\n# Hello, world"):
     with open(fp, "a") as fd:
-        fd.write("\n# Hello, world")
+        fd.write(msg)
 
 
 ########################################################################
@@ -277,6 +279,39 @@ def test_subcommand_sync(topdir_fx: Path, mocker: MockerFixture, capsys: Capture
     captured = capsys.readouterr()
 
     assert "" == captured.out
+
+@pytest.mark.vcr()
+def test_subcommand_sync_md_links_on_initial_download(topdir_fx: Path, mocker: MockerFixture, capsys: CaptureFixture):
+    get_qsync([MarkdownAsset("md3.md", gen_md3), Asset("img1.png")])
+    mocker.patch('sys.argv', ['qiita_sync.py', 'sync', str(topdir_fx)])
+    qsync_main()
+
+    for x in topdir_fx.glob('**/*.md'):
+        if x.is_file():
+            update_test_file(topdir_fx.joinpath("md3.md"), f"\n{x.name}: [DUMMY]({x.name})")
+
+    mocker.patch('sys.argv', ['qiita_sync.py', 'sync', str(topdir_fx)])
+    qsync_main()
+
+    for x in topdir_fx.glob('**/*.md'):
+        if x.is_file():
+            x.unlink()
+
+    mocker.patch('sys.argv', ['qiita_sync.py', 'sync', str(topdir_fx)])
+    qsync_main()
+
+    for x in topdir_fx.glob('**/*.md'):
+        if str(x).find('DUMMY') >= 0:
+            qsync = get_qsync([])
+            article = qsync.toGitHubArticle(GitHubArticle.fromFile(x), x)
+            for y in topdir_fx.glob('**/*.md'):
+                if y.is_file():
+                    res = markdown_find_line(article.body, y.name)
+                    if len(res) > 0:
+                        assert res[0].find(f"({y.name})") > 0
+                
+    mocker.patch('sys.argv', ['qiita_sync.py', 'prune', str(topdir_fx)])
+    qsync_main()
 
 
 @pytest.mark.vcr()
@@ -450,6 +485,52 @@ def test_git_get_HEAD():
 # Qiita API
 ########################################################################
 
+def test_APPLICABLE_TAG_REGEX():
+    assert APPLICABLE_TAG_REGEX.match("filename")
+    assert APPLICABLE_TAG_REGEX.match("filename-with_dash.and_underscore.and-period")
+    assert APPLICABLE_TAG_REGEX.match("filename=is") is None
+    assert APPLICABLE_TAG_REGEX.match("space is invalid") is None
+    assert APPLICABLE_TAG_REGEX.match("colon:is:invalid") is None
+    assert APPLICABLE_TAG_REGEX.match("日本語.md") is None
+
+########################################################################
+# Qiita API
+########################################################################
+
+
+def test_qsync_temporary_file_name():
+    api_data = {
+        "body": "dummy",
+        "updated_at": '2021-06-09T11:22:33+0900',
+        "created_at": '2020-03-12T22:11:44+0900',
+        "title": "title",
+        "id": "12345678901234567890",
+        "tags": [
+            {
+                "name": "Qiita",
+                "versions": []
+            },
+            {
+                "name": "Python",
+                "versions": []
+            },
+            {
+                "name": "GitHub",
+                "versions": []
+            },
+            {
+                "name": "\u500b\u4eba\u958b\u767a",
+                "versions": []
+            },
+            {
+                "name": "GitHubActions",
+                "versions": []
+            }
+        ],
+        "private": "false"
+    }
+    print(qsync_temporary_file_name(QiitaArticle.fromApi(api_data)))
+
 
 def test_qsync_get_access_token(topdir_fx: Path):
     token_file = 'access_token.txt'
@@ -486,6 +567,7 @@ def test_QiitaArticle_fromApi(topdir_fx: Path):
     api_data = {
         "body": article1.body,
         "updated_at": '2021-06-09T11:22:33+0900',
+        "created_at": '2020-03-12T22:11:44+0900',
         "title": article1.data.title,
         "id": article1.data.id,
         "tags": article1.data.tags.toApi(),
