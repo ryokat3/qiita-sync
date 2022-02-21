@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Normalize markdown articles before processing (removing the tailing spaces from each line)
+- Changed Python version to 3.10.1 and 3.10.2 in GitHub Actions
 
 ### Fixed
 
