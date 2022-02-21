@@ -157,6 +157,7 @@ And it will be automatically changed to the relative file path when downloaded f
 
 | Version  | Date       | Summary                                                           |
 |----------|------------|-------------------------------------------------------------------|
+| v1.4.4   | 2021-02-21 | - Fixed the issue #61, enchanced code block splitter              |
 | v1.4.0   | 2021-01-21 | - Understandable file naming when initially downloaded            |
 | v1.3.4   | 2021-01-18 | - Internal data enhancement, verbose options                      |
 | v1.3.3   | 2021-01-16 | - Fixed version number                                            |

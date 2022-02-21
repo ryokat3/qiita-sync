@@ -31,6 +31,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.4 - 2022-02-21
+
+### Changed
+
+- Normalize markdown articles before processing (removing the tailing spaces from each line)
+
+### Fixed
+
+- Fixed the bug code block parsing (#61)
+
+## 1.4.0 - 2022-01-21
+
+- Changed the initial file name when importing articles from Qiita site (#58)
+
+### Changed
+
+- Changed subcommand name from purge to prune
+
+## 1.3.4 - 2022-01-18
+
+### Changed
+
+- Changed to have 2 classes for article, QiitaArticle and GitHubArticle
+
 ## 1.3.3 - 2022-01-16
 
 ### Fixed
@@ -41,7 +65,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added command line tests
+- Added compatiblemand line tests
 - Added PyPI badge
 - Added multiple pages to download (for many articles)
 - Added handling for http status 404 when aritcle is not found
