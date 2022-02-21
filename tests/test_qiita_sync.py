@@ -609,11 +609,6 @@ private: false
 ![img1](img1.png)"""
 
 
-def test_markdown_code_block_split():
-    md = markdown_normalize(gen_md1(identity, identity))
-    assert (''.join(markdown_code_block_split(md))) == md
-
-
 ########################################################################
 # Link Converter Test
 ########################################################################
@@ -651,6 +646,29 @@ def test_markdown_replace_link(text, func, replaced):
 def test_markdown_replace_image(text, func, replaced):
     assert markdown_replace_image(func, text) == replaced
 
+
+def test_markdown_code_block_split():
+    md = markdown_normalize(gen_md1(identity, identity))
+    assert (''.join(markdown_code_block_split(md))) == md
+
+    codeblock = """```shell
+echo "hello, world"
+```"""
+
+    splitted = markdown_code_block_split(markdown_normalize(codeblock))
+    assert len(splitted) == 1
+
+    splitted = markdown_code_block_split(markdown_normalize(codeblock + "\n\n" + codeblock))
+    assert len(splitted) == 3
+    assert splitted[1] == "\n\n"
+
+    splitted = markdown_code_block_split(markdown_normalize("hello\n\n" + codeblock + "\n\n" + codeblock))
+    assert len(splitted) == 4
+    assert splitted[0] == "hello\n\n"
+
+    splitted = markdown_code_block_split(markdown_normalize(codeblock + "\n\n" + codeblock + "\n\nhello"))
+    assert len(splitted) == 4
+    assert splitted[3] == "\n\nhello"
 
 ########################################################################
 # Qiita Sync
