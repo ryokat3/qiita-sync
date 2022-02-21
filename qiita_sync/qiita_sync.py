@@ -618,7 +618,7 @@ class QiitaArticle(NamedTuple):
     def fromApi(cls, item) -> QiitaArticle:
         return cls(
             data=QiitaData.fromApi(item),
-            body=item["body"],
+            body=markdown_normalize(item["body"]),
             timestamp=get_utc(item["updated_at"]),
             aux=QiitaArticleAux.fromApi(item))
 
@@ -649,41 +649,58 @@ class GitHubArticle(NamedTuple):
             Maybe(m).map(lambda m: m.group(1)).getOrElse(""), qiita_get_temporary_title(body),
             qiita_get_temporary_tags(body))
 
-        return cls(data=data, body=body, timestamp=timestamp, filepath=filepath)
+        return cls(data=data, body=markdown_normalize(body), timestamp=timestamp, filepath=filepath)
 
 
 #######################################################################
 # Markdown
 #######################################################################
 
-CODE_BLOCK_REGEX = re.compile(r"([\r\n]+\s*[\r\n]+(?P<CB>````*).*?[\r\n](?P=CB)\s*[\r\n]+)", re.MULTILINE | re.DOTALL)
+# CODE_BLOCK_REGEX = re.compile(r"([\r\n]+\s*[\r\n]+(?P<CB>````*).*?[\r\n](?P=CB)\s*[\r\n]+)", re.MULTILINE | re.DOTALL)
+CODE_BLOCK_RAW = r"(?P<CB>````*).*?\n.*?\n(?P=CB)"
+CODE_BLOCK_RAW_MATCH = r"(?<=\n\n)(" + CODE_BLOCK_RAW + r")(?=\n\n)"
+
+# CODE_BLOCK_REGEX = re.compile(r"(?<=\n\n)((?P<CB>````*).*?[\r\n](?P=CB)\n)(?=\n)", re.MULTILINE | re.DOTALL)
+CODE_BLOCK_REGEX = re.compile(CODE_BLOCK_RAW_MATCH, re.MULTILINE | re.DOTALL)
+# CODE_BLOCK_REGEX_2 = re.compile(r"(?P<CB>````*).*?[\r\n](?P=CB)\n", re.MULTILINE | re.DOTALL)
+CODE_BLOCK_REGEX_2 = re.compile(CODE_BLOCK_RAW, re.MULTILINE | re.DOTALL)
 CODE_INLINE_REGEX = re.compile(r"((?P<BT>``*)[^\r\n]*?(?P=BT))", re.MULTILINE | re.DOTALL)
 MARKDOWN_LINK_REGEX = re.compile(r"(?<!\!)(\[[^\]]*\]\()([^\ \)]+)(.*?\))", re.MULTILINE | re.DOTALL)
 MARKDOWN_IMAGE_REGEX = re.compile(r"(\!\[[^\]]*\]\()([^\ \)]+)(.*?\))", re.MULTILINE | re.DOTALL)
 
+TAILING_SPACES_REGEX = re.compile(r"\s*$")
 
 def markdown_code_block_split(text: str) -> List[str]:
-    return list(
-        filter(lambda elm: elm is not None and re.match(r"^````*$", elm) is None, re.split(CODE_BLOCK_REGEX, text)))
+    #
+    # NOTE 1:
+    # When using regex including placeholder (e.g. (?<BT>...) ) for re.split, the placeholder is included in the result.
+    # In this case, ``` will be included in re.split result.
+    # 'filter' function eliminates ```  from the list
+    #
+    # NOTE 2:
+    # In order to split by code block, \n\n is added to the head and the tail when calling re.split.
+    # This will be eliminated later
+    #
+    blocks = list(filter(lambda elm: elm is not None and re.match(r"^````*$", elm) is None, re.split(CODE_BLOCK_REGEX, '\n\n' + text + '\n\n')))
+    blocks = blocks[1:] if blocks[0] == '\n\n' else ([blocks[0][2:]] + blocks[1:])
+    blocks = blocks[:-1] if blocks[-1] == '\n\n' else (blocks[:-1] + [blocks[-1][:-2]])
+    return blocks
 
 
-def markdown_code_inline_split(text: str) -> List[str]:
-    return list(
-        filter(
-            None,
-            filter(lambda elm: elm is not None and re.match(r"^``*$", elm) is None, re.split(CODE_INLINE_REGEX,
-                                                                                             text))))
+def markdown_code_inline_split(text: str) -> List[str]:    
+    return list(filter(None, filter(lambda elm: elm is not None and re.match(r"^``*$", elm) is None, re.split(CODE_INLINE_REGEX, text))))
 
 
 def markdown_replace_block_text(func: Callable[[str], str], text: str):
-    return "".join(
-        [func(block) if CODE_BLOCK_REGEX.match(block) is None else block for block in markdown_code_block_split(text)])
+    return "".join(        
+        #[func(block) if CODE_BLOCK_REGEX.match(block) is None else block for block in markdown_code_block_split(text)])
+        [func(block) if CODE_BLOCK_REGEX_2.match(block) is None else block for block in markdown_code_block_split(text)])
 
 
 def markdown_replace_text(func: Callable[[str], str], text: str):
     return markdown_replace_block_text(
         lambda block: "".join(
-            [func(x) if CODE_INLINE_REGEX.match(x) is None else x for x in markdown_code_inline_split(block)]), text)
+            [func(x) if CODE_INLINE_REGEX.match(x) is None else x for x in markdown_code_inline_split(block)]), markdown_normalize(text))
 
 
 def markdown_replace_link(conv: Callable[[str], str], text: str):
@@ -692,6 +709,10 @@ def markdown_replace_link(conv: Callable[[str], str], text: str):
 
 def markdown_replace_image(conv: Callable[[str], str], text: str):
     return re.sub(MARKDOWN_IMAGE_REGEX, lambda m: "".join([m.group(1), conv(m.group(2)), m.group(3)]), text)
+
+
+def markdown_normalize(text: str) -> str:
+    return "\n".join(map(lambda line: re.sub(TAILING_SPACES_REGEX, "", line), text.splitlines()))
 
 
 #######################################################################

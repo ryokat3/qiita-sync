@@ -1,7 +1,8 @@
 interactions:
 - request:
     body: '{"body": "![img1](https://raw.githubusercontent.com/github-id/github-repo/master/img1.png)",
-      "tags": [{"name": "test", "versions": []}], "title": "md3", "private": true}'
+      "tags": [{"name": "DUMMY_TAG", "versions": []}], "title": "md3", "private":
+      true}'
     headers:
       Authorization:
       - Bearer fcb2e4a0658f103e4921e684c27d2822e12eebdb
@@ -10,7 +11,7 @@ interactions:
       Connection:
       - close
       Content-Length:
-      - '169'
+      - '174'
       Content-Type:
       - application/json
       Host:
@@ -23,7 +24,7 @@ interactions:
     body:
       string: '{"rendered_body":"\u003cp\u003e\u003ca href=\"https://camo.qiitausercontent.com/d42dfcd6e60ca82bd25818138a4adf6a51e83e2f/68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6769746875622d69642f6769746875622d7265706f2f6d61737465722f696d67312e706e67\"
         target=\"_blank\" rel=\"nofollow noopener\"\u003e\u003cimg src=\"https://camo.qiitausercontent.com/d42dfcd6e60ca82bd25818138a4adf6a51e83e2f/68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6769746875622d69642f6769746875622d7265706f2f6d61737465722f696d67312e706e67\"
-        alt=\"img1\" data-canonical-src=\"https://raw.githubusercontent.com/github-id/github-repo/master/img1.png\"\u003e\u003c/a\u003e\u003c/p\u003e\n","body":"![img1](https://raw.githubusercontent.com/github-id/github-repo/master/img1.png)\n","coediting":false,"comments_count":0,"created_at":"2022-01-21T13:17:36+09:00","group":null,"id":"ee0208a0716acfa3bd1d","likes_count":0,"private":true,"reactions_count":0,"tags":[{"name":"test","versions":[]}],"title":"md3","updated_at":"2022-01-21T13:17:36+09:00","url":"https://qiita.com/ryokat3/private/ee0208a0716acfa3bd1d","user":{"description":"Programmer","facebook_id":"","followees_count":2,"followers_count":1,"github_login_name":"ryokat3","id":"ryokat3","items_count":9,"linkedin_id":"","location":"Japan","name":"Ryoji
+        alt=\"img1\" data-canonical-src=\"https://raw.githubusercontent.com/github-id/github-repo/master/img1.png\"\u003e\u003c/a\u003e\u003c/p\u003e\n","body":"![img1](https://raw.githubusercontent.com/github-id/github-repo/master/img1.png)\n","coediting":false,"comments_count":0,"created_at":"2022-02-21T15:06:39+09:00","group":null,"id":"263f7425ce8e145ecd75","likes_count":0,"private":true,"reactions_count":0,"tags":[{"name":"DUMMY_TAG","versions":[]}],"title":"md3","updated_at":"2022-02-21T15:06:39+09:00","url":"https://qiita.com/ryokat3/private/263f7425ce8e145ecd75","user":{"description":"Programmer","facebook_id":"","followees_count":2,"followers_count":4,"github_login_name":"ryokat3","id":"ryokat3","items_count":11,"linkedin_id":"","location":"Japan","name":"Ryoji
         Kato","organization":"","permanent_id":115148,"profile_image_url":"https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/115148/profile-images/1641617983","team_only":false,"twitter_screen_name":null,"website_url":""},"page_views_count":null,"team_membership":null}'
     headers:
       Cache-Control:
@@ -33,15 +34,15 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Fri, 21 Jan 2022 04:17:36 GMT
+      - Mon, 21 Feb 2022 06:06:39 GMT
       ETag:
-      - W/"530ec3e9e6a652ee4cb2b81fbe173fbe"
+      - W/"624fd88f97df098c820a9b15d5fa13b7"
       Rate-Limit:
       - '1000'
       Rate-Remaining:
-      - '979'
+      - '948'
       Rate-Reset:
-      - '1642741683'
+      - '1645425273'
       Referrer-Policy:
       - strict-origin-when-cross-origin
       Server:
@@ -61,9 +62,9 @@ interactions:
       X-Permitted-Cross-Domain-Policies:
       - none
       X-Request-Id:
-      - 343a6b7f-b8c5-4f67-9c1c-b83e33390f1a
+      - f85c946a-37f7-4e63-9a34-ffcf548294e3
       X-Runtime:
-      - '0.216760'
+      - '0.224908'
       X-XSS-Protection:
       - 1; mode=block
     status:
@@ -83,7 +84,7 @@ interactions:
       User-Agent:
       - Python-urllib/3.10
     method: DELETE
-    uri: https://qiita.com/api/v2/items/ee0208a0716acfa3bd1d
+    uri: https://qiita.com/api/v2/items/263f7425ce8e145ecd75
   response:
     body:
       string: ''
@@ -93,13 +94,13 @@ interactions:
       Connection:
       - close
       Date:
-      - Fri, 21 Jan 2022 04:17:37 GMT
+      - Mon, 21 Feb 2022 06:06:40 GMT
       Rate-Limit:
       - '1000'
       Rate-Remaining:
-      - '978'
+      - '947'
       Rate-Reset:
-      - '1642741684'
+      - '1645425273'
       Referrer-Policy:
       - strict-origin-when-cross-origin
       Server:
@@ -117,9 +118,9 @@ interactions:
       X-Permitted-Cross-Domain-Policies:
       - none
       X-Request-Id:
-      - 798db8cf-0660-4102-9ad6-99138b5f9e72
+      - 3dd31f2a-eea0-4c42-a315-60a15f3c307d
       X-Runtime:
-      - '0.418397'
+      - '0.369770'
       X-XSS-Protection:
       - 1; mode=block
     status:

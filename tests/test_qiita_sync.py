@@ -1,9 +1,10 @@
 import os
 import random
 import string
-import re
+import difflib
 import pytest
 import datetime
+import re
 from pathlib import Path
 from typing import Generator, List, Optional, NamedTuple, Dict, Callable
 from dataclasses import dataclass
@@ -12,19 +13,19 @@ from qiita_sync.qiita_sync import QIITA_API_ENDPOINT, ApplicationError, CommandE
 from qiita_sync.qiita_sync import QiitaTags
 from qiita_sync.qiita_sync import exec_command, qsync_get_access_token
 from qiita_sync.qiita_sync import DEFAULT_ACCESS_TOKEN_FILE, DEFAULT_INCLUDE_GLOB, DEFAULT_EXCLUDE_GLOB, APPLICABLE_TAG_REGEX
-from qiita_sync.qiita_sync import GITHUB_REF, GITHUB_CONTENT_URL, ACCESS_TOKEN_ENV
+from qiita_sync.qiita_sync import GITHUB_REF, GITHUB_CONTENT_URL, ACCESS_TOKEN_ENV, CODE_BLOCK_REGEX
 from qiita_sync.qiita_sync import qsync_init, qsync_argparse, Maybe
 from qiita_sync.qiita_sync import rel_path, add_path, url_add_path, get_utc, str2bool, is_url
 from qiita_sync.qiita_sync import git_get_topdir, git_get_remote_url, git_get_default_branch
 from qiita_sync.qiita_sync import qsync_str_local_only, qsync_str_global_deleted, qsync_temporary_file_name
 from qiita_sync.qiita_sync import git_get_committer_datetime
 from qiita_sync.qiita_sync import qiita_create_caller, qiita_get_authenticated_user_id
-from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text
-from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image
+from qiita_sync.qiita_sync import markdown_code_block_split, markdown_code_inline_split, markdown_replace_text, markdown_replace_block_text
+from qiita_sync.qiita_sync import markdown_replace_link, markdown_replace_image, markdown_normalize
 from qiita_sync.qiita_sync import qsync_main
 
 from pytest_mock.plugin import MockerFixture
-from pytest import CaptureFixture, MonkeyPatch
+from pytest import CaptureFixture, FixtureRequest, MonkeyPatch
 
 ########################################################################
 # Test Utils
@@ -609,8 +610,8 @@ private: false
 
 
 def test_markdown_code_block_split():
-    md = gen_md1(identity, identity)
-    assert ''.join(markdown_code_block_split(md)) == md
+    md = markdown_normalize(gen_md1(identity, identity))
+    assert (''.join(markdown_code_block_split(md))) == md
 
 
 ########################################################################
@@ -717,3 +718,12 @@ def test_QiitaSync_format_conversion(md1, md2, img1, topdir_fx: Path):
         qsync.toGitHubArticle(article, article.filepath).body.lower()
     assert qsync.toQiitaArticle(qsync.toGitHubArticle(
         article, article.filepath)).body.lower() == qsync.toQiitaArticle(article).body.lower()
+
+
+def test_markdown_convert(request: FixtureRequest):
+    for filePath in Path(request.fspath.dirname).glob("markdown/*.md"):
+        qsync = get_qsync([])
+        original = markdown_normalize(filePath.read_text())
+        article = qsync.toGitHubArticle(GitHubArticle.fromFile(filePath), filePath)
+        print(os.linesep.join(list(difflib.unified_diff(article.body.splitlines(), original.splitlines()))))
+        assert original.strip() == article.body.strip()
